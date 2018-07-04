@@ -5,7 +5,7 @@ import PIL.Image as Image
 from os import listdir
 import math
 
-itchat.auto_login(enableCmdQR=True)
+itchat.auto_login(hotReload=True)
 
 friends = itchat.get_friends(update=True)[0:]
 

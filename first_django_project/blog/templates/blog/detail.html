@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Django detail</title>
+</head>
+<body>
+
+<h2>{{ article.title }}</h2>
+<h3>{{ article.content }}</h3>
+<br>
+<a href="{% url 'blog:edit' article.id %}">修改文章</a>
+
+</body>
+</html>

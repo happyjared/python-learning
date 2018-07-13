@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Django list</title>
+</head>
+<body>
+{#<h1>hello，blog !</h1>#}
+{#<h2>{{ hello }}</h2>#}
+{#<h3>{{ article.title }}，{{ article.content }}</h3>#}
+
+<h2><a href="{% url 'blog:edit' 0 %}">新文章</a></h2>
+<br>
+{% for article in articles %}
+    <a href="{% url 'blog:detail' article.id %}">{{ article.title }}</a><br>
+{% endfor %}
+</body>
+</html>

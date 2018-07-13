@@ -1,0 +1,59 @@
+﻿创建项目：
+django-admin startproject （projectname ：项目名称）
+
+创建模块：
+python manage.py stattapp (appname：模块名称)
+
+生成数据表，数据移植：
+python manage.py makemigrations (appname：可选，当app名不指定时，默认当前目录下所有app）
+python manage.py migrate
+
+查看数据表：
+python manage.py sqlmigrate (app_name id：查看SQL语句）
+
+数据呈现：
+views.py中import models
+article = models.Article.objects.get(pk=1)  pk=1是主键为1的
+render(request,page,{'article':artcle})
+
+启动服务：
+python manage.py runserver （port：端口）
+
+创建superuser：
+python manage.py createsuperuser
+
+Admin中文：
+修改settings.py中LANGUAGE_CODE  = 'zh_Hans'
+
+注册模块：
+admin.py中from .models import Article然后admin.site.register(models.Article)
+
+修改数据默认显示名称：
+在Article类下添加一个方法，
+2.7：__str__(self) 或 3+：__unicode__(self)
+return self.title
+
+URL传参:
+参数卸载响应函数中的request后，可以有默认值
+URL正则表达式 r'^article/(?P<article_id>[0-9]+)'.P大写，0-9中间不是逗号。
+URL正则中的组名必须和参数名一致
+
+超链接目标地址：
+href 后面是目标地址
+template 中可以用
+{% url 'app name: url name' param %}
+其中app_name 和 url_name 都在url中配置
+
+url函数的名称参数：
+①跟urls，卸载include()的第二个参数未知，namespace = 'blog'
+②应用下则卸载url()的第三个参数位置，name = 'article'
+主要取决于是否使用include应用了另一个url配置文件
+
+表单提交csrf验证失败的解决方法：
+在前端界面中（.html）文件中输入{% csrf_token%}
+
+Templates过滤器：
+过滤器以|拼接，例如默认值过滤器可以写成：| defaults=''
+
+Django shell界面：
+输入python manage.py shell进入

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Django edit</title>
+</head>
+<body>
+<form action="{% url 'blog:edit_action' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="{{ article.id }}">
+    标题：<input type="text" name="title" value="{{ article.title }}"><br>
+    内容：<input type="text" name="content" value="{{ article.content }}"><br>
+    <input type="submit" value="提交">
+</form>
+</body>
+</html>

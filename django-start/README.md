@@ -1,4 +1,4 @@
-### Django入门源代码说明：
+#### django-start : Django入门源码
 
 1. note.txt为学习笔记
 2. 数据库为默认的sqlite

@@ -1,0 +1,63 @@
+$def with (read_count)
+
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>简书数据统计</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="https://blackrockdigital.github.io/startbootstrap-freelancer/css/freelancer.min.css" rel="stylesheet">
+    <style>
+        .self-text {
+            color: rgba(255, 254, 21, 0.96);
+        }
+        .self-text2 {
+            color: rgba(255, 58, 2, 0.96);
+        }
+        .self-a {
+            color: rgba(255, 58, 2, 0.96);
+            font-size: 2.5rem;
+            text-underline: none;
+        }
+    </style>
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="bg-primary">
+<header class="text-white text-center" style="padding-top: 5rem;">
+$if read_count.exit:
+    <div class="container">
+        <img class="img-fluid mb-5 d-block mx-auto img-circle" src="$read_count.avatar" alt="avatar">
+        <h2 class="mb-0">$read_count.nickname</h2>
+        <hr class="star-light">
+        <h4 class="font-weight-light mb-0">
+            关注 : <span class="self-text">$read_count.watch</span> 人 -
+            粉丝 : <span class="self-text">$read_count.fans</span> 人 -
+            文章 : <span class="self-text">$read_count.articles</span> 篇 <p></p>
+            写作 : <span class="self-text">$read_count.words</span> 字 -
+            收获喜欢 : <span class="self-text">$read_count.likes</span> 次 -
+            总阅读量 : <span class="self-text2">$read_count.total_reading</span> 次 -
+            查询总耗时 ：<span class="self-text2">$read_count.time</span> 秒
+        </h4>
+    </div>
+$else:
+    <h1 class="self-text2">404</h1>
+    <hr class="star-light">
+    <h4>用户不存在 , 您可以尝试下搜下面这些人</h4><br>
+    <h4 class="font-weight-light mb-0">
+        <a class="self-a" href="/000a530f461c">a. happyJared</a> -
+        <a class="self-a" href="/y3Dbcz">b. 简叔</a> -
+        <a class="self-a" href="/d9edcb44e2f2">c. 简黛玉</a> -
+        <a class="self-a" href="/1441f4ae075d">d. 彭小六</a>
+    </h4>
+</header>
+</body>
+</html>

@@ -20,5 +20,7 @@ class Hello:
 
 
 if __name__ == "__main__":
-    app = web.application(urls, globals())
-    app.run()
+    read_count = readCount.ReadCount('000a530f461c')
+    read_count.count()
+    # app = web.application(urls, globals())
+    # app.run()

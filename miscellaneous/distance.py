@@ -15,7 +15,7 @@ with open('lagou_python_gz.csv', 'r', encoding='utf-8-sig') as f:
         url = 'https://restapi.amap.com/v3/direction/walking?origin=113.4066543211546,23.175756023327354&destination=' + destination + '&key=5f884ed3eaf49f32c8c3fc68737358c4'
         resp = requests.get(url)
         resp_json = json.loads(resp.text)
-        print(resp_json)
+        # print(resp_json)
         status = resp_json['status']
         if int(status) == 1:
             route = resp_json['route']

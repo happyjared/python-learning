@@ -39,39 +39,37 @@ class Spider(object):
         result = position_result['result']
         for r in result:
             position_id = r['positionId']
-            if self.list_repeat.__contains__(position_id):
-                continue
-            else:
+            if position_id not in self.list_repeat:
                 self.list_repeat.append(position_id)
-            url = 'https://www.lagou.com/jobs/' + str(position_id) + '.html'
-            # print(url)
-            resp = requests.get(url, headers=headers)
-            bs = BeautifulSoup(resp.text, 'html.parser')
-            work_address = bs.find(class_='work_addr')
-            try:
-                work_address_text = work_address.text
-            except AttributeError:
-                print('---------------AttributeError ', url)
-            else:
-                address = work_address_text.replace('-', '').replace('查看地图', '')
-                location = ''.join(address.split())
-                # print(location)
-                lng_lat = self.transfer(location)
-                print(lng_lat)
-                company = bs.find(class_='b2')
-                company_name = ''
+                url = 'https://www.lagou.com/jobs/' + str(position_id) + '.html'
+                # print(url)
+                resp = requests.get(url, headers=headers)
+                bs = BeautifulSoup(resp.text, 'html.parser')
+                work_address = bs.find(class_='work_addr')
                 try:
-                    company_name = company['alt']
-                except TypeError:
-                    print('---------------TypeError ', url)
-                finally:
-                    print(company_name)
-                    dict_data = {'企业名称': company_name, '工作地址': location, '招聘主页': url, '经纬度': lng_lat}
-                    self.list_data.append(dict_data)
+                    work_address_text = work_address.text
+                except AttributeError:
+                    print('---------------AttributeError ', url)
+                else:
+                    address = work_address_text.replace('-', '').replace('查看地图', '')
+                    location = ''.join(address.split())
+                    # print(location)
+                    lng_lat = self.transfer(location)
+                    print(lng_lat)
+                    company = bs.find(class_='b2')
+                    company_name = ''
+                    try:
+                        company_name = company['alt']
+                    except TypeError:
+                        print('---------------TypeError ', url)
+                    finally:
+                        print(company_name)
+                        dict_data = {'企业名称': company_name, '工作地址': location, '招聘主页': url, '经纬度': lng_lat}
+                        self.list_data.append(dict_data)
 
     @staticmethod
-    def transfer(add):
-        url = 'http://api.map.baidu.com/geocoder/v2/?address=' + add + '&output=json&ak=TCLfUCrFQDLWQrzz3NKYBwb8ZY57tgAt'
+    def transfer(addr):
+        url = 'http://api.map.baidu.com/geocoder/v2/?address=' + addr + '&output=json&ak=TCLfUCrFQDLWQrzz3NKYBwb8ZY57tgAt'
         resp = requests.get(url)
         resp_json = json.loads(resp.text)
         status = resp_json['status']
@@ -98,10 +96,6 @@ class Spider(object):
 if __name__ == '__main__':
     s = Spider()
     for n in range(1, 31):
-        print('1.=================', n)
         s.spider(n)
         # time.sleep(5)
-        print('2.=================', n)
-
-    print("3.-----------------")
     s.save_csv()

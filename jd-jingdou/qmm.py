@@ -3,6 +3,7 @@ import requests
 import authorize
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from urllib.parse import parse_qs
 from selenium.common.exceptions import *
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
@@ -12,7 +13,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 class QMM(object):
 
     def __init__(self):
-        self.list_repeat = []
         self.list_detail = []
 
     '''
@@ -32,10 +32,13 @@ class QMM(object):
             t_body_list = bs.find_all('tbody')
             for t_body in t_body_list:
                 for a in t_body.find_all('a'):
-                    detail = a.get('href')
-                    self.list_detail.append(detail)
+                    href = a.get('href')
+                    detail = self.get_url(href)
+                    print(href, "  +++++   ", detail)
+                    if detail not in self.list_detail:
+                        self.list_detail.append(detail)
         print('一共抓取了 %d 个领取页面' % (len(self.list_detail)))
-        self.list_detail.sort()
+        self.list_detail.sort(reverse=True)
         self.receive()
 
     '''
@@ -43,9 +46,13 @@ class QMM(object):
     '''
 
     def receive(self, timeout=5):
-        # option = webdriver.ChromeOptions()
         # 静默模式
+        # option = webdriver.ChromeOptions()
         # option.add_argument('headless')
+
+        # 登陆京东
+        # driver = webdriver.Chrome(chrome_options=option)
+        # driver = webdriver.PhantomJS()
         driver = webdriver.Chrome()
         jd_login = 'https://passport.jd.com/new/login.aspx'
         driver.get(jd_login)
@@ -59,8 +66,12 @@ class QMM(object):
 
         time.sleep(timeout)
 
+        self.financial(driver)
+
+        num = 0
         for detail in self.list_detail:
-            print('start spider ', detail, end='')
+            num += 1
+            print('%d.Start spider %s' % (num, detail), end='')
             driver.get(detail)
             try:
                 # 领取按钮
@@ -79,6 +90,32 @@ class QMM(object):
                 print(' 领取失败, TimeoutException ')
             else:
                 print(' 领取成功 ')
+
+    '''
+        处理url
+    '''
+
+    @staticmethod
+    def get_url(detail):
+        url = parse_qs(detail).get('url')
+        return detail if url is None else url.pop()
+
+    '''
+        京东金融签到
+    '''
+
+    @staticmethod
+    def financial(driver, timeout=5):
+        # 进入京东金融
+        driver.find_element_by_xpath('//*[@id="navitems-group3"]/li[2]/a').click()
+        driver.close()
+        # 切换到最新打开的窗口
+        window_handles = driver.window_handles
+        driver.switch_to.window(window_handles[-1])
+        # 点击签到
+        sign_btn = WebDriverWait(driver, timeout).until(
+            lambda d: d.find_element_by_xpath('//*[@id="primeWrap"]/div[1]/div[3]/div[1]/a'))
+        sign_btn.click()
 
 
 if __name__ == '__main__':

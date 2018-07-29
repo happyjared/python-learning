@@ -1,4 +1,5 @@
 import time
+import random
 import requests
 import authorize
 from bs4 import BeautifulSoup
@@ -11,7 +12,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 # 券妈妈
 class QMM(object):
-
     def __init__(self):
         self.list_detail = []
 
@@ -34,18 +34,19 @@ class QMM(object):
                 for a in t_body.find_all('a'):
                     href = a.get('href')
                     detail = self.get_url(href)
-                    print(href, "  +++++   ", detail)
+                    # print(href, "  +++++   ", detail)
                     if detail not in self.list_detail:
                         self.list_detail.append(detail)
         print('一共抓取了 %d 个领取页面' % (len(self.list_detail)))
-        self.list_detail.sort(reverse=True)
+        # self.list_detail.sort(reverse=True)
+        random.shuffle(self.list_detail)
         self.receive()
 
     '''
         登录并领取详情页的店铺京豆
     '''
 
-    def receive(self, timeout=5):
+    def receive(self, timeout=2):
         # 静默模式
         # option = webdriver.ChromeOptions()
         # option.add_argument('headless')
@@ -82,10 +83,11 @@ class QMM(object):
                 close_btn = WebDriverWait(driver, timeout).until(
                     lambda d: d.find_element_by_css_selector("[class='J_giftclose d-btn']"))
                 close_btn.click()
+                time.sleep(timeout)
                 # 取消关注
-                unsubscribe_btn = WebDriverWait(driver, timeout).until(
-                    lambda d: d.find_element_by_css_selector("[class='d-header-icon e-attention']"))
-                unsubscribe_btn.click()
+                subscribe_btn = WebDriverWait(driver, timeout).until(
+                    lambda d: d.find_element_by_id('shop-attention'))
+                subscribe_btn.click()
             except TimeoutException:
                 print(' 领取失败, TimeoutException ')
             else:
@@ -105,7 +107,7 @@ class QMM(object):
     '''
 
     @staticmethod
-    def financial(driver, timeout=5):
+    def financial(driver, timeout=3):
         # 进入京东金融
         driver.find_element_by_xpath('//*[@id="navitems-group3"]/li[2]/a').click()
         driver.close()

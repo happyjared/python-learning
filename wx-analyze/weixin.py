@@ -5,9 +5,16 @@ import matplotlib.pyplot as plt
 # 1.登录微信
 itchat.auto_login(hotReload=True)
 
+# 给文件助手发消息
+itchat.send('Hello, filehelper', toUserName='filehelper')
+
+# 群聊
 chat_rooms = itchat.get_chatrooms(update=True)
 for room in chat_rooms:
     print(room['MemberCount'])
+
+# 公众号
+mps = itchat.get_mps()
 
 # 2.获取好友列表，第一个是本人
 friends = itchat.get_friends()

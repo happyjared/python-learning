@@ -1,5 +1,6 @@
 import csv
 import json
+import time
 import random
 import requests
 from bs4 import BeautifulSoup
@@ -34,12 +35,11 @@ class Spider(object):
 
     def spider(self, page):
         # Python: c101280100-p100109 Java: c101280100-p100101
-        url = 'https://www.zhipin.com/c101280100-p100101/?page=' + page + '&ka=page-' + page
+        url = 'https://www.zhipin.com/c101280100-p100101/?page=' + page
         headers = {
             'user-agent': random.choice(self.user_agent_list)
         }
-        proxy = {'http': 'http://219.141.153.38:80'}
-        resp = requests.get(url, headers=headers, proxies={'http': 'http://219.141.153.38:80'})
+        resp = requests.get(url, headers=headers)
         bs = BeautifulSoup(resp.text, 'html.parser')
         info_primary = bs.find_all(class_='info-primary')
         for info in info_primary:
@@ -88,4 +88,5 @@ if __name__ == '__main__':
     s = Spider()
     for n in range(1, 11):
         s.spider(str(n))
+        time.sleep(60)
     # s.save_csv()

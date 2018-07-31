@@ -1,7 +1,7 @@
 import itchat
 import requests
 
-KEY = '8edce3ce905a4c1dbb965e6b35c3834d'
+KEY = '6ad11c98a4da4cb986ff1d2d83b49347'
 
 
 def get_response(msg):

@@ -31,9 +31,23 @@ class WxChat(object):
         # 绘图大小
         plt.figure(figsize=(6.4, 4.8))
 
-    '''
+    """
+        数据重置
+    """
+
+    def reload_data(self):
+        # 男性好友人数
+        self.maleNum = 0
+        # 女性好友人数
+        self.femaleNum = 0
+        # 未知性别好友人数
+        self.unknownNum = 0
+        # K=省份名 V=人数
+        self.provinces = {}
+
+    """
         给文件助手发消息
-    '''
+    """
 
     @staticmethod
     def send_file_helper(msg):
@@ -102,6 +116,7 @@ class WxChat(object):
             self.handle_province(member_count)
             # 绘制饼图
             self.province_pie(chat_room_name)
+            self.reload_data()
 
     """
         处理所在省份人数占比较低的数据

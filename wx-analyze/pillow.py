@@ -18,11 +18,11 @@ os.mkdir(user)
 num = 0
 
 for i in friends:
-	img = itchat.get_head_img(userName=i["UserName"])
-	fileImage = open(user + "/" + str(num) + ".jpg",'wb')
-	fileImage.write(img)
-	fileImage.close()
-	num += 1
+    img = itchat.get_head_img(userName=i["UserName"])
+    fileImage = open(user + "/" + str(num) + ".jpg", 'wb')
+    fileImage.write(img)
+    fileImage.close()
+    num += 1
 
 pics = listdir(user)
 
@@ -38,29 +38,24 @@ numline = int(640 / eachsize)
 
 toImage = Image.new('RGB', (640, 640))
 
-
 print(numline)
 
 x = 0
 y = 0
 
 for i in pics:
-	try:
-		img = Image.open(user + "/" + i)
-	except IOError:
-		print("Error: No file or Read file error")
-	else:
-		img = img.resize((eachsize, eachsize), Image.ANTIALIAS)
-		toImage.paste(img, (x * eachsize, y * eachsize))
-		x += 1
-		if x == numline:
-			x = 0
-			y += 1
-
+    try:
+        img = Image.open(user + "/" + i)
+    except IOError:
+        print("Error: No file or Read file error")
+    else:
+        img = img.resize((eachsize, eachsize), Image.ANTIALIAS)
+        toImage.paste(img, (x * eachsize, y * eachsize))
+        x += 1
+        if x == numline:
+            x = 0
+            y += 1
 
 toImage.save(user + ".jpg")
 
-
 itchat.send_image(user + ".jpg", 'filehelper')
-
-

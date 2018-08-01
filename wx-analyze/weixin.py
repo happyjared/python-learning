@@ -2,7 +2,7 @@ import itchat
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 1.登录微信
+# 登录微信
 itchat.auto_login(hotReload=True)
 
 # 给文件助手发消息
@@ -16,7 +16,7 @@ for room in chat_rooms:
 # 公众号
 mps = itchat.get_mps()
 
-# 2.获取好友列表，第一个是本人
+# 获取好友列表，第一个是本人
 friends = itchat.get_friends()
 loginUser = friends[0]
 print('欢迎 %s 登录 , 个性签名: %s' % (loginUser['NickName'], loginUser['Signature']))

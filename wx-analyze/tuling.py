@@ -1,41 +1,76 @@
 import itchat
 import requests
+from aip import AipSpeech
 
 KEY = '6ad11c98a4da4cb986ff1d2d83b49347'
 
 
-def get_response(msg):
-    # 这里我们就像在“3. 实现最简单的与图灵机器人的交互”中做的一样
-    # 构造了要发送给服务器的数据
-    apiUrl = 'http://www.tuling123.com/openapi/api'
+# 注册微信文本消息
+@itchat.msg_register(itchat.content.TEXT)
+def reply(msg):
+    receive_text = msg['Text']
+    print('1.Call: ' + receive_text, end='')
+    # 默认回复
+    default_reply = 'I received: ' + receive_text
+    text = get_text_response(receive_text, msg['FromUserName'])
+    # a or b的意思是，如果a有内容(非空或者非None)，那么返回a，否则返回b
+    return text or default_reply
+
+
+# 获取文本消息回应
+def get_text_response(msg, user_id):
+    # 构造要发送给图灵服务器的数据
+    api = 'http://www.tuling123.com/openapi/api'
     data = {
         'key': KEY,
         'info': msg,
-        'userid': 'wechat-robot',
+        'userid': user_id,
     }
     try:
-        r = requests.post(apiUrl, data=data).json()
+        resp = requests.post(api, data=data).json()
         # 字典的get方法在字典没有'text'值的时候会返回None而不会抛出异常
-        return r.get('text')
+        reply_text = resp.get('text')
+        print(' Back: ' + reply_text)
+        return reply_text
     # 为了防止服务器没有正常响应导致程序异常退出，这里用try-except捕获了异常
-    # 如果服务器没能正常交互（返回非json或无法连接），那么就会进入下面的return
+    # 如果服务器没能正常交互（返回非json或无法连接），那么就会进入下面的return并返回一个None
     except:
-        # 将会返回一个None
         return
 
 
-# 这里是我们在“1. 实现微信消息的获取”中已经用到过的同样的注册方法
-@itchat.msg_register(itchat.content.TEXT)
-def tuling_reply(msg):
-    # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
-    defaultReply = 'I received: ' + msg['Text']
-    # 如果图灵Key出现问题，那么reply将会是None
-    reply = get_response(msg['Text'])
-    # a or b的意思是，如果a有内容，那么返回a，否则返回b
-    # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
-    return reply or defaultReply
+# 注册微信语音消息
+@itchat.msg_register(itchat.content.RECORDING)
+def reply(msg):
+    file = msg['FileName']
+    path = 'voices/' + file
+    msg['Text'](path)
+    default_reply = 'I received recording : ' + file
+    print('2.Call: ' + file, end='')
+    text = get_text_response(transfer_record(path), msg['FromUserName'])
+    # a or b的意思是，如果a有内容(非空或者非None)，那么返回a，否则返回b
+    return text or default_reply
 
 
-# 为了让实验过程更加方便（修改程序不用多次扫码），我们使用热启动
+# 读取本地文件
+def get_file_content(file_path):
+    with open(file_path, 'rb') as fp:
+        return fp.read()
+
+
+# 通过百度AI将语音消息转换为文本消息
+def transfer_record(path):
+    app_id = '11618209'
+    api_key = 'Mva5lMkVyUSzNta0f4G7Dt4K'
+    secret_key = 'aAwUgOKPzYPgnrzAeRl2G0F5EZg6r70d'
+
+    client = AipSpeech(app_id, api_key, secret_key)
+    # 识别本地文件
+    result = client.asr(get_file_content(path))
+    err_no = result['err_no']
+    print(' Code: ' + str(err_no), end='')
+    return result['result'] if err_no == 0 else result['err_msg']
+
+
+# 登录微信机器人
 itchat.auto_login(hotReload=True)
 itchat.run()

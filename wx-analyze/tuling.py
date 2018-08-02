@@ -26,7 +26,7 @@ def reply(msg):
             switch[user_id] = True
         else:
             switch[user_id] = not switch[user_id]
-        return "[愉快] Hello. This is Jared. [愉快]" if switch[user_id] else '[再见] Bye. Please Remember Jared. [再见]'
+        return "[愉快] Hello. This is Jared. [愉快]" if switch[user_id] else '[再见] Bye. Please Remember Jared.'
     flag = switch.get(user_id)
 
     #  判断是否开启机器对话
@@ -98,5 +98,5 @@ def transfer_record(path):
 
 
 # 登录微信机器人
-itchat.auto_login(hotReload=True)
+itchat.auto_login(hotReload=True, enableCmdQR=2)
 itchat.run()

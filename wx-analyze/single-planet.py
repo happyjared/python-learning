@@ -15,6 +15,9 @@ class SinglePlanet(object):
         self.header = {
             'Authorization': 'token djM6xZStuyhZask3vssgz8xMtjrrIAGR7JsU6gSvwp8ClkkGrVQRI6K34_BnjyVriHZEopaxBT1zwkt11eEO8bHnw-JAESD3Kv4E4IdfW7lg2GEP46eyRP_ccFLo6VKwDjRRA48B4hW9Mp7L5pRPaBwCpcIUPKbN_oQLnVRIiI1ZEY9k'
         }
+        self.pg_ip = '139.199.162.33'
+        self.pg_port = '15234'
+        self.pg_db = 'planet'
 
     """
         与你有缘
@@ -89,6 +92,81 @@ class SinglePlanet(object):
         resp = requests.post(api, json=data, headers=self.header)
         result = json.loads(resp.text)
         print(result)
+
+    """
+        获取access_token
+    """
+
+    def access_token(self):
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/push/access_token'
+        data = {}
+        resp = requests.post(api, json=data, headers=self.header)
+        result = json.loads(resp.text)
+        print(result)
+
+    """
+        最新提醒
+    """
+
+    def latest_notify(self):
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/my-latest-notifications'
+        data = {}
+        resp = requests.post(api, json=data, headers=self.header)
+        result = json.loads(resp.text)
+        print(result)
+
+    """
+        消息回复
+    """
+
+    def my_comments(self):
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/tlmsg/comments/my-received'
+        data = {"offset": 0}
+        resp = requests.post(api, json=data, headers=self.header)
+        result = json.loads(resp.text)
+        # print(result)
+        comments = result['comments']
+        for comment in comments:
+            id = comment['id']
+            user_id = comment['user_id']
+            to_user_id = comment['to_user_id']
+            tl_id = comment['tl_id']
+            msg_id = comment['msg_id']
+            ctime = comment['ctime']
+            message = comment['message']
+            text = message['text']['Text']
+
+    """
+        发现频道
+    """
+
+    def find_members(self):
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/dog-all-random'
+        data = {"hash": "2476115a", "pagesize": 50, "location": "P3569589400", "offset": 0, "seed": 631836964}
+        resp = requests.post(api, json=data, headers=self.header)
+        result = json.loads(resp.text)
+        # print(result)
+        members = result['members']
+        for member in members:
+            # TODO 同上
+            pass
+
+    """
+        发现附近
+    """
+
+    def find_nearby(self):
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/dog-nearby-members'
+        data = {"hash": "2476115a", "pagesize": 50, "geo_type": "wgs84", "geo_lat": 23.122986, "geo_lng": 113.389,
+                "gender": 2, "offset": 0}
+        resp = requests.post(api, json=data, headers=self.header)
+        result = json.loads(resp.text)
+        # print(result)
+        members = result['members']
+        for i, member in enumerate(members):
+            # TODO
+            distance = result['distances'][i]
+            last_update = result['last_updates'][i]
 
 
 if __name__ == '__main__':

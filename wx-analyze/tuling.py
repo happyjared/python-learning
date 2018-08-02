@@ -1,8 +1,16 @@
+import random
 import itchat
 import requests
 from aip import AipSpeech
 
-KEY = '6ad11c98a4da4cb986ff1d2d83b49347'
+switch = {}
+command = '666'
+key = '6ad11c98a4da4cb986ff1d2d83b49347'
+
+
+# 判断消息是否为表情
+def is_emoji(text):
+    return text.startswith('[') and text.endswith(']')
 
 
 # 注册微信文本消息
@@ -10,11 +18,29 @@ KEY = '6ad11c98a4da4cb986ff1d2d83b49347'
 def reply(msg):
     receive_text = msg['Text']
     print('1.Call: ' + receive_text, end='')
-    # 默认回复
-    default_reply = 'I received: ' + receive_text
-    text = get_text_response(receive_text, msg['FromUserName'])
-    # a or b的意思是，如果a有内容(非空或者非None)，那么返回a，否则返回b
-    return text or default_reply
+
+    user_id = msg['FromUserName']
+    # 判断机器人开关
+    if receive_text == command:
+        if switch.get(user_id) is None:
+            switch[user_id] = True
+        else:
+            switch[user_id] = not switch[user_id]
+        return "[愉快] Hello. This is Jared. [愉快]" if switch[user_id] else '[再见] Bye. Please Remember Jared. [再见]'
+    flag = switch.get(user_id)
+
+    #  判断是否开启机器对话
+    if flag:
+        if is_emoji(receive_text):
+            reply_text = random.randint(1, 3) * receive_text
+            print(' Back: ' + reply_text)
+            return reply_text
+        else:
+            # 默认回复
+            default_reply = 'I received: ' + receive_text
+            text = get_text_response(receive_text, user_id)
+            # a or b的意思是，如果a有内容(非空或者非None)，那么返回a，否则返回b
+            return text or default_reply
 
 
 # 获取文本消息回应
@@ -22,7 +48,7 @@ def get_text_response(msg, user_id):
     # 构造要发送给图灵服务器的数据
     api = 'http://www.tuling123.com/openapi/api'
     data = {
-        'key': KEY,
+        'key': key,
         'info': msg,
         'userid': user_id,
     }

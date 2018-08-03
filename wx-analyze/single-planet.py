@@ -125,8 +125,9 @@ class SinglePlanet(object):
             if not user_id:
                 # 主页动态
                 user = result['users'][index]
+                uid_hash = result['uid_hashes'][index]
                 # 对应用户信息
-                self.parse_member(user)
+                self.parse_member(user, uid_hash=uid_hash)
                 # 判断是否允许机器人回复
                 if disable_comment:
                     recent_comment = result['recent_comments'][index]

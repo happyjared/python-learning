@@ -2,8 +2,6 @@
 import time
 import json
 import tuling
-import requests
-import psycopg2
 import pg_util as pu
 import req_util as ru
 from datetime import datetime

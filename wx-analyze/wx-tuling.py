@@ -3,6 +3,7 @@ import itchat
 import tuling
 import requests
 from aip import AipSpeech
+from itchat.content import *
 
 switch = {}
 command = '666'
@@ -38,37 +39,48 @@ def reply(msg):
             return text or default_reply
 
 
-# 注册微信语音消息
-@itchat.msg_register(itchat.content.RECORDING)
+# 除文本外的其它类型统一回复默认
+@itchat.msg_register([MAP, CARD, NOTE, SHARING, PICTURE, RECORDING, ATTACHMENT, VIDEO, FRIENDS])
 def reply(msg):
-    file = msg['FileName']
-    path = 'voices/' + file
-    msg['Text'](path)
-    default_reply = 'I received recording : ' + file
-    print('2.Call: ' + file, end='')
-    text = tuling.get_text_response(transfer_record(path), msg['FromUserName'])
-    # a or b的意思是，如果a有内容(非空或者非None)，那么返回a，否则返回b
-    return text or default_reply
+    msg_type = msg['Type']
+    filename = msg['FileName']
+    content = msg['Content']
+    print('Type: %s , FileName: %s , Content: %s' % (msg_type, filename, content))
+    default_reply = '[疑问] Type : ' + msg_type
+    return default_reply
 
 
-# 读取本地文件
-def get_file_content(file_path):
-    with open(file_path, 'rb') as fp:
-        return fp.read()
-
-
-# 通过百度AI将语音消息转换为文本消息
-def transfer_record(path):
-    app_id = '11618209'
-    api_key = 'Mva5lMkVyUSzNta0f4G7Dt4K'
-    secret_key = 'aAwUgOKPzYPgnrzAeRl2G0F5EZg6r70d'
-
-    client = AipSpeech(app_id, api_key, secret_key)
-    # 识别本地文件
-    result = client.asr(get_file_content(path))
-    err_no = result['err_no']
-    print(' Code: ' + str(err_no), end='')
-    return result['result'] if err_no == 0 else result['err_msg']
+# # 注册微信语音消息
+# @itchat.msg_register(itchat.content.RECORDING)
+# def reply(msg):
+#     file = msg['FileName']
+#     path = 'voices/' + file
+#     msg['Text'](path)
+#     default_reply = 'I received recording : ' + file
+#     print('2.Call: ' + file, end='')
+#     text = tuling.get_text_response(transfer_record(path), msg['FromUserName'])
+#     # a or b的意思是，如果a有内容(非空或者非None)，那么返回a，否则返回b
+#     return text or default_reply
+#
+#
+# # 读取本地文件
+# def get_file_content(file_path):
+#     with open(file_path, 'rb') as fp:
+#         return fp.read()
+#
+#
+# # 通过百度AI将语音消息转换为文本消息
+# def transfer_record(path):
+#     app_id = '11618209'
+#     api_key = 'Mva5lMkVyUSzNta0f4G7Dt4K'
+#     secret_key = 'aAwUgOKPzYPgnrzAeRl2G0F5EZg6r70d'
+#
+#     client = AipSpeech(app_id, api_key, secret_key)
+#     # 识别本地文件
+#     result = client.asr(get_file_content(path))
+#     err_no = result['err_no']
+#     print(' Code: ' + str(err_no), end='')
+#     return result['result'] if err_no == 0 else result['err_msg']
 
 
 # 登录微信机器人

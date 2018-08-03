@@ -338,4 +338,5 @@ if __name__ == '__main__':
     # sp.comment()
     # sp.find_nearby()
     # sp.find_members()
-    sp.dynamic()
+    while True:
+        sp.dynamic()

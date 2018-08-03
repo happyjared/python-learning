@@ -183,8 +183,9 @@ class SinglePlanet(object):
                                  disable_comment, photos_data, data, now))
 
         if not user_id:
+            print('In sleep')
             time.sleep(150)
-            print('Sleep Over')
+            print('Out sleep')
 
     """
         *消息回复

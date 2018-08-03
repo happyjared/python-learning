@@ -137,7 +137,7 @@ class SinglePlanet(object):
                         # 最新评论非自己(机器人)
                         if top_comment['user_id'] != self.my_user_id:
                             comment = top_comment['message']['text']['Text']
-                            reply_msg = tuling.get_text_response(comment, msg_user_id, key=self.tl_key)
+                            reply_msg = tuling.get_text_response(comment, msg_user_id)
                             self.msg_comment(msg_id, reply_msg, tl_hash, msg_user_id)
                         # 保存评论对话内容
                         for rc in recent_comment:
@@ -146,13 +146,13 @@ class SinglePlanet(object):
                             msg_id = rc_message['id']
                             msg_type = rc_message['type']
                             comment = rc_message['text']['Text']
-                            create_time = rc_message['create_time']
+                            create_time = rc_message['ctime']
                             sql = 'INSERT INTO tb_user_message(user_id, msg_id,tl_hash,"comment",c_time,' \
                                   'msg_type,create_time) VALUES (%s,%s,%s,%s,%s,%s,%s)'
                             pu.handler(sql, (user_id, msg_id, tl_hash, comment, create_time, msg_type, now))
                     else:
                         # 无最新评论就开始做评论并存动态
-                        reply_msg = tuling.get_text_response(comment, msg_user_id, key=self.tl_key)
+                        reply_msg = tuling.get_text_response(comment, msg_user_id)
                         self.msg_comment(msg_id, reply_msg, tl_hash, msg_user_id)
                         # tb_user_message
                         sql = 'INSERT INTO tb_user_message(user_id, msg_id,tl_hash,"comment",c_time,' \

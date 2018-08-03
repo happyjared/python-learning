@@ -20,6 +20,7 @@ class SinglePlanet(object):
         }
         self.tl_key = '6bb65cb09a144030aa5ffffe37b3251f'
         self.my_hash = ''
+        self.my_user_id = ''
         self.load_num = 1000
 
     """
@@ -68,10 +69,10 @@ class SinglePlanet(object):
         else:
             # Update
             sql = 'update tb_user set "name"=%s,head_img=%s,location=%s,hometown=%s,birth_year=%s,horoscope=%s,' \
-                  'profession=%s,blast=%s,update_time=%s,"data"=%s,distance=%s,d_last_update=%s,photos_data=%s' \
+                  'profession=%s,blast=%s,update_time=%s,"data"=%s,d_last_update=%s,photos_data=%s' \
                   'where user_id=%s'
             pu.handler(sql, (name, head_img, location, hometown, birth_year, horoscope,
-                             profession, blast, now, data, distance, last_update, p_data, user_id))
+                             profession, blast, now, data, last_update, p_data, user_id))
 
         # tb_user_photo
         for photo in photos_data:
@@ -79,8 +80,8 @@ class SinglePlanet(object):
             url = photo['url']
             pu.handler(sql, (user_id, url, now))
 
-        # tb_user_talk
-        self.dynamic('user', user_id=user_id, user_hash=uid_hash)
+            # tb_user_talk
+            # self.dynamic('user', user_id=user_id, user_hash=uid_hash)
 
     """
         *动态列表
@@ -89,10 +90,12 @@ class SinglePlanet(object):
     def dynamic(self, data_list='explore', user_id=None, user_hash=None):
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/list'
         data = {"list": data_list, "offset": 0, "pagesize": 20}
-        if user_id and user_hash:
+        if user_id:
             data['user_id'] = user_id
             data['hash'] = user_hash
             data['pagesize'] = self.load_num
+        else:
+            self.get_my_user_id()
         result = ru.req_post_json(api, data=data, header=self.header)
 
         messages = result['messages']
@@ -100,7 +103,7 @@ class SinglePlanet(object):
             # 消息id
             msg_id = message['id']
             # 用户id
-            user_id = message['user_id']
+            msg_user_id = message['user_id']
             # 动态内容
             comment = message['comment']
             # 查看人次
@@ -115,30 +118,71 @@ class SinglePlanet(object):
             tl_hash = result['tl_hashes'][index]
             # 消息类型
             msg_type = message['msg_type']
+            if msg_type == 'Text':
+                comment = message['message']['text']['Text']
 
-            if data_list == 'explore':
-                # 对应用户信息
-                user = result['users'][index]
+            now = datetime.now()
+            if not user_id:
                 # 主页动态
+                user = result['users'][index]
+                # 对应用户信息
                 self.parse_member(user)
+                # 判断是否允许机器人回复
+                if disable_comment:
+                    recent_comment = result['recent_comments'][index]
+                    if not recent_comment:
+                        # 有最新评论
+                        top_comment = recent_comment[0]
+                        # 最新评论非自己(机器人)
+                        if top_comment['user_id'] != self.my_user_id:
+                            comment = top_comment['message']['text']['Text']
+                            reply_msg = tuling.get_text_response(comment, msg_user_id, self.tl_key)
+                            self.msg_comment(msg_id, reply_msg, tl_hash, msg_user_id)
+                        # 保存评论对话内容
+                        for rc in recent_comment:
+                            rc_message = rc['message']
+                            user_id = rc_message['user_id']
+                            msg_id = rc_message['id']
+                            msg_type = rc_message['type']
+                            comment = rc_message['text']['Text']
+                            create_time = rc_message['create_time']
+                            sql = 'INSERT INTO tb_user_message(user_id, msg_id,tl_hash,"comment",c_time,' \
+                                  'msg_type,create_time) VALUES (%s,%s,%s,%s,%s,%s,%s)'
+                            pu.handler(sql, (user_id, msg_id, tl_hash, comment, create_time, msg_type, now))
+                    else:
+                        # 无最新评论就开始做评论并存动态
+                        reply_msg = tuling.get_text_response(comment, msg_user_id, self.tl_key)
+                        self.msg_comment(msg_id, reply_msg, tl_hash, msg_user_id)
+                        # tb_user_message
+                        sql = 'INSERT INTO tb_user_message(user_id, msg_id,tl_hash,"comment",c_time,' \
+                              'msg_type,disable_comment,create_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
+                        pu.handler(sql, (msg_user_id, msg_id, tl_hash, comment, create_time, msg_type,
+                                         disable_comment, now))
+                else:
+                    # 不允许评论直接只存数据入库
+                    # tb_user_message
+                    sql = 'INSERT INTO tb_user_message(user_id, msg_id,tl_hash,"comment",c_time,' \
+                          'msg_type,disable_comment,create_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
+                    pu.handler(sql, (msg_user_id, msg_id, tl_hash, comment, create_time, msg_type,
+                                     disable_comment, now))
             else:
                 m = message['message']
                 photos = {}
                 if msg_type == 'PHOTO':
                     photos = m['photo']
-                elif msg_type == 'TEXT':
-                    comment = m['text']['Text']
 
                 # tb_user_talk
                 sql = 'INSERT INTO tb_user_talk(user_id, msg_id,tl_hash,"comment",c_time,' \
                       'msg_type,disable_comment,photos_data,"data",create_time) VALUES ' \
                       '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-                now = datetime.now()
                 data = json.dumps(m)
                 photos_data = json.dumps(photos)
 
                 pu.handler(sql, (user_id, msg_id, tl_hash, comment, create_time, msg_type,
                                  disable_comment, photos_data, data, now))
+
+        if not user_id:
+            time.sleep(150)
 
     """
         *消息回复
@@ -248,6 +292,18 @@ class SinglePlanet(object):
             self.my_hash = uid_hash
         return self.my_hash
 
+    """
+         个人user_id
+     """
+
+    def get_my_user_id(self):
+        if not self.my_user_id:
+            api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/my-status'
+            result = ru.req_post_json(api, header=self.header)
+            user_id = result['notification_settings'][0]['user_id']
+            self.my_user_id = user_id
+        return self.my_user_id
+
         # """
         #     获取access_token
         # """
@@ -279,4 +335,5 @@ if __name__ == '__main__':
     # sp.dynamic()
     # sp.comment()
     # sp.find_nearby()
-    sp.find_members()
+    # sp.find_members()
+    sp.dynamic()

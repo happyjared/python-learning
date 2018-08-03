@@ -21,12 +21,15 @@ class QMM(object):
 
     def spider(self):
         # 京豆汇总页
-        url = 'http://www.quanmama.com/zhidemai/2354631.html'
+        url = 'http://www.quanmama.com/zhidemai/2459063.html'
         resp = requests.get(url)
         bs = BeautifulSoup(resp.text, 'html.parser')
         t_body = bs.tbody
         for link in t_body.find_all('a'):
             detail = link.get('href')
+            text = link.text
+            if '8月' not in text:
+                continue
             resp = requests.get(detail)
             bs = BeautifulSoup(resp.text, 'html.parser')
             t_body_list = bs.find_all('tbody')

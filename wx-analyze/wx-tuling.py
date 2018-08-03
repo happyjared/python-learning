@@ -46,7 +46,7 @@ def reply(msg):
     filename = msg['FileName']
     content = msg['Content']
     print('Type: %s , FileName: %s , Content: %s' % (msg_type, filename, content))
-    default_reply = '[疑问] Type : ' + msg_type
+    default_reply = "[疑问] Is't a " + msg_type
     return default_reply
 
 

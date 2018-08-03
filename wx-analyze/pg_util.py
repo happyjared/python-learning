@@ -3,7 +3,7 @@ import psycopg2
 
 def handler(sql, params):
     # 139.199.162.33
-    conn = psycopg2.connect("host=localhost port=15234 dbname=planet user=planet password=planet")
+    conn = psycopg2.connect("host=139.199.162.33 port=15234 dbname=planet user=planet password=planet")
     row_count = 0
     try:
         cur = conn.cursor()

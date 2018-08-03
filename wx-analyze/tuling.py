@@ -1,7 +1,5 @@
 import requests
 
-key = '6ad11c98a4da4cb986ff1d2d83b49347'
-
 
 # 判断消息是否为表情
 def is_emoji(text):
@@ -9,7 +7,7 @@ def is_emoji(text):
 
 
 # 获取文本消息回应
-def get_text_response(msg, user_id):
+def get_text_response(msg, user_id, key='6ad11c98a4da4cb986ff1d2d83b49347'):
     # 构造要发送给图灵服务器的数据
     api = 'http://www.tuling123.com/openapi/api'
     data = {

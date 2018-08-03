@@ -1,4 +1,5 @@
 # coding=UTF-8
+import sys
 import time
 import json
 import tuling
@@ -17,6 +18,7 @@ class SinglePlanet(object):
         self.header = {
             'Authorization': 'token djM6xZStuyhZask3vssgz8xMtjrrIAGR7JsU6gSvwp8ClkkGrVQRI6K34_BnjyVriHZEopaxBT1zwkt11eEO8bHnw-JAESD3Kv4E4IdfW7lg2GEP46eyRP_ccFLo6VKwDjRRA48B4hW9Mp7L5pRPaBwCpcIUPKbN_oQLnVRIiI1ZEY9k'
         }
+        self.tl_key = '6bb65cb09a144030aa5ffffe37b3251f'
         self.my_hash = ''
         self.load_num = 1000
 
@@ -167,19 +169,32 @@ class SinglePlanet(object):
         data = {"tl_id": tl_id, "message": msg, "hash": tl_hash, "to_user_id": to_user_id}
         ru.req_post_json(api, data=data, header=self.header)
 
-    # """
-    #     *发现频道
-    # """
-    #
-    # def find_members(self):
-    #     api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/dog-all-random'
-    #     #  "location": "P3569589400",
-    #     data = {"hash": "2476115a", "pagesize": 50, "offset": 0, "seed": 631836964}
-    #     result = ru.req_post_json(api, data=data, header=self.header)
-    #
-    #     members = result['members']
-    #     for member in members:
-    #         self.parse_member(member)
+    """
+        *发现频道
+    """
+
+    def find_members(self):
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/dog-all-random'
+        #  "location": "P3569589400"
+        my_hash = self.get_my_hash()
+        max_int = sys.maxsize
+        data = {"hash": my_hash, "pagesize": 50, "seed": 655572327}
+
+        for offset in range(max_int):
+            data["offset"] = offset
+            print('offset is ' + str(offset))
+
+            result = ru.req_post_json(api, data=data, header=self.header)
+            members = result['members']
+            for index, member in enumerate(members):
+                uid_hash = result['uid_hashes'][index]
+                self.parse_member(member, uid_hash=uid_hash)
+
+            if len(members) == 0:
+                print("All Ending")
+                break
+            else:
+                time.sleep(3)
 
     """
         *发现附近
@@ -189,8 +204,8 @@ class SinglePlanet(object):
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/dog-nearby-members'
         next_pos = 0
         my_hash = self.get_my_hash()
-        data = {"hash": my_hash, "pagesize": 50, "geo_type": "wgs84", "geo_lat": 23.122986, "geo_lng": 113.389,
-                "gender": 2}
+        data = {"hash": my_hash, "pagesize": 50, "geo_type": "wgs84", "geo_lat": 23.122986,
+                "geo_lng": 113.389, "gender": 2}
         with open('pos.txt', 'a') as f:
             while True:
                 data["offset"] = next_pos
@@ -209,7 +224,7 @@ class SinglePlanet(object):
                     print("All Ending")
                     break
                 else:
-                    time.sleep(5)
+                    time.sleep(3)
 
     """
         * 用户相册
@@ -234,28 +249,28 @@ class SinglePlanet(object):
         return self.my_hash
 
         # """
-    #     获取access_token
-    # """
-    #
-    # def access_token(self):
-    #     api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/push/access_token'
-    #     ru.req_post_json(api, data=data, header=self.header)
-    #
-    # """
-    #     最新提醒
-    # """
-    #
-    # def latest_notify(self):
-    #     api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/my-latest-notifications'
-    #     ru.req_post_json(api, data=data, header=self.header)
-    #
-    # """
-    #     与你有缘
-    # """
-    #
-    # def recommend(self):
-    #     api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/dog-recommend'
-    #     ru.req_post_json(api, header=self.header)
+        #     获取access_token
+        # """
+        #
+        # def access_token(self):
+        #     api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/push/access_token'
+        #     ru.req_post_json(api, data=data, header=self.header)
+        #
+        # """
+        #     最新提醒
+        # """
+        #
+        # def latest_notify(self):
+        #     api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/my-latest-notifications'
+        #     ru.req_post_json(api, data=data, header=self.header)
+        #
+        # """
+        #     与你有缘
+        # """
+        #
+        # def recommend(self):
+        #     api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/dog-recommend'
+        #     ru.req_post_json(api, header=self.header)
 
 
 if __name__ == '__main__':
@@ -263,4 +278,5 @@ if __name__ == '__main__':
     # sp.recommend()
     # sp.dynamic()
     # sp.comment()
-    sp.find_nearby()
+    # sp.find_nearby()
+    sp.find_members()

@@ -142,14 +142,14 @@ class SinglePlanet(object):
                         # 保存评论对话内容
                         for rc in recent_comment:
                             rc_message = rc['message']
-                            user_id = rc_message['user_id']
+                            r_user_id = rc_message['user_id']
                             msg_id = rc_message['id']
                             msg_type = rc_message['type']
                             comment = rc_message['text']['Text']
                             create_time = rc_message['ctime']
                             sql = 'INSERT INTO tb_user_message(user_id, msg_id,tl_hash,"comment",c_time,' \
                                   'msg_type,create_time) VALUES (%s,%s,%s,%s,%s,%s,%s)'
-                            pu.handler(sql, (user_id, msg_id, tl_hash, comment, create_time, msg_type, now))
+                            pu.handler(sql, (r_user_id, msg_id, tl_hash, comment, create_time, msg_type, now))
                     else:
                         # 无最新评论就开始做评论并存动态
                         reply_msg = tuling.get_text_response(comment, msg_user_id)
@@ -166,6 +166,8 @@ class SinglePlanet(object):
                           'msg_type,disable_comment,create_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
                     pu.handler(sql, (msg_user_id, msg_id, tl_hash, comment, create_time, msg_type,
                                      disable_comment, now))
+                time.sleep(150)
+                print('Sleep Over')
             else:
                 m = message['message']
                 photos = {}
@@ -181,10 +183,6 @@ class SinglePlanet(object):
 
                 pu.handler(sql, (user_id, msg_id, tl_hash, comment, create_time, msg_type,
                                  disable_comment, photos_data, data, now))
-
-        if not user_id:
-            time.sleep(150)
-            print('Sleep Over')
 
     """
         *消息回复

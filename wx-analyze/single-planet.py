@@ -127,9 +127,9 @@ class SinglePlanet(object):
                 user = result['users'][index]
                 uid_hash = result['uid_hashes'][index]
                 # 对应用户信息
-                self.parse_member(user, uid_hash=uid_hash)
+                # self.parse_member(user, uid_hash=uid_hash)
                 # 判断是否允许机器人回复
-                if disable_comment:
+                if not disable_comment:
                     recent_comment = result['recent_comments'][index]
                     if not recent_comment:
                         # 有最新评论
@@ -184,6 +184,7 @@ class SinglePlanet(object):
 
         if not user_id:
             time.sleep(150)
+            print('Sleep Over')
 
     """
         *消息回复

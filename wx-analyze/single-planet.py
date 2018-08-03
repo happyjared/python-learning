@@ -191,24 +191,25 @@ class SinglePlanet(object):
         my_hash = self.get_my_hash()
         data = {"hash": my_hash, "pagesize": 50, "geo_type": "wgs84", "geo_lat": 23.122986, "geo_lng": 113.389,
                 "gender": 2}
-        while True:
-            data["offset"] = next_pos
-            result = ru.req_post_json(api, data=data, header=self.header)
+        with open('pos.txt', 'a') as f:
+            while True:
+                data["offset"] = next_pos
+                result = ru.req_post_json(api, data=data, header=self.header)
 
-            members = result['members']
-            for index, member in enumerate(members):
-                distance = result['distances'][index]
-                last_update = result['last_updates'][index]
-                uid_hash = result['uid_hashes'][index]
-                self.parse_member(member, uid_hash=uid_hash, distance=distance, last_update=last_update)
-            next_pos = result['next_pos']
-            # write next_pos
-            print('next_pos = ' + next_pos)
-            if next_pos == 0:
-                print("All Ending")
-                break
-            else:
-                time.sleep(5)
+                next_pos = result['next_pos']
+                f.write(str(next_pos) + '\n')
+
+                members = result['members']
+                for index, member in enumerate(members):
+                    distance = result['distances'][index]
+                    last_update = result['last_updates'][index]
+                    uid_hash = result['uid_hashes'][index]
+                    self.parse_member(member, uid_hash=uid_hash, distance=distance, last_update=last_update)
+                if next_pos == 0:
+                    print("All Ending")
+                    break
+                else:
+                    time.sleep(5)
 
     """
         * 用户相册

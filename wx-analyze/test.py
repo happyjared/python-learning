@@ -44,3 +44,11 @@
 #
 # conn.commit()
 # conn.close()
+
+import random
+
+with open('pos.txt', 'a') as f:
+    a = 0
+    while a < 5:
+        f.write(str(random.randint(100, 10000)) + '\n')
+        a += 1

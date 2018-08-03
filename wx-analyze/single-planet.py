@@ -166,8 +166,6 @@ class SinglePlanet(object):
                           'msg_type,disable_comment,create_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
                     pu.handler(sql, (msg_user_id, msg_id, tl_hash, comment, create_time, msg_type,
                                      disable_comment, now))
-                time.sleep(150)
-                print('Sleep Over')
             else:
                 m = message['message']
                 photos = {}
@@ -183,6 +181,10 @@ class SinglePlanet(object):
 
                 pu.handler(sql, (user_id, msg_id, tl_hash, comment, create_time, msg_type,
                                  disable_comment, photos_data, data, now))
+
+        if not user_id:
+            time.sleep(150)
+            print('Sleep Over')
 
     """
         *消息回复

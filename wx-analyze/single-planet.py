@@ -131,7 +131,7 @@ class SinglePlanet(object):
                 # 判断是否允许机器人回复
                 if not disable_comment:
                     recent_comment = result['recent_comments'][index]
-                    if not recent_comment:
+                    if recent_comment:
                         # 有最新评论
                         top_comment = recent_comment[0]
                         # 最新评论非自己(机器人)

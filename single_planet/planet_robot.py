@@ -36,7 +36,7 @@ class PlanetRobot:
         
         """
 
-        sleep_time = random.randint(75, 105)
+        sleep_time = random.randint(180, 300)
         data = {"list": 'explore', "offset": 0, "pagesize": 20}
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/list'
 
@@ -61,14 +61,14 @@ class PlanetRobot:
 
                 if not disable_comment:
                     recent_comment = resp['recent_comments'][index]
-                    if not recent_comment or (recent_comment[0] != Planet.my_user_id):
+                    if not recent_comment or (recent_comment[0]['user_id'] != Planet.my_user_id):
                         # 未评论过或最新的评论非机器人
                         comment_msg = robot.call_text(comment, msg_user_id)
                         self.robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
 
             log.info('Get users dynamic Going to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
-            sleep_time = random.randint(75, 105)
+            sleep_time = random.randint(180, 300)
             log.info('Get users dynamic End sleep , next sleep time is %d', sleep_time)
 
     def reply_robot(self):

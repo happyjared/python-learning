@@ -1,4 +1,5 @@
 import os
+import sys
 import yaml
 import logging
 import planet_robot
@@ -25,5 +26,6 @@ def setup_logging():
 
 
 if __name__ == '__main__':
+    sys.path.append('../common_util/*')
     setup_logging()
     planet_robot.run()

@@ -17,10 +17,10 @@ def run():
     ps = PlanetSpider()
     pr = PlanetRobot(ps)
 
-    t1 = Thread(target=pr.dynamic, name='Thread-pr.dynamic')
+    t1 = Thread(target=pr.dynamic, name='Thread-dynamic')
     t1.start()
 
-    t2 = Thread(target=pr.reply_robot, name='Thread-pr.reply_robot')
+    t2 = Thread(target=pr.reply_robot, name='Thread-reply')
     t2.start()
 
 

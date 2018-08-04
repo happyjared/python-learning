@@ -57,7 +57,7 @@ class PlanetSpider(Planet):
         self.blast = user['Blast']  # 个性签名
         self.head_img = user['Headimg']  # 头像
         self.data = json.dumps(user, ensure_ascii=False)  # data数据
-        if not user_hash:
+        if user_hash:
             self.user_hash = user_hash
 
         self.member_info()
@@ -90,7 +90,7 @@ class PlanetSpider(Planet):
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/list'
         data = {"list": 'user', "offset": 0, "pagesize": PlanetSpider.max_page_size,
                 "user_id": self.user_id, "hash": self.user_hash}
-        resp = requests.post(api, data=data, headers=Planet.headers).json()
+        resp = requests.post(api, json=data, headers=Planet.headers).json()
 
         now = datetime.now()
         messages = resp['messages']
@@ -124,7 +124,7 @@ class PlanetSpider(Planet):
 
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/album/photos'
         data = {"hash": self.user_hash, "user_id": self.user_id, "offset": 0, "pagesize": PlanetSpider.max_page_size}
-        resp = requests.post(api, data=data, header=Planet.headers).json()
+        resp = requests.post(api, json=data, headers=Planet.headers).json()
         member_photos = resp['photos']
         now = datetime.now()
         for member_photo in member_photos:

@@ -25,7 +25,7 @@ def handler(sql, params):
         # To close thread
         raise psycopg2.OperationalError
     except psycopg2.IntegrityError:
-        log.warning('psycopg2.IntegrityError. SQL: %s , Params: %s', sql, params)
+        log.warning('psycopg2.IntegrityError.')
     except psycopg2.Error:
         log.error('SQL: %s , Params: %s', sql, params)
         log.exception('psycopg2 Error')

@@ -26,6 +26,6 @@ def setup_logging():
 
 
 if __name__ == '__main__':
-    sys.path.append('../common_util/*')
+    sys.path.append('../common_util')
     setup_logging()
     planet_robot.run()

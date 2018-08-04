@@ -1,11 +1,21 @@
 # coding=UTF-8
 import sys
 import json
+import logging
 import requests
 import planet_sql
 from planet import Planet
 from common_util import pg
 from datetime import datetime
+
+
+# 程序入口
+def run():
+    ps = PlanetSpider()
+    ps.find_random_member()
+
+
+log = logging.getLogger()
 
 
 class PlanetSpider(Planet):
@@ -129,6 +139,7 @@ class PlanetSpider(Planet):
 
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/dog-all-random'
         data = {"hash": Planet.my_hash, "pagesize": 50, "seed": 655572327}  # "location": "P3569589400"
+        log.info("Start find random member")
         for offset in range(PlanetSpider.max_size):
             data["offset"] = offset
             resp = requests.post(api, json=data, headers=Planet.headers).json()
@@ -138,7 +149,9 @@ class PlanetSpider(Planet):
                 self.parse(member)
 
             if len(members) == 0:
+                log.info("End Find random member : %d", offset)
                 break
+            log.info("Find random member : %d", offset)
 
     def find_nearby_member(self):
         """发现页 -> 附近 -> 爬取距离用户信息
@@ -149,6 +162,7 @@ class PlanetSpider(Planet):
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/dog-nearby-members'
         data = {"hash": Planet.my_hash, "pagesize": 50, "geo_type": "wgs84", "geo_lat": 23.122986,
                 "geo_lng": 113.389, "gender": 2}
+        log.info("Start find nearby member")
         while True:
             data["offset"] = next_pos
             resp = requests.post(api, json=data, headers=Planet.headers).json()
@@ -163,9 +177,6 @@ class PlanetSpider(Planet):
                 self.parse(member)
 
             if next_pos == 0:
+                log.info("End Find nearby member : %d", next_pos)
                 break
-
-
-if __name__ == '__main__':
-    ps = PlanetSpider()
-    ps.find_random_member()
+            log.info("Find nearby member : %d", next_pos)

@@ -1,5 +1,8 @@
 # coding=UTF-8
+import logging
 import requests
+
+log = logging.getLogger()
 
 
 class Planet(object):
@@ -14,6 +17,7 @@ class Planet(object):
     def __init__(self):
         Planet.my_hash = self.__get_my_hash()
         Planet.my_user_id = self.__get_my_user_id()
+        log.info('Init my hash : %s and my user id : %s', Planet.my_hash, Planet.my_user_id)
 
     @staticmethod
     def __get_my_user_id():

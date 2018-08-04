@@ -1,4 +1,7 @@
+import logging
 import psycopg2
+
+log = logging.getLogger()
 
 
 def handler(sql, params):
@@ -16,10 +19,10 @@ def handler(sql, params):
         cur = conn.cursor()
         cur.execute(sql, params)
         effect_count = cur.rowcount
-    except psycopg2.Error as e:
-        print(sql, params)
-        print('psycopg2 Error ', e)
+    except psycopg2.Error:
         conn.rollback()
+        log.error('SQL: %s , Params: %s', sql, params)
+        log.exception('psycopg2 Error')
     else:
         conn.commit()
     return effect_count

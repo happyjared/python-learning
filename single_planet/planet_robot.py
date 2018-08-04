@@ -1,6 +1,7 @@
 # coding=UTF-8
 import time
 import random
+import logging
 import requests
 import planet_sql
 from planet import Planet
@@ -9,6 +10,19 @@ from threading import Thread
 from common_util import robot
 from datetime import datetime
 from planet_spider import PlanetSpider
+
+
+# 程序入口
+def run():
+    ps = PlanetSpider()
+    pr = PlanetRobot(ps)
+    t1 = Thread(target=pr.dynamic)
+    t2 = Thread(target=pr.reply_robot)
+    t1.start()
+    t2.start()
+
+
+log = logging.getLogger()
 
 
 class PlanetRobot:
@@ -24,6 +38,7 @@ class PlanetRobot:
         data = {"list": 'explore', "offset": 0, "pagesize": 20}
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/list'
 
+        log.info('Start to get users dynamic')
         while True:
             resp = requests.post(api, json=data, headers=Planet.headers).json()
 
@@ -46,35 +61,15 @@ class PlanetRobot:
                     recent_comment = resp['recent_comments'][index]
                     if not recent_comment or (recent_comment[0] != Planet.my_user_id):
                         # 未评论过或最新的评论非机器人
-                        comment_msg = robot.get_text_response(comment, msg_user_id)
+                        comment_msg = robot.call_text(comment, msg_user_id)
                         self.robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
 
+            log.info('Get users dynamic Going to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
             sleep_time = random.randint(75, 105)
+            log.info('Get users dynamic End sleep , next sleep time is %d', sleep_time)
 
-    @staticmethod
-    def robot_comment(tl_id, comment_msg, tl_hash, to_user_id):
-        """机器人评论动态或回复评论
-        
-        :param tl_id: 动态id
-        :param comment_msg: 内容
-        :param tl_hash: 动态hash
-        :param to_user_id: 目标用户id
-        """
-
-        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/comment/add'
-        data = {"tl_id": tl_id, "message": comment_msg, "hash": tl_hash, "to_user_id": to_user_id}
-        resp = requests.post(api, json=data, headers=Planet.headers).json()
-
-        comment = resp['comment']
-        comment_id = comment['id']  # 评论id
-        comment_time = comment['ctime']  # 评论时间
-
-        pg.handler(planet_sql.add_user_comment(),
-                   (comment_id, Planet.my_user_id, tl_id, comment_msg, comment_time, datetime.now()))
-
-    @staticmethod
-    def reply_robot():
+    def reply_robot(self):
         """回复机器人的评论
 
         """
@@ -87,24 +82,40 @@ class PlanetRobot:
 
             now = datetime.now()
             comments = resp['comments']
-            for comment in comments:
+            for index, comment in enumerate(comments):
                 comment_id = comment['id']  # 评论id
                 user_id = comment['user_id']  # 评论用户id
-                tl_id = comment['tl_id']  # 动态id
+                msg_id = comment['tl_id']  # 动态id
                 comment_time = comment['ctime']  # 回复时间
                 text = comment['message']['text']['Text']  # 回复内容
 
-                pg.handler(planet_sql.add_user_comment(),
-                           (comment_id, user_id, tl_id, text, comment_time, now))
+                effect_count = pg.handler(planet_sql.add_user_comment(),
+                                          (comment_id, user_id, msg_id, text, comment_time, now))
+                if effect_count != 0:
+                    comment_msg = robot.call_text(text, user_id)
+                    tl_hash = resp['tl_hashes'][index]
+                    self.robot_comment(msg_id, comment_msg, tl_hash, user_id)
 
             time.sleep(sleep_time)
             sleep_time = random.randint(45, 75)
 
+    @staticmethod
+    def robot_comment(msg_id, comment_msg, tl_hash, to_user_id):
+        """机器人评论动态或回复评论
+        
+        :param msg_id: 动态id
+        :param comment_msg: 内容
+        :param tl_hash: 动态hash
+        :param to_user_id: 目标用户id
+        """
 
-if __name__ == '__main__':
-    ps = PlanetSpider()
-    pr = PlanetRobot(ps)
-    t1 = Thread(target=pr.dynamic)
-    t2 = Thread(target=pr.reply_robot)
-    t1.start()
-    t2.start()
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/comment/add'
+        data = {"tl_id": msg_id, "message": comment_msg, "hash": tl_hash, "to_user_id": to_user_id}
+        resp = requests.post(api, json=data, headers=Planet.headers).json()
+
+        comment = resp['comment']
+        comment_id = comment['id']  # 评论id
+        comment_time = comment['ctime']  # 评论时间
+
+        pg.handler(planet_sql.add_user_comment(),
+                   (comment_id, Planet.my_user_id, msg_id, comment_msg, comment_time, datetime.now()))

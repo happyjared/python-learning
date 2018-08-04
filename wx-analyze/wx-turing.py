@@ -33,7 +33,7 @@ def reply(msg):
         else:
             # 默认回复
             default_reply = 'I received: ' + receive_text
-            text = robot.get_text_response(receive_text, user_id)
+            text = robot.call_text(receive_text, user_id)
             # a or b的意思是，如果a有内容(非空或者非None)，那么返回a，否则返回b
             return text or default_reply
 

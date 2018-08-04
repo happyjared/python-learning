@@ -1,11 +1,8 @@
-import sys
 import os
 import yaml
 import logging
 import planet_robot
 import logging.config
-
-sys.path.append('..')
 
 
 def setup_logging():

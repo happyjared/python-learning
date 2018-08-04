@@ -101,7 +101,7 @@ class PlanetRobot:
             log.info('Get reply robot Going to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
             sleep_time = random.randint(60, 90)
-            log.info('Get reply robot Going to sleep , sleep time is %d', sleep_time)
+            log.info('Get reply robot End sleep , next sleep time is %d', sleep_time)
 
     @staticmethod
     def robot_comment(msg_id, comment_msg, tl_hash, to_user_id):

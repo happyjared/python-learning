@@ -1,8 +1,7 @@
+import robot
 import random
 import itchat
-import tuling
-import requests
-from aip import AipSpeech
+from common_util import mat
 from itchat.content import *
 
 switch = {}
@@ -27,14 +26,14 @@ def reply(msg):
 
     #  判断是否开启机器对话
     if flag:
-        if tuling.is_emoji(receive_text):
+        if mat.is_emoji(receive_text):
             reply_text = random.randint(1, 3) * receive_text
             print(' Back: ' + reply_text)
             return reply_text
         else:
             # 默认回复
             default_reply = 'I received: ' + receive_text
-            text = tuling.get_text_response(receive_text, user_id)
+            text = robot.get_text_response(receive_text, user_id)
             # a or b的意思是，如果a有内容(非空或者非None)，那么返回a，否则返回b
             return text or default_reply
 

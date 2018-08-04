@@ -1,11 +1,7 @@
 import itchat
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-# 判断text是否全部为中文
-def match_all_chinese(text):
-    return u'\u4e00' <= text <= u'\u9fff'
+from common_util import mat
 
 
 class WxChat(object):
@@ -148,7 +144,7 @@ class WxChat(object):
     """
 
     def count_province(self, province_name):
-        if not province_name or not match_all_chinese(province_name):
+        if not province_name or not mat.all_chinese(province_name):
             # 未设置省份名或非国内城市
             other_province_num = self.provinces.get(self.otherProvince)
             self.provinces.__setitem__(self.otherProvince,

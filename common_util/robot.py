@@ -1,3 +1,4 @@
+# coding=UTF-8
 import logging
 import requests
 
@@ -22,7 +23,7 @@ def call_text(msg, user_id, key='6ad11c98a4da4cb986ff1d2d83b49347'):
     try:
         resp = requests.post(api, data=data).json()
         reply_text = resp.get('text')
-        log.info('Call : %s . Turing Response : ', msg, reply_text)
+        log.info('Call : %s . Turing Response : %s', msg, reply_text)
         return reply_text
     except:
         log.exception('Call Turing Response Error')

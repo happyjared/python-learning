@@ -1,3 +1,4 @@
+# coding=UTF-8
 import logging
 import psycopg2
 
@@ -23,6 +24,8 @@ def handler(sql, params):
         log.exception('psycopg2 OperationalError')
         # To close thread
         raise psycopg2.OperationalError
+    except psycopg2.IntegrityError:
+        log.warning('psycopg2.IntegrityError. SQL: %s , Params: %s', sql, params)
     except psycopg2.Error:
         log.error('SQL: %s , Params: %s', sql, params)
         log.exception('psycopg2 Error')

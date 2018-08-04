@@ -4,7 +4,7 @@ def find_user():
     :return: sql
     """
 
-    sql = 'SELECT id FROM tb_user where user_id=%s'
+    sql = 'SELECT id FROM tb_user where user_id = %s'
     return sql
 
 
@@ -28,8 +28,7 @@ def update_user():
     """
 
     sql = 'update tb_user set "name"=%s,head_img=%s,location=%s,hometown=%s,birth_year=%s,horoscope=%s,' \
-          'profession=%s,blast=%s,update_time=%s,"data"=%s,d_last_update=%s,photos_data=%s' \
-          'where user_id=%s'
+          'profession=%s,blast=%s,update_time=%s,"data"=%s,d_last_update=%s,photos_data=%s where user_id=%s'
     return sql
 
 

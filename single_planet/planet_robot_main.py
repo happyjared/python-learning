@@ -5,7 +5,7 @@ import logging
 import planet_robot
 import logging.config
 
-sys.path.append('../common_util/')
+sys.path.append('..')
 
 
 def setup_logging():

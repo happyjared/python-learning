@@ -1,9 +1,11 @@
-import os
 import sys
+import os
 import yaml
 import logging
 import planet_robot
 import logging.config
+
+sys.path.append('../common_util/')
 
 
 def setup_logging():
@@ -26,6 +28,5 @@ def setup_logging():
 
 
 if __name__ == '__main__':
-    sys.path.append('/root/py/python-learning/common_util/')
     setup_logging()
     planet_robot.run()

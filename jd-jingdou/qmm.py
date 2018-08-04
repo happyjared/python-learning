@@ -1,9 +1,9 @@
 import time
 import random
 import requests
-import authorize
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from common_util import authorize
 from urllib.parse import parse_qs
 from selenium.common.exceptions import *
 from selenium.webdriver.common.keys import Keys

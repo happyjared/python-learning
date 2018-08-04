@@ -77,7 +77,7 @@ class PlanetRobot:
         """
 
         data = {"offset": 0}
-        sleep_time = random.randint(45, 75)
+        sleep_time = random.randint(60, 90)
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/tlmsg/comments/my-received'
         while True:
             resp = requests.post(api, json=data, headers=Planet.headers).json()
@@ -98,8 +98,10 @@ class PlanetRobot:
                     tl_hash = resp['tl_hashes'][index]
                     self.robot_comment(msg_id, comment_msg, tl_hash, user_id)
 
+            log.info('Get reply robot Going to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
-            sleep_time = random.randint(45, 75)
+            sleep_time = random.randint(60, 90)
+            log.info('Get reply robot Going to sleep , sleep time is %d', sleep_time)
 
     @staticmethod
     def robot_comment(msg_id, comment_msg, tl_hash, to_user_id):

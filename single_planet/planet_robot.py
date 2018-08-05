@@ -67,10 +67,10 @@ class PlanetRobot:
                         comment_msg = robot.call_text(comment, msg_user_id)
                         self.robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
 
-            log.info('Get users dynamic Going to sleep , sleep time is %d', sleep_time)
+            log.info('Dynamic to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
             sleep_time = random.randint(180, 300)
-            log.info('Get users dynamic End sleep , next sleep time is %d', sleep_time)
+            log.info('Dynamic end sleep , next sleep time is %d', sleep_time)
 
     def reply_robot(self):
         """回复机器人的评论
@@ -99,10 +99,10 @@ class PlanetRobot:
                     tl_hash = resp['tl_hashes'][index]
                     self.robot_comment(msg_id, comment_msg, tl_hash, user_id)
 
-            log.info('Get reply robot Going to sleep , sleep time is %d', sleep_time)
+            log.info('Reply robot to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
             sleep_time = random.randint(60, 90)
-            log.info('Get reply robot End sleep , next sleep time is %d', sleep_time)
+            log.info('Reply robot end sleep , next sleep time is %d', sleep_time)
 
     @staticmethod
     def robot_comment(msg_id, comment_msg, tl_hash, to_user_id):

@@ -1,4 +1,5 @@
 import re
+import time
 import json
 import requests
 import wx_mps_sql
@@ -70,12 +71,15 @@ class WxMps:
                                                                                 content_url, source_url, comment_id,
                                                                                 token, del_flag, ext_data,
                                                                                 datetime.now()))
-                                    # self.__get_comment(comment_id, token)
-
+                                    # self.get_comment(comment_id, token)
+                # 必要的休眠
+                time.sleep(60)
+                print('next offset is %d' % offset)
             else:
+                print('Current end offset is %d' % offset)
                 break
 
-    def __get_comment(self, comment_id, msg_token):
+    def get_comment(self, comment_id, msg_token):
         """抓取某一文章的评论内容
         
         :param comment_id: 标志
@@ -101,15 +105,15 @@ class WxMps:
                 like_num = comment['like_num']  # 点赞数
                 reply_list = comment['reply']['reply_list']  # 原数据
 
+                reply_like_num = 0
                 reply_content = None
                 reply_create_time = None
-                reply_like_num = None
                 reply_data = json.dumps(reply_list)  # 原数据
                 if reply_list:
                     reply = reply_list[0]  # 第1条回复评论
                     reply_content = reply['content']  # 回复评论内容
                     reply_create_time = datetime.fromtimestamp(reply['create_time'])  # 回复评论手时间
-                    reply_like_num = reply['reply_like_num']  # 回复评论点赞数
+                    reply_like_num = reply.get('reply_like_num')  # 回复评论点赞数
 
                 self.__save_data(wx_mps_sql.add_article_comment(), (comment_id, nick_name, logo_url,
                                                                     content_id, content, like_num, create_time,
@@ -124,3 +128,4 @@ class WxMps:
 if __name__ == '__main__':
     wxMps = WxMps()
     wxMps.spider_articles()
+    # wxMps.get_comment('399267325150347266','968_2X0M8Acw6rK%2FMwc6IGYBMIvD_KN4wNdxVRey38IKTWlUfwe1wND8a4oBSOBGrtifRNp1KMeJ6pEOgvew')

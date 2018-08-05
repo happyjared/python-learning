@@ -51,7 +51,7 @@ class WxMps:
                         source_url = app_msg_ext_info['source_url']  # 原文地址
                         ext_data = json.dumps(app_msg_ext_info, ensure_ascii=False)  # 原始数据
                         content_url = app_msg_ext_info['content_url']  # 微信地址
-                        # multi_app_msg_item_list = app_msg_ext_info['multi_app_msg_item_list']
+                        # multi_app_msg_item_list = app_msg_ext_info.get('multi_app_msg_item_list')
 
                         try:
                             html = requests.get(content_url, headers=self.headers).text

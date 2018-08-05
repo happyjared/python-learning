@@ -27,6 +27,7 @@ def handler(sql, params, db_name='planet'):
         # To close thread
         raise psycopg2.OperationalError
     except psycopg2.IntegrityError:
+        # print('psycopg2.IntegrityError.')
         # log.warning('psycopg2.IntegrityError.')
         pass
     except psycopg2.Error:

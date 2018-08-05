@@ -18,9 +18,9 @@ def run():
     pr = PlanetRobot(ps)
 
     t1 = Thread(target=pr.dynamic, name='Thread-dynamic')
-    t1.start()
-
     t2 = Thread(target=pr.reply_robot, name='Thread-reply')
+
+    t1.start()
     t2.start()
 
 

@@ -24,36 +24,37 @@ for r in rows:
     msg_data = '{}'
     ext_data = msg_data
 
-    multi_app_msg_item_list = r[0]['multi_app_msg_item_list']
-    for app_msg_ext_info in multi_app_msg_item_list:
-        msg_id = app_msg_ext_info['fileid']
-        title = app_msg_ext_info['title']  # 标题
-        author = app_msg_ext_info['author']  # 作者
-        cover = app_msg_ext_info['cover']  # 封面图
-        del_flag = app_msg_ext_info.get('del_flag')  # 标志位
-        digest = app_msg_ext_info['digest']  # 关键字
-        source_url = app_msg_ext_info['source_url']  # 原文地址
-        content_url = app_msg_ext_info['content_url']  # 微信地址
+    if r[0]:
+        multi_app_msg_item_list = r[0]['multi_app_msg_item_list']
+        for app_msg_ext_info in multi_app_msg_item_list:
+            msg_id = app_msg_ext_info['fileid']
+            title = app_msg_ext_info['title']  # 标题
+            author = app_msg_ext_info['author']  # 作者
+            cover = app_msg_ext_info['cover']  # 封面图
+            del_flag = app_msg_ext_info.get('del_flag')  # 标志位
+            digest = app_msg_ext_info['digest']  # 关键字
+            source_url = app_msg_ext_info['source_url']  # 原文地址
+            content_url = app_msg_ext_info['content_url']  # 微信地址
 
-        try:
-            html = requests.get(content_url, headers=headers).text
-        except requests.exceptions.MissingSchema:
-            print('requests.exceptions.MissingSchema = ' + content_url)
-        else:
-            # group(0) is current line
-            comment_str = re.search(r'var comment_id = "(.*)" \|\| "(.*)" \* 1;', html)
-            if comment_str:
-                comment_id = comment_str.group(1)
-                # print(comment_id, end='')
+            try:
+                html = requests.get(content_url, headers=headers).text
+            except requests.exceptions.MissingSchema:
+                print('requests.exceptions.MissingSchema = ' + content_url)
+            else:
+                # group(0) is current line
+                comment_str = re.search(r'var comment_id = "(.*)" \|\| "(.*)" \* 1;', html)
+                if comment_str:
+                    comment_id = comment_str.group(1)
+                    # print(comment_id, end='')
 
-                token_str = re.search(r'window.appmsg_token = "(.*)";', html)
-                if token_str:
-                    token = token_str.group(1)
-                    pg.handler(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data,
-                                                          title, author, cover, digest,
-                                                          content_url, source_url, comment_id,
-                                                          token, del_flag, ext_data,
-                                                          datetime.now()), db_name='wxmps')
-                    print('sleep in')
-                    time.sleep(random.randint(1, 5))
-                    print('sleep out')
+                    token_str = re.search(r'window.appmsg_token = "(.*)";', html)
+                    if token_str:
+                        token = token_str.group(1)
+                        pg.handler(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data,
+                                                              title, author, cover, digest,
+                                                              content_url, source_url, comment_id,
+                                                              token, del_flag, ext_data,
+                                                              datetime.now()), db_name='wxmps')
+                        print('sleep in')
+                        time.sleep(random.randint(1, 3))
+                        print('sleep out')

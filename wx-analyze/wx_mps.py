@@ -23,7 +23,7 @@ class WxMps:
 
         offset = 0
         while True:
-            # 微信链接有时效性，Api应根据手机抓包获取最新的cookie和msg_token
+            # 微信链接有时效性，Api参数中应根据手机抓包获取最新的cookie和msg_token
             msg_token = '968_xDms46Qr4aDyyGztsd2KrCTBkhFG7CYkhQ4Nuw~~'
             api = 'https://mp.weixin.qq.com/mp/profile_ext?action=getmsg&__biz={0}&f=json&offset={1}' \
                   '&count=10&is_ok=1&scene=124&uin=777&key=777&pass_ticket={2}&wxtoken=&appmsg_token' \

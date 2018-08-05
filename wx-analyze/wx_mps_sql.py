@@ -4,7 +4,7 @@ def add_article():
     :return: sql
     """
 
-    sql = 'insert into tb_article(msg_id,date_time,"type",msg_data,title,author,cover,digest' \
+    sql = 'insert into tb_article(msg_id,date_time,"type",msg_data,title,author,cover,digest,' \
           'content_url,source_url,comment_id,comment_token,del_flag,ext_data,create_time) VALUES' \
           '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 

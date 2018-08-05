@@ -1,5 +1,6 @@
 import re
 import json
+import time
 import requests
 import wx_mps_sql
 from common_util import pg
@@ -36,7 +37,7 @@ class WxMps:
                 for msg in msg_list:
                     comm_msg_info = msg['comm_msg_info']
                     msg_id = comm_msg_info['id']
-                    date_time = comm_msg_info['datetime']
+                    date_time = time.localtime(comm_msg_info['datetime'])
                     msg_type = comm_msg_info['type']
                     msg_data = json.dumps(comm_msg_info, ensure_ascii=False)
 
@@ -95,7 +96,7 @@ class WxMps:
             for comment in elected_comment:
                 nick_name = comment['nick_name']  # 昵称
                 logo_url = comment['logo_url']  # 评论人头像
-                create_time = comment['create_time']  # 评论时间
+                create_time = time.localtime(comment['create_time'])  # 评论时间
                 content = comment['content']  # 评论内容
                 content_id = comment['content_id']  # id
                 like_num = comment['like_num']  # 点赞数
@@ -108,7 +109,7 @@ class WxMps:
                 if reply_list:
                     reply = reply_list[0]  # 第1条回复评论
                     reply_content = reply['content']  # 回复评论内容
-                    reply_create_time = reply['create_time']  # 回复评论手时间
+                    reply_create_time = time.localtime(reply['create_time'])  # 回复评论手时间
                     reply_like_num = reply['reply_like_num']  # 回复评论点赞数
 
                 self.__save_data(wx_mps_sql.add_article_comment(), (comment_id, nick_name, logo_url,

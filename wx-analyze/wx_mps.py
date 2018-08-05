@@ -61,7 +61,7 @@ class WxMps:
                             comment_str = re.search(r'var comment_id = "(.*)" \|\| "(.*)" \* 1;', html)
                             if comment_str:
                                 comment_id = comment_str.group(1)
-                                print(comment_id, end='')
+                                # print(comment_id, end='')
 
                                 token_str = re.search(r'window.appmsg_token = "(.*)";', html)
                                 if token_str:
@@ -72,8 +72,10 @@ class WxMps:
                                                                                 token, del_flag, ext_data,
                                                                                 datetime.now()))
                                     # self.get_comment(comment_id, token)
+                if not msg_list:
+                    break
                 # 必要的休眠
-                time.sleep(60)
+                time.sleep(30)
                 print('next offset is %d' % offset)
             else:
                 print('Current end offset is %d' % offset)

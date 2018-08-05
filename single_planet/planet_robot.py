@@ -17,8 +17,8 @@ def run():
     ps = PlanetSpider()
     pr = PlanetRobot(ps)
 
-    t1 = Thread(target=pr.dynamic, name='Thread-dynamic')
-    t2 = Thread(target=pr.reply_robot, name='Thread-reply')
+    t1 = Thread(target=pr.dynamic, name='Thread-1-dynamic')
+    t2 = Thread(target=pr.reply_robot, name='Thread-2-reply')
 
     t1.start()
     t2.start()

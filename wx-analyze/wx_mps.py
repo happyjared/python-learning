@@ -1,6 +1,9 @@
 import re
 import json
 import requests
+import wx_mps_sql
+from common_util import pg
+from datetime import datetime
 
 
 class WxMps:
@@ -8,7 +11,7 @@ class WxMps:
         self.biz = 'MzU4NjA4NjMwNw=='
         self.pass_ticket = 'gE0OKWkDz44LPIYaUIwj620%2BSiAEn%2Be7ErgC%2BrwB3twIxblzynCaxA%2FZXlxAlqTZ'
         self.headers = {
-            'Cookie': 'pgv_pvi=6708115456; pgv_si=s4773475328; ptisp=cm; RK=XopsBML0RK; ptcz=73aac9f580839d2b9c7f634ca28f3e19c8bd037390a7f639e5332831aa13b8c4; uin=o1394223902; skey=@KWMdUovjK; pt2gguin=o1394223902; rewardsn=; wxuin=2089823341; devicetype=android-26; version=26060739; lang=zh_HK; pass_ticket=gE0OKWkDz44LPIYaUIwj620+SiAEn+e7ErgC+rwB3twIxblzynCaxA/ZXlxAlqTZ; wap_sid2=CO3YwOQHEnBNRlZfSktnQ19TYkRRWDYtZ0JobTdpdGd3c0NnRUUzZC1OTjNaUXdHMlhPemhGQ1NTWnQyR3Fzc19rcnozck8wUUdyTUIyVUt4aFNsa3ROc3RBQW5hVVVkY1ljeC13M0VqT2RyUjZCUEoyM0lBd0FBMIPEmdsFOA1AAQ==; wxtokenkey=777',
+            'Cookie': 'pgv_pvi=6708115456; pgv_si=s4773475328; ptisp=cm; RK=XopsBML0RK; ptcz=73aac9f580839d2b9c7f634ca28f3e19c8bd037390a7f639e5332831aa13b8c4; uin=o1394223902; skey=@KWMdUovjK; pt2gguin=o1394223902; rewardsn=; wxtokenkey=777; wxuin=2089823341; devicetype=android-26; version=26060739; lang=zh_HK; pass_ticket=gE0OKWkDz44LPIYaUIwj620+SiAEn+e7ErgC+rwB3twIxblzynCaxA/ZXlxAlqTZ; wap_sid2=CO3YwOQHEogBSEVWRW44T0RhUmNKdTQ3bnBuWHpEYm1YVkI2TmFNSGFlckt5VEEycE5tc3RtV1RMZW04WVZvbXIwSzA3MktYUnMyUGY1ZDFSeV9Kd24waHdlUUVmbWFRR1gxckFjLVhiNW5lQXdwSHR4eG0zVTd0YWZlNlN0OFZxUS1kMEQ5OEh5QU1BQUF+fjDH85rbBTgNQJVO',
             'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; WAS-AL00 Build/HUAWEIWAS-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/044203 Mobile Safari/537.36 MicroMessenger/6.6.7.1321(0x26060739) NetType/WIFI Language/zh_HK'
         }
 
@@ -20,8 +23,8 @@ class WxMps:
 
         offset = 0
         while True:
-            # 微信链接有时效性，Api应根据手机抓包获取最新的msg_token
-            msg_token = '968_v7xwf3CnfqzVr3oZPtRmAUYdqrRkAqgFZWlG6Q~~'
+            # 微信链接有时效性，Api应根据手机抓包获取最新的cookie和msg_token
+            msg_token = '968_xDms46Qr4aDyyGztsd2KrCTBkhFG7CYkhQ4Nuw~~'
             api = 'https://mp.weixin.qq.com/mp/profile_ext?action=getmsg&__biz={0}&f=json&offset={1}' \
                   '&count=10&is_ok=1&scene=124&uin=777&key=777&pass_ticket={2}&wxtoken=&appmsg_token' \
                   '={3}&x5=1&f=json'.format(self.biz, offset, self.pass_ticket, msg_token)
@@ -32,9 +35,9 @@ class WxMps:
                 msg_list = json.loads(resp['general_msg_list'])['list']
                 for msg in msg_list:
                     comm_msg_info = msg['comm_msg_info']
-                    id = comm_msg_info['datetime']
-                    datetime = comm_msg_info['datetime']
-                    type = comm_msg_info['type']
+                    msg_id = comm_msg_info['id']
+                    date_time = comm_msg_info['datetime']
+                    msg_type = comm_msg_info['type']
                     msg_data = json.dumps(comm_msg_info, ensure_ascii=False)
 
                     app_msg_ext_info = msg.get('app_msg_ext_info')
@@ -62,8 +65,12 @@ class WxMps:
                                 token_str = re.search(r'window.appmsg_token = "(.*)";', html)
                                 if token_str:
                                     token = token_str.group(1)
-                                    print(' --- ' + token)
-                                    self.__get_comment(comment_id, token, self.pass_ticket)
+                                    self.__save_data(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data,
+                                                                                title, author, cover, digest,
+                                                                                content_url, source_url, comment_id,
+                                                                                token, del_flag, ext_data,
+                                                                                datetime.now()))
+                                    # self.__get_comment(comment_id, token)
 
             else:
                 break
@@ -84,7 +91,7 @@ class WxMps:
         status = resp['base_resp']['errmsg']
         if status == 'ok':
             elected_comment = resp['elected_comment']
-            comment_data = json.dumps(elected_comment, ensure_ascii=False)
+            # comment_data = json.dumps(elected_comment, ensure_ascii=False)
             for comment in elected_comment:
                 nick_name = comment['nick_name']  # 昵称
                 logo_url = comment['logo_url']  # 评论人头像
@@ -94,12 +101,24 @@ class WxMps:
                 like_num = comment['like_num']  # 点赞数
                 reply_list = comment['reply']['reply_list']  # 原数据
 
+                reply_content = None
+                reply_create_time = None
+                reply_like_num = None
+                reply_data = json.dumps(reply_list)  # 原数据
                 if reply_list:
                     reply = reply_list[0]  # 第1条回复评论
                     reply_content = reply['content']  # 回复评论内容
                     reply_create_time = reply['create_time']  # 回复评论手时间
                     reply_like_num = reply['reply_like_num']  # 回复评论点赞数
-                    reply_data = json.dumps(reply_list)  # 原数据
+
+                self.__save_data(wx_mps_sql.add_article_comment(), (comment_id, nick_name, logo_url,
+                                                                    content_id, content, like_num, create_time,
+                                                                    reply_content, reply_create_time, reply_like_num,
+                                                                    reply_data, datetime.now()))
+
+    @staticmethod
+    def __save_data(sql, params):
+        pg.handler(sql, params, db_name='wxmps')
 
 
 if __name__ == '__main__':

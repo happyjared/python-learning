@@ -4,7 +4,9 @@ def add_article():
     :return: sql
     """
 
-    sql = ''
+    sql = 'insert into tb_article(msg_id,date_time,"type",msg_data,title,author,cover,digest' \
+          'content_url,source_url,comment_id,comment_token,del_flag,ext_data,create_time) VALUES' \
+          '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 
     return sql
 
@@ -15,6 +17,8 @@ def add_article_comment():
     :return: sql
     """
 
-    sql = ''
+    sql = 'insert into tb_article_comment(comment_id,nick_name,logo_url,content_id,content,like_num,' \
+          'comment_time,reply_content,reply_create_time,reply_like_num,reply_data,create_time) VALUES' \
+          '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 
     return sql

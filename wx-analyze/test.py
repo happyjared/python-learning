@@ -3,7 +3,6 @@ import time
 import psycopg2
 import requests
 import wx_mps_sql
-from common_util import pg
 from datetime import datetime
 
 headers = {
@@ -48,10 +47,19 @@ for r in rows:
                 token_str = re.search(r'window.appmsg_token = "(.*)";', html)
                 if token_str:
                     token = token_str.group(1)
-                    pg.handler(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data,
-                                                          title, author, cover, digest,
-                                                          content_url, source_url, comment_id,
-                                                          token, del_flag, ext_data,
-                                                          datetime.now()), db_name='wxmps')
-
-                    print('success')
+                    try:
+                        cur.execute(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data,
+                                                               title, author, cover, digest,
+                                                               content_url, source_url, comment_id,
+                                                               token, del_flag, ext_data,
+                                                               datetime.now()))
+                    except psycopg2.IntegrityError:
+                        print('psycopg2.IntegrityError.')
+                    except psycopg2.Error:
+                        print('psycopg2 Error')
+                    else:
+                        conn.commit()
+                        print('success')
+                    print('sleep in')
+                    time.sleep(3)
+                    print('sleep out')

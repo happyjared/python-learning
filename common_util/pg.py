@@ -5,18 +5,20 @@ import psycopg2
 log = logging.getLogger()
 
 
-def handler(sql, params):
+def handler(sql, params, db_name='planet'):
     """Save data to PostgreSQL
     
     :param sql: SQL
     :param params: 参数列表
+    :param db_name: 数据库名
     :return: 影响行数
     """
 
     effect_count = 0
     try:
         # 139.199.162.33
-        conn = psycopg2.connect("host=localhost port=15234 dbname=planet user=planet password=planet")
+        conn_info = "host=localhost port=15234 dbname={0} user=planet password=planet".format(db_name)
+        conn = psycopg2.connect(conn_info)
         cur = conn.cursor()
         cur.execute(sql, params)
         effect_count = cur.rowcount

@@ -8,11 +8,16 @@ switch = {}
 command = '666'
 
 
-# 注册微信文本消息
 @itchat.msg_register(itchat.content.TEXT)
 def reply(msg):
+    """注册微信文本消息
+    
+    :param msg: 消息
+    :return: 回应消息
+    """
+
     receive_text = msg['Text']
-    print('1.Call: ' + receive_text, end='')
+    print('Call: ' + receive_text, end='')
 
     user_id = msg['FromUserName']
     # 判断机器人开关
@@ -34,13 +39,18 @@ def reply(msg):
             # 默认回复
             default_reply = 'I received: ' + receive_text
             text = robot.call_text(receive_text, user_id)
-            # a or b的意思是，如果a有内容(非空或者非None)，那么返回a，否则返回b
+            # a or b 如果a有内容(非空或者非None)，那么返回a，否则返回b
             return text or default_reply
 
 
-# 除文本外的其它类型统一回复默认
 @itchat.msg_register([MAP, CARD, NOTE, SHARING, PICTURE, RECORDING, ATTACHMENT, VIDEO, FRIENDS])
 def reply(msg):
+    """注册除文本外的其它类型消息
+    
+    :param msg: 消息
+    :return: 回应内容
+    """
+
     msg_type = msg['Type']
     filename = msg['FileName']
     content = msg['Content']
@@ -48,6 +58,10 @@ def reply(msg):
     default_reply = "[疑问] Is't a " + msg_type
     return default_reply
 
+
+# 登录微信机器人
+itchat.auto_login(hotReload=True, enableCmdQR=2)
+itchat.run()
 
 # # 注册微信语音消息
 # @itchat.msg_register(itchat.content.RECORDING)
@@ -80,8 +94,3 @@ def reply(msg):
 #     err_no = result['err_no']
 #     print(' Code: ' + str(err_no), end='')
 #     return result['result'] if err_no == 0 else result['err_msg']
-
-
-# 登录微信机器人
-itchat.auto_login(hotReload=True, enableCmdQR=2)
-itchat.run()

@@ -54,17 +54,6 @@ def add_user_talk():
     return sql
 
 
-def add_user_message():
-    """ The SQL for add user message 
-
-    :return: sql
-    """
-
-    sql = 'INSERT INTO tb_user_message(user_id, msg_id,tl_hash,"comment",c_time,' \
-          'msg_type,disable_comment,create_time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
-    return sql
-
-
 def add_user_comment():
     """ The SQL for add user comment 
 

@@ -1,4 +1,4 @@
-#### baike-spider : 百度和搜狗百科Python爬虫
+#### baike : 百度和搜狗百科Python爬虫
 
 1. 开发环境python2.7，python3+可能会略有不同
 2. 实际测试使用百度百科和搜狗百科均有效，其它请自行检验

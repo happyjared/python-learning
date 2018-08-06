@@ -1,5 +1,5 @@
 ---
-title: 自动发布测试文章
+title: 自动发布测试
 date: 2018-05-16
 categories:
     - 测试

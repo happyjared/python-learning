@@ -1,11 +1,12 @@
 # -*- coding:utf-8 -*-
 # url解析器
-import urlparse
-from bs4 import BeautifulSoup
 import re
+import urllib.parse
+from bs4 import BeautifulSoup
 
 
-class htmlParser(object):
+class HtmlParser(object):
+
     def parse(self, page_url, html_content):
         if page_url is None or html_content is None:
             return
@@ -14,20 +15,21 @@ class htmlParser(object):
         new_data = self.get_new_data(page_url, soup)
         return new_urls, new_data
 
-    def get_new_urls(self, page_url, soup):
+    @staticmethod
+    def get_new_urls(page_url, soup):
         new_urls = set()
         # 百度百科：a --> /item/ --> /item/*?
         # 搜狗百科：a --> /lemma/ --> /lemma/*?
         links = soup.find_all('a', href=re.compile(r'/item/*?'))
         for link in links:
             new_url = link['href']
-            new_full_url = urlparse.urljoin(page_url, new_url)
+            new_full_url = urllib.parse.urljoin(page_url, new_url)
             new_urls.add(new_full_url)
         return new_urls
 
-    def get_new_data(self, page_url, soup):
-        res_data = {}
-        res_data['url'] = page_url
+    @staticmethod
+    def get_new_data(page_url, soup):
+        res_data = {'url': page_url}
 
         # 百度百科：<dd class="lemmaWgt-lemmaTitle-title"><h1>...
         # 搜狗百科：<div class="lemma_name"><h1 id="title">...

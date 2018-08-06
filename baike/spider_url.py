@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 # url管理器
-class urlManager(object):
+
+
+class UrlManager(object):
     def __init__(self):
         self.new_urls = set()
         self.old_urls = set()

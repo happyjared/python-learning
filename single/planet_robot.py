@@ -5,9 +5,9 @@ import logging
 import requests
 import planet_sql
 from planet import Planet
-from common_util import pg
+from utils import pg
 from threading import Thread
-from common_util import robot
+from utils import robot
 from datetime import datetime
 from planet_spider import PlanetSpider
 

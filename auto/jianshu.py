@@ -1,6 +1,6 @@
 import time
 from selenium import webdriver
-from common_util import authorize
+from utils import authorize
 from selenium.webdriver.support.wait import WebDriverWait
 
 

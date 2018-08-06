@@ -1,7 +1,7 @@
 import itchat
 import numpy as np
 import matplotlib.pyplot as plt
-from common_util import mat
+from utils import mat
 
 
 class WxChat(object):
@@ -68,7 +68,7 @@ class WxChat(object):
             # city = friend['City']
             # alias = friend['Alias']
             signature = ''.join(friend['Signature'].split())
-            head_img_url = 'https://wx.qq.com' + friend['HeadImgUrl']
+            head_img_url = 'https://wechat.qq.com' + friend['HeadImgUrl']
             print("%d.昵称: %s ,备注: %s ,个性签名: %s ,头像: %s " % (
                 i + 1, nickname, remark, signature, head_img_url))
 
@@ -203,8 +203,8 @@ class WxChat(object):
 
 if __name__ == '__main__':
     wx = WxChat()
-    # wx.send_file_helper('Hello, File Helper')
-    # wx.get_mps()
-    # wx.logout()
-    # wx.get_friends()
+    # wechat.send_file_helper('Hello, File Helper')
+    # wechat.get_mps()
+    # wechat.logout()
+    # wechat.get_friends()
     wx.get_chat_rooms()

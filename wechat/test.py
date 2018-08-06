@@ -4,7 +4,7 @@ import random
 import psycopg2
 import requests
 import wx_mps_sql
-from common_util import pg
+from utils import pg
 from datetime import datetime
 
 headers = {

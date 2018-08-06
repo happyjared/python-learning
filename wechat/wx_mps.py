@@ -9,7 +9,7 @@ from datetime import datetime
 
 class WxMps:
     def __init__(self):
-        self.biz = 'MzU4NjA4NjMwNw=='
+        self.biz = 'MzU4NjA4NjMwNw=='  # 刺猬体验
         self.pass_ticket = 'gE0OKWkDz44LPIYaUIwj620%2BSiAEn%2Be7ErgC%2BrwB3twIxblzynCaxA%2FZXlxAlqTZ'
         self.headers = {
             'Cookie': 'pgv_pvi=6708115456; pgv_si=s4773475328; ptisp=cm; RK=XopsBML0RK; ptcz=73aac9f580839d2b9c7f634ca28f3e19c8bd037390a7f639e5332831aa13b8c4; uin=o1394223902; skey=@KWMdUovjK; pt2gguin=o1394223902; rewardsn=; wxtokenkey=777; wxuin=2089823341; devicetype=android-26; version=26060739; lang=zh_HK; pass_ticket=gE0OKWkDz44LPIYaUIwj620+SiAEn+e7ErgC+rwB3twIxblzynCaxA/ZXlxAlqTZ; wap_sid2=CO3YwOQHEogBSEVWRW44T0RhUmNKdTQ3bnBuWHpEYm1YVkI2TmFNSGFlckt5VEEycE5tc3RtV1RMZW04WVZvbXIwSzA3MktYUnMyUGY1ZDFSeV9Kd24waHdlUUVmbWFRR1gxckFjLVhiNW5lQXdwSHR4eG0zVTd0YWZlNlN0OFZxUS1kMEQ5OEh5QU1BQUF+fjDH85rbBTgNQJVO',
@@ -43,36 +43,12 @@ class WxMps:
 
                     app_msg_ext_info = msg.get('app_msg_ext_info')
                     if app_msg_ext_info:
-                        title = app_msg_ext_info['title']  # 标题
-                        author = app_msg_ext_info['author']  # 作者
-                        cover = app_msg_ext_info['cover']  # 封面图
-                        del_flag = app_msg_ext_info.get('del_flag')  # 标志位
-                        digest = app_msg_ext_info['digest']  # 关键字
-                        source_url = app_msg_ext_info['source_url']  # 原文地址
-                        ext_data = json.dumps(app_msg_ext_info, ensure_ascii=False)  # 原始数据
-                        content_url = app_msg_ext_info['content_url']  # 微信地址
-                        # multi_app_msg_item_list = app_msg_ext_info.get('multi_app_msg_item_list')
-
-                        try:
-                            html = requests.get(content_url, headers=self.headers).text
-                        except requests.exceptions.MissingSchema:
-                            print('requests.exceptions.MissingSchema = ' + content_url)
-                        else:
-                            # group(0) is current line
-                            comment_str = re.search(r'var comment_id = "(.*)" \|\| "(.*)" \* 1;', html)
-                            if comment_str:
-                                comment_id = comment_str.group(1)
-                                # print(comment_id, end='')
-
-                                token_str = re.search(r'window.appmsg_token = "(.*)";', html)
-                                if token_str:
-                                    token = token_str.group(1)
-                                    self.__save_data(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data,
-                                                                                title, author, cover, digest,
-                                                                                content_url, source_url, comment_id,
-                                                                                token, del_flag, ext_data,
-                                                                                datetime.now()))
-                                    # self.get_comment(comment_id, token)
+                        self.parse_data(app_msg_ext_info, msg_id, datetime, msg_type, msg_data)
+                        multi_app_msg_item_list = app_msg_ext_info.get('multi_app_msg_item_list')
+                        if multi_app_msg_item_list:
+                            for item in multi_app_msg_item_list:
+                                msg_id = item['fileid']
+                                self.parse_data(item, msg_id, datetime, msg_type, '{}')
                 if not msg_list:
                     break
                 # 必要的休眠
@@ -81,6 +57,36 @@ class WxMps:
             else:
                 print('Current end offset is %d' % offset)
                 break
+
+    def parse_data(self, info, msg_id, date_time, msg_type, msg_data):
+        title = info['title']  # 标题
+        author = info['author']  # 作者
+        cover = info['cover']  # 封面图
+        del_flag = info.get('del_flag')  # 标志位
+        digest = info['digest']  # 关键字
+        source_url = info['source_url']  # 原文地址
+        ext_data = json.dumps(info, ensure_ascii=False)  # 原始数据
+        content_url = info['content_url']  # 微信地址
+
+        try:
+            html = requests.get(content_url, headers=self.headers).text
+        except requests.exceptions.MissingSchema:
+            print('requests.exceptions.MissingSchema = ' + content_url)
+        else:
+            # group(0) is current line
+            comment_str = re.search(r'var comment_id = "(.*)" \|\| "(.*)" \* 1;', html)
+            if comment_str:
+                comment_id = comment_str.group(1)
+                token_str = re.search(r'window.appmsg_token = "(.*)";', html)
+                if token_str:
+                    token = token_str.group(1)
+                    if token:
+                        self.__save_data(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data,
+                                                                    title, author, cover, digest,
+                                                                    content_url, source_url, comment_id,
+                                                                    token, del_flag, ext_data,
+                                                                    datetime.now()))
+                        # self.get_comment(comment_id, token) # 爬取评论
 
     def get_comment(self, comment_id, msg_token):
         """抓取某一文章的评论内容

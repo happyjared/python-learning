@@ -12,7 +12,7 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; WAS-AL00 Build/HUAWEIWAS-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/044203 Mobile Safari/537.36 MicroMessenger/6.6.7.1321(0x26060739) NetType/WIFI Language/zh_HK'
 }
 sql = "select ext_data,date_time,type,id from tb_article where ext_data->'multi_app_msg_item_list' is not null and \
-       ext_data->>'multi_app_msg_item_list' <> '[]' order by id asc"
+       ext_data->>'multi_app_msg_item_list' <> '[]' and id >= 229 order by id asc"
 
 conn_info = "host=localhost port=15234 dbname={0} user=planet password=planet".format('wxmps')
 conn = psycopg2.connect(conn_info)

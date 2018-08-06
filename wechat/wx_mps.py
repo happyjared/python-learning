@@ -48,6 +48,8 @@ class WxMps:
                         if multi_app_msg_item_list:
                             for item in multi_app_msg_item_list:
                                 msg_id = item['fileid']
+                                if msg_id == 0:
+                                    msg_id = int(time.time() * 1000)
                                 self.parse_data(item, msg_id, datetime, msg_type, '{}')
                 if not msg_list:
                     break

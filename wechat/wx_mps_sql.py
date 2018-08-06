@@ -22,3 +22,14 @@ def add_article_comment():
           '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 
     return sql
+
+
+def find_article():
+    """ Select from Article
+
+    :return: sql
+    """
+
+    sql = 'select comment_id,comment_token from tb_article where title like %s'
+
+    return sql

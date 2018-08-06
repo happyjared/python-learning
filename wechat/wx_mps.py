@@ -12,7 +12,7 @@ class WxMps:
         self.biz = 'MzU4NjA4NjMwNw=='  # 刺猬体验
         self.pass_ticket = 'M7xz2Lwxxg2%25252F8HQMNubFvBpO0NJd70CNvsBxMFErvIDKgQDX0rfCbv80yPHcQKNK'
         self.headers = {
-            'Cookie': 'pgv_pvi=6708115456; pgv_si=s4773475328; ptisp=cm; RK=XopsBML0RK; ptcz=73aac9f580839d2b9c7f634ca28f3e19c8bd037390a7f639e5332831aa13b8c4; uin=o1394223902; skey=@KWMdUovjK; pt2gguin=o1394223902; rewardsn=; wxuin=2089823341; devicetype=android-26; version=26060739; lang=zh_HK; pass_ticket=M7xz2Lwxxg2/8HQMNubFvBpO0NJd70CNvsBxMFErvIDKgQDX0rfCbv80yPHcQKNK; wap_sid2=CO3YwOQHEogBYk9hSVlOWm9XcTluczJRYUE5cEZJb3AwYjZOZGJZN0VHX0ZLcjRpem1NV2M3Zk1DVTF5Yld1QkM5SHJEN0NGQ244SnVnS044dGZvSVJ5ZnZmOEdPSFBDREVWeDNITEo1UWYyZXR1WElQbTQyZ3Q2dG9iaFhoSldBUUVyUlhqd3p5QU1BQUF+fjD2maDbBTgNQAE=; wxtokenkey=777',
+            'Cookie': 'pgv_pvi=6708115456; pgv_si=s4773475328; ptisp=cm; RK=XopsBML0RK; ptcz=73aac9f580839d2b9c7f634ca28f3e19c8bd037390a7f639e5332831aa13b8c4; uin=o1394223902; skey=@KWMdUovjK; pt2gguin=o1394223902; rewardsn=; wxuin=2089823341; devicetype=android-26; version=26060739; lang=zh_HK; pass_ticket=M7xz2Lwxxg2/8HQMNubFvBpO0NJd70CNvsBxMFErvIDKgQDX0rfCbv80yPHcQKNK; wap_sid2=CO3YwOQHEogBME9vTDBQc09lUmJNZVpSV1R2WEJYbVdweDZscHFaRGNNUnp0S2ZVdURJaFFSa3F0cV9pM0JYSzhJNmVWdTZaS2Fhb1FPRkhEZ2UwNVVabm9fUUJBcl9nNjdfcnMxVEdhMllKUFY1UExua0NfekFkQ0FWYXVYcU9yVmxJeXRqNGx5QU1BQUF+fjCd5qHbBTgNQAE=; wxtokenkey=777',
             'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; WAS-AL00 Build/HUAWEIWAS-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/044203 Mobile Safari/537.36 MicroMessenger/6.6.7.1321(0x26060739) NetType/WIFI Language/zh_HK'
         }
 

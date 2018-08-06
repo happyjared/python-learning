@@ -5,7 +5,7 @@ import logging
 import requests
 import planet_sql
 from planet import Planet
-from utils import pg
+from utils import pgs
 from datetime import datetime
 
 
@@ -71,15 +71,15 @@ class PlanetSpider(Planet):
 
         # tb_user
         now = datetime.now()
-        effect_count = pg.handler(planet_sql.find_user(), (self.user_id,))
+        effect_count = pgs.handler(planet_sql.find_user(), (self.user_id,))
         if effect_count == 0:
-            pg.handler(planet_sql.add_user(),
-                       (self.user_id, self.user_hash, self.name, self.gender, self.head_img, self.location,
+            pgs.handler(planet_sql.add_user(),
+                        (self.user_id, self.user_hash, self.name, self.gender, self.head_img, self.location,
                         self.hometown, self.birth_year, self.horoscope, self.profession, self.blast, now, now,
                         self.data, self.distance, self.last_update, self.photos_data))
         else:
-            pg.handler(planet_sql.update_user(),
-                       (self.name, self.head_img, self.location, self.hometown, self.birth_year, self.horoscope,
+            pgs.handler(planet_sql.update_user(),
+                        (self.name, self.head_img, self.location, self.hometown, self.birth_year, self.horoscope,
                         self.profession, self.blast, now, self.data, self.last_update, self.photos_data, self.user_id))
 
     def member_dynamic(self):
@@ -114,8 +114,8 @@ class PlanetSpider(Planet):
             data = json.dumps(message, ensure_ascii=False)
             photos_data = json.dumps(member_photos, ensure_ascii=False)
             # tb_user_talk
-            pg.handler(planet_sql.add_user_talk(), (self.user_id, msg_id, tl_hash, comment, create_time, msg_type,
-                                                    disable_comment, photos_data, data, now))
+            pgs.handler(planet_sql.add_user_talk(), (self.user_id, msg_id, tl_hash, comment, create_time, msg_type,
+                                                     disable_comment, photos_data, data, now))
 
     def member_photos(self):
         """ request to get user albums and save data (爬取指定用户的相册数据并保存)
@@ -129,7 +129,7 @@ class PlanetSpider(Planet):
         now = datetime.now()
         for member_photo in member_photos:
             # tb_user_photo
-            pg.handler(planet_sql.add_user_photo(), (self.user_id, member_photo['url'], now))
+            pgs.handler(planet_sql.add_user_photo(), (self.user_id, member_photo['url'], now))
         self.photos_data = json.dumps(member_photos, ensure_ascii=False)
 
     def find_random_member(self):

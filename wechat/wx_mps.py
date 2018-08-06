@@ -3,7 +3,7 @@ import time
 import json
 import requests
 import wx_mps_sql
-from utils import pg
+from utils import pgs
 from datetime import datetime
 
 
@@ -125,7 +125,7 @@ class WxMps:
 
     @staticmethod
     def __save_data(sql, params):
-        pg.handler(sql, params, db_name='wxmps')
+        pgs.handler(sql, params, db_name='wxmps')
 
 
 if __name__ == '__main__':

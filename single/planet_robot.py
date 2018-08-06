@@ -5,7 +5,7 @@ import logging
 import requests
 import planet_sql
 from planet import Planet
-from utils import pg
+from utils import pgs
 from threading import Thread
 from utils import robot
 from datetime import datetime
@@ -92,8 +92,8 @@ class PlanetRobot:
                 comment_time = comment['ctime']  # 回复时间
                 text = comment['message']['text']['Text']  # 回复内容
 
-                effect_count = pg.handler(planet_sql.add_user_comment(),
-                                          (comment_id, user_id, msg_id, text, comment_time, now))
+                effect_count = pgs.handler(planet_sql.add_user_comment(),
+                                           (comment_id, user_id, msg_id, text, comment_time, now))
                 if effect_count != 0:
                     comment_msg = robot.call_text(text, user_id)
                     tl_hash = resp['tl_hashes'][index]
@@ -122,5 +122,5 @@ class PlanetRobot:
         comment_id = comment['id']  # 评论id
         comment_time = comment['ctime']  # 评论时间
 
-        pg.handler(planet_sql.add_user_comment(),
-                   (comment_id, Planet.my_user_id, msg_id, comment_msg, comment_time, datetime.now()))
+        pgs.handler(planet_sql.add_user_comment(),
+                    (comment_id, Planet.my_user_id, msg_id, comment_msg, comment_time, datetime.now()))

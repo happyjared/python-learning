@@ -35,17 +35,17 @@ $def with (read_count)
 <header class="text-white text-center" style="padding-top: 5rem;">
 $if read_count.exit:
     <div class="container">
-        <img class="img-fluid mb-5 d-block mx-auto img-circle" src="$read_count.avatar" alt="avatar">
-        <h2 class="mb-0">$read_count.nickname</h2>
+        <img class="img-fluid mb-5 d-block mx-auto img-circle" src="rc.avatar" alt="avatar">
+        <h2 class="mb-0">rc.nickname</h2>
         <hr class="star-light">
         <h4 class="font-weight-light mb-0">
-            关注 : <span class="self-text">$read_count.watch</span> 人 -
-            粉丝 : <span class="self-text">$read_count.fans</span> 人 -
-            文章 : <span class="self-text">$read_count.articles</span> 篇 <p></p>
-            写作 : <span class="self-text">$read_count.words</span> 字 -
-            收获喜欢 : <span class="self-text">$read_count.likes</span> 次 -
-            总阅读量 : <span class="self-text2">$read_count.total_reading</span> 次 -
-            查询总耗时 ：<span class="self-text2">$read_count.time</span> 秒
+            关注 : <span class="self-text">rc.watch</span> 人 -
+            粉丝 : <span class="self-text">rc.fans</span> 人 -
+            文章 : <span class="self-text">rc.articles</span> 篇 <p></p>
+            写作 : <span class="self-text">rc.words</span> 字 -
+            收获喜欢 : <span class="self-text">rc.likes</span> 次 -
+            总阅读量 : <span class="self-text2">rc.total_reading</span> 次 -
+            查询总耗时 ：<span class="self-text2">rc.time</span> 秒
         </h4>
     </div>
 $else:

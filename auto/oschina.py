@@ -1,5 +1,5 @@
 from selenium import webdriver
-from utils import authorize
+from utils import auth
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -22,7 +22,7 @@ class OsChina(object):
 
         # 4.使用QQ授权登录
         driver.find_element_by_xpath('/html/body/section/div/div[2]/div[2]/div/div[2]/a[4]').click()
-        authorize.qq(driver, timeout)
+        auth.qq(driver, timeout)
 
         # 4.使用账号密码登陆
         # driver.find_element_by_id('userMail').send_keys(account)

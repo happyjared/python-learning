@@ -1,5 +1,5 @@
 import time
-from utils import authorize
+from utils import auth
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.wait import WebDriverWait
@@ -34,7 +34,7 @@ class CSDN(object):
         # 4.使用QQ授权登录
         driver.find_element_by_id('qqAuthorizationUrl').click()
         driver.close()
-        authorize.qq(driver, timeout)
+        auth.qq(driver, timeout)
 
         # 5.点击"写博客"
         write_blog = WebDriverWait(driver, timeout).until(

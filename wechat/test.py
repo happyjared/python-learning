@@ -4,7 +4,7 @@ import random
 import psycopg2
 import requests
 import wx_mps_sql
-from utils import pg
+from utils import pgs
 from datetime import datetime
 
 headers = {
@@ -50,11 +50,11 @@ for r in rows:
                     token_str = re.search(r'window.appmsg_token = "(.*)";', html)
                     if token_str:
                         token = token_str.group(1)
-                        pg.handler(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data,
-                                                              title, author, cover, digest,
-                                                              content_url, source_url, comment_id,
-                                                              token, del_flag, ext_data,
-                                                              datetime.now()), db_name='wxmps')
+                        pgs.handler(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data,
+                                                               title, author, cover, digest,
+                                                               content_url, source_url, comment_id,
+                                                               token, del_flag, ext_data,
+                                                               datetime.now()), db_name='wxmps')
                         print('sleep in')
                         time.sleep(random.randint(1, 3))
                         print('sleep out')

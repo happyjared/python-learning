@@ -1,6 +1,6 @@
 import time
 from selenium import webdriver
-from utils import authorize
+from utils import auth
 from selenium.webdriver.support.wait import WebDriverWait
 
 
@@ -19,7 +19,7 @@ class JianShu(object):
         # 3.使用QQ授权登录
         driver.find_element_by_xpath('/html/body/div[1]/div[2]/div/div/ul/li[3]/a/i').click()
         driver.close()
-        authorize.qq(driver, timeout)
+        auth.qq(driver, timeout)
 
         # 4.点击"写文章"
         write_blog = WebDriverWait(driver, timeout).until(lambda d: d.find_element_by_xpath('/html/body/nav/div/a[2]'))

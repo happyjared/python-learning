@@ -3,7 +3,7 @@ import random
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from utils import authorize
+from utils import auth
 from urllib.parse import parse_qs
 from selenium.common.exceptions import *
 from selenium.webdriver.common.keys import Keys
@@ -15,11 +15,12 @@ class QMM(object):
     def __init__(self):
         self.list_detail = []
 
-    '''
-        爬取券妈妈的京豆汇总页及详情页获得具体的京东京豆领取页地址
-    '''
-
     def spider(self):
+        """爬取券妈妈的京豆汇总页及详情页获得具体的京东京豆领取页地址
+
+        :return:
+        """
+
         # 京豆汇总页
         url = 'http://www.quanmama.com/zhidemai/2459063.html'
         resp = requests.get(url)
@@ -45,12 +46,14 @@ class QMM(object):
         random.shuffle(self.list_detail)
         self.receive()
 
-    '''
-        登录并领取详情页的店铺京豆
-    '''
-
     def receive(self, timeout=2):
-        # 静默模式
+        """ 登录并领取详情页的店铺京豆
+
+        :param timeout:
+        :return:
+        """
+
+        # 无浏览器模式
         # option = webdriver.ChromeOptions()
         # option.add_argument('headless')
 
@@ -66,7 +69,7 @@ class QMM(object):
 
         # QQ授权登录
         driver.find_element_by_xpath('//*[@id="kbCoagent"]/ul/li[1]/a').click()
-        authorize.qq(driver, timeout)
+        auth.qq(driver, timeout)
 
         time.sleep(timeout)
 
@@ -96,21 +99,26 @@ class QMM(object):
             else:
                 print(' 领取成功 ')
 
-    '''
-        处理url
-    '''
-
     @staticmethod
     def get_url(detail):
+        """处理url
+
+        :param detail:
+        :return:
+        """
+
         url = parse_qs(detail).get('url')
         return detail if url is None else url.pop()
 
-    '''
-        京东金融签到
-    '''
-
     @staticmethod
     def financial(driver, timeout=3):
+        """京东金融签到
+
+        :param driver:
+        :param timeout:
+        :return:
+        """
+
         # 进入京东金融
         driver.find_element_by_xpath('//*[@id="navitems-group3"]/li[2]/a').click()
         driver.close()

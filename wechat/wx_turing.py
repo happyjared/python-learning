@@ -26,7 +26,7 @@ def reply(msg):
             switch[user_id] = True
         else:
             switch[user_id] = not switch[user_id]
-        return "[愉快] Hello. This is Jared. [愉快]" if switch[user_id] else '[再见] Bye. Please Remember Jared.'
+        return "[愉快] Hello. 私人管家 贾里得 上线了 !" if switch[user_id] else '[再见] Bye. Please Remember Jared'
     flag = switch.get(user_id)
 
     #  判断是否开启机器对话

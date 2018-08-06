@@ -22,7 +22,8 @@ rows = cur.fetchall()
 for r in rows:
     date_time = r[1]
     msg_type = r[2]
-    msg_data, ext_data = '{}'
+    ext_data = '{}'
+    msg_data = ext_data
     print(r[3])
     if r[0]:
         multi_app_msg_item_list = r[0]['multi_app_msg_item_list']

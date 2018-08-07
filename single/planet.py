@@ -1,7 +1,7 @@
 # coding=UTF-8
-import pgs
 import logging
 import requests
+from utils import pgs
 
 log = logging.getLogger()
 

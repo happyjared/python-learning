@@ -9,7 +9,6 @@ cmd = '管家'
 jared = '贾里德'
 hello = "[愉快] 您好, 管家\"贾里德\"为你服务 ☺"
 bye = '[流淚] Bye. This is Jared [再见]'
-my_nickname = 'Jared Qiu'
 
 
 @itchat.msg_register(itchat.content.TEXT)
@@ -23,17 +22,15 @@ def reply(msg):
     print('Call: ' + receive_text, end='')
 
     to_user_id = msg['ToUserName']  # 接收人
-    to_user_nickname = msg.User.NickName  # 接收人昵称
-    print(to_user_nickname)
     from_user_id = msg['FromUserName']  # 发送人
-    if my_nickname != to_user_nickname and receive_text == cmd:
+    if receive_text == cmd:
         # 用户控制机器人开关
         if switch.get(from_user_id) is None:
             switch[from_user_id] = True
         else:
             switch[from_user_id] = not switch[from_user_id]
         return hello if switch[from_user_id] else bye
-    if my_nickname == to_user_nickname and receive_text == jared:
+    if receive_text == jared:
         # 自己控制机器人
         if switch.get(to_user_id) is None:
             switch[to_user_id] = True
@@ -41,8 +38,8 @@ def reply(msg):
             switch[to_user_id] = not switch[to_user_id]
         itchat.send_msg(hello, to_user_id) if switch[to_user_id] else itchat.send_msg(bye, to_user_id)
 
-    print('----------' + str(switch))
-    flag = switch.get(from_user_id) or switch.get(to_user_id)
+    # print('----------' + str(switch))
+    flag = switch.get(from_user_id)
 
     # 判断是否开启机器对话
     if flag:

@@ -51,7 +51,7 @@ def call_text_v2(msg, user_id, key=default_key):
         },
         "userInfo": {
             "apiKey": key,
-            "userId": user_id
+            "userId": user_id[1:33]
         }
     }
     try:

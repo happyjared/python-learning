@@ -10,14 +10,14 @@ from datetime import datetime
 class WxMps:
     def __init__(self):
         self.biz = 'MzU4NjA4NjMwNw=='  # 公众号标志
-        self.pass_ticket = 'M7xz2Lwxxg2%25252F8HQMNubFvBpO0NJd70CNvsBxMFErvIDKgQDX0rfCbv80yPHcQKNK'  # 通用票据(非固定)
+        self.pass_ticket = 'syyvrYpIR5DlT5goq3tcdr1sw%25252BUhH%25252FByS6GimOsAWTbnh3eR94OSz9Xb665LkGfV'  # 通用票据(非固定)
         self.headers = {
             # 通用cookie(非固定)
-            'Cookie': 'pgv_pvi=6708115456; pgv_si=s4773475328; ptisp=cm; RK=XopsBML0RK; ptcz=73aac9f580839d2b9c7f634ca28f3e19c8bd037390a7f639e5332831aa13b8c4; uin=o1394223902; skey=@KWMdUovjK; pt2gguin=o1394223902; rewardsn=; wxuin=2089823341; devicetype=android-26; version=26060739; lang=zh_HK; pass_ticket=M7xz2Lwxxg2/8HQMNubFvBpO0NJd70CNvsBxMFErvIDKgQDX0rfCbv80yPHcQKNK; wap_sid2=CO3YwOQHEogBME9vTDBQc09lUmJNZVpSV1R2WEJYbVdweDZscHFaRGNNUnp0S2ZVdURJaFFSa3F0cV9pM0JYSzhJNmVWdTZaS2Fhb1FPRkhEZ2UwNVVabm9fUUJBcl9nNjdfcnMxVEdhMllKUFY1UExua0NfekFkQ0FWYXVYcU9yVmxJeXRqNGx5QU1BQUF+fjCd5qHbBTgNQAE=; wxtokenkey=777',
+            'Cookie': 'pgv_pvi=6708115456; pgv_si=s4773475328; ptisp=cm; RK=XopsBML0RK; ptcz=73aac9f580839d2b9c7f634ca28f3e19c8bd037390a7f639e5332831aa13b8c4; uin=o1394223902; skey=@KWMdUovjK; pt2gguin=o1394223902; rewardsn=; wxuin=2089823341; devicetype=android-26; version=26060739; lang=zh_HK; pass_ticket=syyvrYpIR5DlT5goq3tcdr1sw+UhH/ByS6GimOsAWTbnh3eR94OSz9Xb665LkGfV; wap_sid2=CO3YwOQHEogBWFJhV2l3ajhMc0ZtZGFreFF0dGx1MGNaWi1XVE5Ubzk4QXFOMDRVclRCNkhLb1JSdjJqUXR2d1p4aTJheWZ3OWhFSVlvdmlaME1wSzhFMHRzUVBxT0tocFVna2t6QUVwQkoyQUNtUzdrZ1FLUHNGR1VwNEl0N1ZRUnlhT3V5MHV5QU1BQUF+fjDzpaXbBTgNQAE=; wxtokenkey=777',
             'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; WAS-AL00 Build/HUAWEIWAS-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/044203 Mobile Safari/537.36 MicroMessenger/6.6.7.1321(0x26060739) NetType/WIFI Language/zh_HK'
         }
 
-    def spider_articles(self):
+    def spider_articles(self, msg_token):
         """抓取公众号的文章
         
         :return: 
@@ -25,7 +25,6 @@ class WxMps:
 
         offset = 0
         while True:
-            msg_token = '968_xDms46Qr4aDyyGztsd2KrCTBkhFG7CYkhQ4Nuw~~'  # 文章列表票据(非固定)
             api = 'https://mp.weixin.qq.com/mp/profile_ext?action=getmsg&__biz={0}&f=json&offset={1}' \
                   '&count=10&is_ok=1&scene=124&uin=777&key=777&pass_ticket={2}&wxtoken=&appmsg_token' \
                   '={3}&x5=1&f=json'.format(self.biz, offset, self.pass_ticket, msg_token)
@@ -45,7 +44,7 @@ class WxMps:
                     app_msg_ext_info = msg.get('app_msg_ext_info')  # article原数据
                     if app_msg_ext_info:
                         # 某推送的首条文章
-                        self.parse_data(app_msg_ext_info, msg_id, date_time, msg_type, msg_data)
+                        self.__parse_articles(app_msg_ext_info, msg_id, date_time, msg_type, msg_data)
                         # 该推送的其余文章
                         multi_app_msg_item_list = app_msg_ext_info.get('multi_app_msg_item_list')
                         if multi_app_msg_item_list:
@@ -54,7 +53,7 @@ class WxMps:
                                 if msg_id == 0:
                                     msg_id = int(time.time() * 1000)  # 部分历史文章有都为0的问题
                                 msg_data = '{}'  # 首条文章有该数据即可
-                                self.parse_data(item, msg_id, date_time, msg_type, msg_data)
+                                self.__parse_articles(item, msg_id, date_time, msg_type, msg_data)
                 if not msg_list:
                     break
                 time.sleep(30)  # 必要的休眠
@@ -63,7 +62,17 @@ class WxMps:
                 print('Current end offset is %d' % offset)
                 break
 
-    def parse_data(self, info, msg_id, date_time, msg_type, msg_data):
+    def __parse_articles(self, info, msg_id, date_time, msg_type, msg_data):
+        """解析文章列表接口数据并保存
+
+        :param info:
+        :param msg_id:
+        :param date_time:
+        :param msg_type:
+        :param msg_data:
+        :return:
+        """
+
         title = info['title']  # 标题
         author = info['author']  # 作者
         cover = info['cover']  # 封面图
@@ -73,30 +82,36 @@ class WxMps:
         ext_data = json.dumps(info, ensure_ascii=False)  # 原始数据
         content_url = info['content_url']  # 微信地址
 
+        self.__handle_data(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data, title,
+                                                      author, cover, digest, content_url, source_url,
+                                                      del_flag, ext_data, datetime.now()))
+
+    def __parse_article_detail(self, content_url):
+        """从文章详情提取数据用于获取评论
+
+        :param content_url: 微信地址
+        :return:
+        """
+
         try:
-            html = requests.get(content_url, headers=self.headers).text
+            api = content_url.replace('amp;', '')
+            html = requests.get(api, headers=self.headers).text
         except requests.exceptions.MissingSchema:
             print('requests.exceptions.MissingSchema = ' + content_url)
         else:
             # group(0) is current line
             comment_str = re.search(r'var comment_id = "(.*)" \|\| "(.*)" \* 1;', html)
-            if comment_str:
-                comment_id = comment_str.group(1)
-                token_str = re.search(r'window.appmsg_token = "(.*)";', html)
-                if token_str:
-                    token = token_str.group(1)
-                    if token:
-                        self.__handle_data(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data,
-                                                                      title, author, cover, digest,
-                                                                      content_url, source_url, comment_id,
-                                                                      token, del_flag, ext_data,
-                                                                      datetime.now()))
-                        # self.get_comment(comment_id, token) # 爬取评论
+            comment_id = comment_str.group(1)
+            app_msg_id_str = re.search(r"var appmsgid = '' \|\| '(.*)'\|\|", html)
+            app_msg_id = app_msg_id_str.group(1)
+            token_str = re.search(r'window.appmsg_token = "(.*)";', html)
+            token = token_str.group(1)
 
-    def parse_article(self):
-        pass
+            if app_msg_id and token:
+                print('__parse_article_detail: ' + api)
+                self.__spider_comments(app_msg_id, comment_id, token)  # 爬取评论
 
-    def spider_comments(self, app_msg_id, comment_id, msg_token):
+    def __spider_comments(self, app_msg_id, comment_id, msg_token):
         """抓取文章的评论
         
         :param app_msg_id: 标志
@@ -142,19 +157,17 @@ class WxMps:
     def __handle_data(sql, params):
         pgs.handler(sql, params, db_name='wxmps')
 
-    def get_article_by_title(self, title):
+    def get_content_url(self, title=None):
         rows = pgs.fetch_all(wx_mps_sql.find_article(), ('%' + title + '%',), db_name='wxmps')
-        if rows:
-            for row in rows:
-                comment_id = row[0]
-                comment_token = row[1]
-                if comment_id and comment_token:
-                    self.spider_comments(comment_id, comment_token)
+        for row in rows:
+            content_url = row[0]
+            self.__parse_article_detail(content_url)
 
 
 if __name__ == '__main__':
     wxMps = WxMps()
     # 爬取文章
-    # wxMps.spider_articles()
+    # msg_token = '968_xDms46Qr4aDyyGztsd2KrCTBkhFG7CYkhQ4Nuw~~'  # 文章列表票据(非固定)
+    # wxMps.spider_articles(msg_token)
     # 爬取评论
-    wxMps.get_article_by_title('我想认识你')
+    wxMps.get_content_url(title='我想认识你')

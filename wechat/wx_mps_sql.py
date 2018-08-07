@@ -5,8 +5,8 @@ def add_article():
     """
 
     sql = 'insert into tb_article(msg_id,date_time,"type",msg_data,title,author,cover,digest,' \
-          'content_url,source_url,comment_id,comment_token,del_flag,ext_data,create_time) VALUES' \
-          '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+          'content_url,source_url,del_flag,ext_data,create_time) VALUES' \
+          '(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 
     return sql
 
@@ -30,6 +30,6 @@ def find_article():
     :return: sql
     """
 
-    sql = 'select comment_id,comment_token from tb_article where title like %s'
+    sql = 'select content_url from tb_article where title like %s'
 
     return sql

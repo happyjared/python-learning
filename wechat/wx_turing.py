@@ -50,7 +50,7 @@ def reply(msg):
         else:
             # 默认回复
             default_reply = 'I received: ' + receive_text
-            text = robot.call_text_v1(receive_text, from_user_id)
+            text = robot.call_text_v2(receive_text, from_user_id)
             # a or b 如果a有内容(非空或者非None)，那么返回a，否则返回b
             return text or default_reply
 

@@ -17,7 +17,7 @@ def run():
     ps = PlanetSpider()
     pr = PlanetRobot(ps)
 
-    t1 = Thread(target=pr.dynamic, name='Thread-1-dynamic')
+    t1 = Thread(target=pr.user_dynamic, name='Thread-1-dynamic')
     t2 = Thread(target=pr.reply_robot, name='Thread-2-reply')
 
     t2.start()
@@ -31,7 +31,7 @@ class PlanetRobot:
     def __init__(self, spider):
         self.spider = spider
 
-    def dynamic(self):
+    def user_dynamic(self):
         """获得全局的动态列表
         
         """
@@ -65,7 +65,7 @@ class PlanetRobot:
                     if not recent_comment or len(
                             list(filter(lambda rc: rc['user_id'] == Planet.my_user_id, recent_comment))) == 0:
                         comment_msg = robot.call_text(comment, msg_user_id)
-                        self.robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
+                        self.__robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
 
             log.info('Dynamic to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
@@ -93,20 +93,19 @@ class PlanetRobot:
                 comment_time = comment['ctime']  # 回复时间
                 text = comment['message']['text']['Text']  # 回复内容
 
-                effect_count = pgs.handler(planet_sql.add_user_comment(),
-                                           (comment_id, user_id, msg_id, text, comment_time, now))
+                effect_count = self.spider.handler(planet_sql.add_user_comment(),
+                                                   (comment_id, user_id, msg_id, text, comment_time, now))
                 if effect_count != 0:
                     comment_msg = robot.call_text(text, user_id)
                     tl_hash = resp['tl_hashes'][index]
-                    self.robot_comment(msg_id, comment_msg, tl_hash, user_id)
+                    self.__robot_comment(msg_id, comment_msg, tl_hash, user_id)
 
             log.info('Reply robot to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
             sleep_time = random.randint(60, 90)
             log.info('Reply robot end sleep , next sleep time is %d', sleep_time)
 
-    @staticmethod
-    def robot_comment(msg_id, comment_msg, tl_hash, to_user_id):
+    def __robot_comment(self, msg_id, comment_msg, tl_hash, to_user_id):
         """机器人评论动态或回复评论
         
         :param msg_id: 动态id
@@ -123,5 +122,5 @@ class PlanetRobot:
         comment_id = comment['id']  # 评论id
         comment_time = comment['ctime']  # 评论时间
 
-        pgs.handler(planet_sql.add_user_comment(),
-                    (comment_id, Planet.my_user_id, msg_id, comment_msg, comment_time, datetime.now()))
+        self.spider.handler(planet_sql.add_user_comment(),
+                            (comment_id, Planet.my_user_id, msg_id, comment_msg, comment_time, datetime.now()))

@@ -5,7 +5,7 @@ import psycopg2
 log = logging.getLogger()
 
 
-def handler(sql, params, db_name='planet'):
+def handler(sql, params, db_name='postgres'):
     """Save or Update data to PostgreSQL
     
     :param sql: SQL
@@ -38,7 +38,7 @@ def handler(sql, params, db_name='planet'):
     return effect_count
 
 
-def fetch_all(sql, params, db_name='planet'):
+def fetch_all(sql, params, db_name='postgres'):
     """Select data from PostgreSQL
 
     :param sql: SQL

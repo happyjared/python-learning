@@ -1,4 +1,5 @@
 # coding=UTF-8
+import pgs
 import logging
 import requests
 
@@ -6,6 +7,7 @@ log = logging.getLogger()
 
 
 class Planet(object):
+    db_name = 'planet'
     my_hash = None
     my_user_id = None
     headers = {
@@ -18,6 +20,17 @@ class Planet(object):
         Planet.my_hash = self.__get_my_hash()
         Planet.my_user_id = self.__get_my_user_id()
         log.info('Init my hash : %s and my user id : %s', Planet.my_hash, Planet.my_user_id)
+
+    @staticmethod
+    def handler(sql, params):
+        """ 处理数据
+
+        :param sql:
+        :param params:
+        :return:
+        """
+
+        return pgs.handler(sql, params, db_name=Planet.db_name)
 
     @staticmethod
     def __get_my_user_id():

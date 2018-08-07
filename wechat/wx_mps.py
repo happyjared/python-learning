@@ -9,52 +9,55 @@ from datetime import datetime
 
 class WxMps:
     def __init__(self):
-        self.biz = 'MzU4NjA4NjMwNw=='  # 刺猬体验
-        self.pass_ticket = 'M7xz2Lwxxg2%25252F8HQMNubFvBpO0NJd70CNvsBxMFErvIDKgQDX0rfCbv80yPHcQKNK'
+        self.biz = 'MzU4NjA4NjMwNw=='  # 公众号标志
+        self.pass_ticket = 'M7xz2Lwxxg2%25252F8HQMNubFvBpO0NJd70CNvsBxMFErvIDKgQDX0rfCbv80yPHcQKNK'  # 通用票据(非固定)
         self.headers = {
+            # 通用cookie(非固定)
             'Cookie': 'pgv_pvi=6708115456; pgv_si=s4773475328; ptisp=cm; RK=XopsBML0RK; ptcz=73aac9f580839d2b9c7f634ca28f3e19c8bd037390a7f639e5332831aa13b8c4; uin=o1394223902; skey=@KWMdUovjK; pt2gguin=o1394223902; rewardsn=; wxuin=2089823341; devicetype=android-26; version=26060739; lang=zh_HK; pass_ticket=M7xz2Lwxxg2/8HQMNubFvBpO0NJd70CNvsBxMFErvIDKgQDX0rfCbv80yPHcQKNK; wap_sid2=CO3YwOQHEogBME9vTDBQc09lUmJNZVpSV1R2WEJYbVdweDZscHFaRGNNUnp0S2ZVdURJaFFSa3F0cV9pM0JYSzhJNmVWdTZaS2Fhb1FPRkhEZ2UwNVVabm9fUUJBcl9nNjdfcnMxVEdhMllKUFY1UExua0NfekFkQ0FWYXVYcU9yVmxJeXRqNGx5QU1BQUF+fjCd5qHbBTgNQAE=; wxtokenkey=777',
             'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; WAS-AL00 Build/HUAWEIWAS-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/044203 Mobile Safari/537.36 MicroMessenger/6.6.7.1321(0x26060739) NetType/WIFI Language/zh_HK'
         }
 
     def spider_articles(self):
-        """抓取公众号的文章列表
+        """抓取公众号的文章
         
         :return: 
         """
 
         offset = 0
         while True:
-            # 微信链接有时效性，Api参数中应根据手机抓包获取最新的cookie和msg_token
-            msg_token = '968_xDms46Qr4aDyyGztsd2KrCTBkhFG7CYkhQ4Nuw~~'
+            msg_token = '968_xDms46Qr4aDyyGztsd2KrCTBkhFG7CYkhQ4Nuw~~'  # 文章列表票据(非固定)
             api = 'https://mp.weixin.qq.com/mp/profile_ext?action=getmsg&__biz={0}&f=json&offset={1}' \
                   '&count=10&is_ok=1&scene=124&uin=777&key=777&pass_ticket={2}&wxtoken=&appmsg_token' \
                   '={3}&x5=1&f=json'.format(self.biz, offset, self.pass_ticket, msg_token)
+
             resp = requests.get(api, headers=self.headers).json()
-            status = resp['errmsg']
+            status = resp['errmsg']  # 状态码
             if status == 'ok':
-                offset = resp['next_offset']
+                offset = resp['next_offset']  # 偏移量
                 msg_list = json.loads(resp['general_msg_list'])['list']
                 for msg in msg_list:
                     comm_msg_info = msg['comm_msg_info']
-                    msg_id = comm_msg_info['id']
-                    date_time = datetime.fromtimestamp(comm_msg_info['datetime'])
-                    msg_type = comm_msg_info['type']
-                    msg_data = json.dumps(comm_msg_info, ensure_ascii=False)
+                    msg_id = comm_msg_info['id']  # 文章标志位
+                    date_time = datetime.fromtimestamp(comm_msg_info['datetime'])  # 发布时间
+                    msg_type = comm_msg_info['type']  # 文章类型
+                    msg_data = json.dumps(comm_msg_info, ensure_ascii=False)  # msg原数据
 
-                    app_msg_ext_info = msg.get('app_msg_ext_info')
+                    app_msg_ext_info = msg.get('app_msg_ext_info')  # article原数据
                     if app_msg_ext_info:
+                        # 某推送的首条文章
                         self.parse_data(app_msg_ext_info, msg_id, date_time, msg_type, msg_data)
+                        # 该推送的其余文章
                         multi_app_msg_item_list = app_msg_ext_info.get('multi_app_msg_item_list')
                         if multi_app_msg_item_list:
                             for item in multi_app_msg_item_list:
-                                msg_id = item['fileid']
+                                msg_id = item['fileid']  # 文章标志位
                                 if msg_id == 0:
-                                    msg_id = int(time.time() * 1000)
-                                self.parse_data(item, msg_id, date_time, msg_type, '{}')
+                                    msg_id = int(time.time() * 1000)  # 部分历史文章有都为0的问题
+                                msg_data = '{}'  # 首条文章有该数据即可
+                                self.parse_data(item, msg_id, date_time, msg_type, msg_data)
                 if not msg_list:
                     break
-                # 必要的休眠
-                time.sleep(30)
+                time.sleep(30)  # 必要的休眠
                 print('next offset is %d' % offset)
             else:
                 print('Current end offset is %d' % offset)
@@ -90,24 +93,27 @@ class WxMps:
                                                                       datetime.now()))
                         # self.get_comment(comment_id, token) # 爬取评论
 
-    def get_comment(self, comment_id, msg_token):
-        """抓取某一文章的评论内容
+    def parse_article(self):
+        pass
+
+    def spider_comments(self, app_msg_id, comment_id, msg_token):
+        """抓取文章的评论
         
+        :param app_msg_id: 标志
         :param comment_id: 标志
-        :param msg_token: 票据
+        :param msg_token: 评论票据(非固定)
         :return: 
         """
 
         api = 'https://mp.weixin.qq.com/mp/appmsg_comment?action=getcomment&scene=0&__biz={0}' \
-              '&appmsgid=2247500695&idx=1&comment_id={1}&offset=0&limit=100&uin=777&key=777' \
+              '&appmsgid={4}&idx=1&comment_id={1}&offset=0&limit=100&uin=777&key=777' \
               '&pass_ticket={2}&wxtoken=777&devicetype=android-26&clientversion=26060739' \
-              '&appmsg_token={3}&x5=1&f=json'.format(self.biz, comment_id, self.pass_ticket, msg_token)
-        print(api)
+              '&appmsg_token={3}&x5=1&f=json'.format(self.biz, comment_id, self.pass_ticket,
+                                                     msg_token, app_msg_id)
         resp = requests.get(api, headers=self.headers).json()
         status = resp['base_resp']['errmsg']
         if status == 'ok':
             elected_comment = resp['elected_comment']
-            # comment_data = json.dumps(elected_comment, ensure_ascii=False)
             for comment in elected_comment:
                 nick_name = comment['nick_name']  # 昵称
                 logo_url = comment['logo_url']  # 评论人头像
@@ -143,12 +149,12 @@ class WxMps:
                 comment_id = row[0]
                 comment_token = row[1]
                 if comment_id and comment_token:
-                    self.get_comment(comment_id, comment_token)
+                    self.spider_comments(comment_id, comment_token)
 
 
 if __name__ == '__main__':
     wxMps = WxMps()
+    # 爬取文章
     # wxMps.spider_articles()
+    # 爬取评论
     wxMps.get_article_by_title('我想认识你')
-    # wxMps.get_comment('397825638695813120',
-    #                   '968_ueuCDgjouhU5xWv5jOYRBs3OMFEutLK52vvP0s--DPZlmGflhRyGwzuTxPuyAoaAJonRTKp2uJy_9uFF')

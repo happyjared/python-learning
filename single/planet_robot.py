@@ -64,7 +64,7 @@ class PlanetRobot:
                     # 无评论或评论列表里没有机器人的回复
                     if not recent_comment or len(
                             list(filter(lambda rc: rc['user_id'] == Planet.my_user_id, recent_comment))) == 0:
-                        comment_msg = robot.call_text(comment, msg_user_id)
+                        comment_msg = robot.call_text_v1(comment, msg_user_id)
                         self.__robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
 
             log.info('Dynamic to sleep , sleep time is %d', sleep_time)
@@ -96,7 +96,7 @@ class PlanetRobot:
                 effect_count = self.spider.handler(planet_sql.add_user_comment(),
                                                    (comment_id, user_id, msg_id, text, comment_time, now))
                 if effect_count != 0:
-                    comment_msg = robot.call_text(text, user_id)
+                    comment_msg = robot.call_text_v1(text, user_id)
                     tl_hash = resp['tl_hashes'][index]
                     self.__robot_comment(msg_id, comment_msg, tl_hash, user_id)
 

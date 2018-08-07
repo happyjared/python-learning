@@ -5,7 +5,6 @@ import logging
 import requests
 import planet_sql
 from planet import Planet
-from utils import pgs
 from threading import Thread
 from utils import robot
 from datetime import datetime

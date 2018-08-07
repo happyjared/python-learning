@@ -1,7 +1,7 @@
-import robot
 import random
 import itchat
 from utils import mat
+from utils import robot
 from itchat.content import *
 
 switch = {}

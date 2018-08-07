@@ -4,7 +4,7 @@ import requests
 
 log = logging.getLogger()
 default_key = '6ad11c98a4da4cb986ff1d2d83b49347'
-default_reply = 'What???'
+default_reply = 'What ???'
 
 
 def call_text_v1(msg, user_id, key=default_key):

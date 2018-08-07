@@ -20,8 +20,8 @@ def run():
     t1 = Thread(target=pr.dynamic, name='Thread-1-dynamic')
     t2 = Thread(target=pr.reply_robot, name='Thread-2-reply')
 
-    t1.start()
     t2.start()
+    t1.start()
 
 
 log = logging.getLogger()
@@ -80,6 +80,7 @@ class PlanetRobot:
         data = {"offset": 0}
         sleep_time = random.randint(60, 90)
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/tlmsg/comments/my-received'
+        log.info('Start to get reply robot')
         while True:
             resp = requests.post(api, json=data, headers=Planet.headers).json()
 

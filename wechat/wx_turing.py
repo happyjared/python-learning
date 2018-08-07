@@ -63,12 +63,17 @@ def reply(msg):
     :return: 回应内容
     """
 
-    msg_type = msg['Type']
-    filename = msg['FileName']
-    content = msg['Content']
-    print('Type: %s , FileName: %s , Content: %s' % (msg_type, filename, content))
-    default_reply = "[疑问] Is't a " + msg_type
-    return default_reply
+    from_user_id = msg['FromUserName']  # 发送人
+    flag = switch.get(from_user_id)
+
+    # 判断是否开启机器对话
+    if flag:
+        msg_type = msg['Type']
+        content = msg['Content']
+        filename = msg['FileName']
+        print('Type: %s , FileName: %s , Content: %s' % (msg_type, filename, content))
+        default_reply = "[疑问] Is't a " + msg_type
+        return default_reply
 
 
 # 登录微信机器人

@@ -33,3 +33,14 @@ def find_article():
     sql = 'select content_url from tb_article where title like %s'
 
     return sql
+
+
+def find_article_comment():
+    """ Select from Article Comment
+
+    :return: sql
+    """
+
+    sql = 'select nick_name,content,logo_url,comment_time from tb_article_comment where content like %s'
+
+    return sql

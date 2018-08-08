@@ -21,14 +21,15 @@ def call_text_v1(msg, user_id, key=default_key):
         'info': msg,
         'userid': user_id,
     }
-    try:
-        resp = requests.post(api, data=data).json()
-        reply_text = resp.get('text')
-        log.info('Call : %s . V1 Turing Response : %s', msg, reply_text)
-        return reply_text if reply_text else default_reply
-    except:
-        log.exception('Call V1 Turing Response Error')
-        return default_reply
+    resp = requests.post(api, data=data).json()
+    reply_text = resp.get('text')
+    log.info('Call : %s . V1 Turing Response : %s', msg, reply_text)
+    return reply_text if reply_text else default_reply
+    # try:
+    #
+    # except:
+    #     log.exception('Call V1 Turing Response Error')
+    #     return default_reply
 
 
 def call_text_v2(msg, user_id, key=default_key):

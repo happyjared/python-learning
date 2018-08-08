@@ -15,7 +15,6 @@ def handler(sql, params, db_name='postgres'):
 
     effect_count = 0
     try:
-        # 139.199.162.33
         conn_info = "host=localhost port=15234 dbname={0} user=planet password=planet".format(db_name)
         conn = psycopg2.connect(conn_info)
         cur = conn.cursor()

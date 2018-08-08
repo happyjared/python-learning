@@ -3,23 +3,9 @@ import random
 import logging
 import requests
 import planet_sql
-from planet import Planet
-from threading import Thread
 from utils import robot
+from planet import Planet
 from datetime import datetime
-from planet_spider import PlanetSpider
-
-
-# 程序入口
-def run():
-    ps = PlanetSpider()
-    pr = PlanetRobot(ps)
-
-    t1 = Thread(target=pr.user_dynamic, name='Thread-1-dynamic')
-    t2 = Thread(target=pr.reply_robot, name='Thread-2-reply')
-
-    t2.start()
-    t1.start()
 
 
 log = logging.getLogger()

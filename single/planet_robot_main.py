@@ -1,8 +1,10 @@
 import os
 import yaml
 import logging
-import planet_robot
 import logging.config
+from threading import Thread
+from planet_robot import PlanetRobot
+from planet_spider import PlanetSpider
 
 
 def setup_logging():
@@ -26,4 +28,11 @@ def setup_logging():
 
 if __name__ == '__main__':
     setup_logging()
-    planet_robot.run()
+    ps = PlanetSpider()
+    pr = PlanetRobot(ps)
+
+    t1 = Thread(target=pr.user_dynamic, name='Thread-1')
+    t2 = Thread(target=pr.reply_robot, name='Thread-2')
+
+    t1.start()
+    t2.start()

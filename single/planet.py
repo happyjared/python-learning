@@ -7,7 +7,7 @@ log = logging.getLogger()
 
 class Planet(object):
     host = 'localhost'
-    port = 12432
+    port = 15234
     db_name = 'planet'
     user = db_name
     pwd = db_name

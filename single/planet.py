@@ -1,16 +1,23 @@
 import logging
 import requests
 from utils import pgs
+from utils import rds
 
 log = logging.getLogger()
 
 
 class Planet(object):
-    host = 'localhost'
-    port = 15234
-    db_name = 'planet'
-    user = db_name
-    pwd = db_name
+    # Postgres配置
+    pgs_host = 'localhost'
+    pgs_port = 15234
+    pgs_db_name = 'planet'
+    pgs_user = pgs_db_name
+    pgs_pwd = pgs_db_name
+    # Redis配置
+    rds_host = pgs_host
+    rds_port = 16937
+    rds_db = 0
+    rds_pwd = pgs_user
     my_hash = None
     my_user_id = None
     headers = {
@@ -20,11 +27,12 @@ class Planet(object):
     }
 
     def __init__(self):
+        self.postgres = pgs.Pgs(host=Planet.pgs_host, port=Planet.pgs_port, db_name=Planet.pgs_db_name,
+                                user=Planet.pgs_user, password=Planet.pgs_pwd)
+        self.redis = rds.Rds(host=Planet.rds_host, port=Planet.rds_port, db=Planet.rds_db, password=Planet.rds_pwd)
         Planet.my_hash = self.__get_my_hash()
         Planet.my_user_id = self.__get_my_user_id()
         log.info('Init my hash : %s and my user id : %s', Planet.my_hash, Planet.my_user_id)
-        self.postgres = pgs.Pgs(host=Planet.host, port=Planet.port, db_name=Planet.db_name,
-                                user=Planet.user, password=Planet.pwd)
 
     def handler(self, sql, params):
         """ 处理数据

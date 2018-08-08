@@ -1,4 +1,3 @@
-# coding=UTF-8
 import time
 import random
 import logging

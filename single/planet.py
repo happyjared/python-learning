@@ -1,4 +1,3 @@
-# coding=UTF-8
 import logging
 import requests
 from utils import pgs

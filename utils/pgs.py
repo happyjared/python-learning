@@ -34,8 +34,6 @@ class Pgs:
         except psycopg2.Error:
             log.error('SQL: %s , Params: %s', sql, params)
             log.exception('psycopg2 Error')
-        else:
-            self.conn.commit()
         return effect_count
 
     def fetch_all(self, sql, params):

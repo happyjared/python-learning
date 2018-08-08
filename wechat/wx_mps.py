@@ -8,6 +8,12 @@ from datetime import datetime
 
 
 class WxMps:
+    host = 'localhost'
+    port = '12432'
+    db_name = 'wxmps'
+    user = db_name
+    pwd = db_name
+
     def __init__(self):
         self.biz = 'MzU4NjA4NjMwNw=='  # 公众号标志
         self.pass_ticket = 'syyvrYpIR5DlT5goq3tcdr1sw%25252BUhH%25252FByS6GimOsAWTbnh3eR94OSz9Xb665LkGfV'  # 通用票据(非固定)
@@ -16,6 +22,8 @@ class WxMps:
             'Cookie': 'pgv_pvi=6708115456; pgv_si=s4773475328; ptisp=cm; RK=XopsBML0RK; ptcz=73aac9f580839d2b9c7f634ca28f3e19c8bd037390a7f639e5332831aa13b8c4; uin=o1394223902; skey=@KWMdUovjK; pt2gguin=o1394223902; rewardsn=; wxuin=2089823341; devicetype=android-26; version=26060739; lang=zh_HK; pass_ticket=syyvrYpIR5DlT5goq3tcdr1sw+UhH/ByS6GimOsAWTbnh3eR94OSz9Xb665LkGfV; wap_sid2=CO3YwOQHEogBWFJhV2l3ajhMc0ZtZGFreFF0dGx1MGNaWi1XVE5Ubzk4QXFOMDRVclRCNkhLb1JSdjJqUXR2d1p4aTJheWZ3OWhFSVlvdmlaME1wSzhFMHRzUVBxT0tocFVna2t6QUVwQkoyQUNtUzdrZ1FLUHNGR1VwNEl0N1ZRUnlhT3V5MHV5QU1BQUF+fjDzpaXbBTgNQAE=; wxtokenkey=777',
             'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; WAS-AL00 Build/HUAWEIWAS-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/044203 Mobile Safari/537.36 MicroMessenger/6.6.7.1321(0x26060739) NetType/WIFI Language/zh_HK'
         }
+        self.postgres = pgs.Pgs(host=WxMps.host, port=WxMps.port, db_name=WxMps.db_name,
+                                user=WxMps.user, password=WxMps.pwd)
 
     def spider_articles(self, msg_token):
         """抓取公众号的文章
@@ -107,6 +115,7 @@ class WxMps:
             token_str = re.search(r'window.appmsg_token = "(.*)";', html)
             token = token_str.group(1)
 
+            # 两个条件缺一不可
             if app_msg_id and token:
                 print('__parse_article_detail: ' + api)
                 self.__spider_comments(app_msg_id, comment_id, token)  # 爬取评论
@@ -153,12 +162,24 @@ class WxMps:
                                                                       reply_content, reply_create_time, reply_like_num,
                                                                       reply_data, datetime.now()))
 
-    @staticmethod
-    def __handle_data(sql, params):
-        pgs.handler(sql, params, db_name='wxmps')
+    def __handle_data(self, sql, params):
+        """保存数据
 
-    def get_content_url(self, title=None):
-        rows = pgs.fetch_all(wx_mps_sql.find_article(), ('%' + title + '%',), db_name='wxmps')
+        :param sql: SQL
+        :param params: Params
+        :return:
+        """
+
+        self.postgres.handler(sql, params)
+
+    def get_content_url(self, title=''):
+        """从数据库获取帅选文章的微信地址
+
+        :param title: 过滤条件
+        :return:
+        """
+
+        rows = self.postgres.fetch_all(wx_mps_sql.find_article(), ('%' + title + '%',))
         for row in rows:
             content_url = row[0]
             self.__parse_article_detail(content_url)
@@ -170,4 +191,4 @@ if __name__ == '__main__':
     # msg_token = '968_xDms46Qr4aDyyGztsd2KrCTBkhFG7CYkhQ4Nuw~~'  # 文章列表票据(非固定)
     # wxMps.spider_articles(msg_token)
     # 爬取评论
-    wxMps.get_content_url(title='我想认识你')
+    wxMps.get_content_url()

@@ -6,7 +6,11 @@ log = logging.getLogger()
 
 
 class Planet(object):
+    host = 'localhost'
+    port = 12432
     db_name = 'planet'
+    user = db_name
+    pwd = db_name
     my_hash = None
     my_user_id = None
     headers = {
@@ -19,9 +23,10 @@ class Planet(object):
         Planet.my_hash = self.__get_my_hash()
         Planet.my_user_id = self.__get_my_user_id()
         log.info('Init my hash : %s and my user id : %s', Planet.my_hash, Planet.my_user_id)
+        self.postgres = pgs.Pgs(host=Planet.host, port=Planet.port, db_name=Planet.db_name,
+                                user=Planet.user, password=Planet.pwd)
 
-    @staticmethod
-    def handler(sql, params):
+    def handler(self, sql, params):
         """ 处理数据
 
         :param sql:
@@ -29,7 +34,7 @@ class Planet(object):
         :return:
         """
 
-        return pgs.handler(sql, params, db_name=Planet.db_name)
+        return self.postgres.handler(sql, params)
 
     @staticmethod
     def __get_my_user_id():

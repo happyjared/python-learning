@@ -13,9 +13,12 @@ def show_data(data_list):
 
 
 def get_data():
-    content = '%广州%'
-    rows = pgs.fetch_all(wx_mps_sql.find_article_comment(), (content,), db_name='wxmps')
-    show_data(rows)
+    wxmps = 'wxmps'
+    content = '%%'
+    postgres = pgs.Pgs(host='', port=12432, db_name=wxmps, user=wxmps, password=wxmps)
+    rows = postgres.fetch_all(wx_mps_sql.find_article_comment(), (content,))
+    if rows:
+        show_data(rows)
 
 
 if __name__ == '__main__':

@@ -88,8 +88,8 @@ class Planet(object):
 
         if not Planet.my_hash:
             key = 'planet:my:hash'
-            Planet.my_user_id = self.redis.get(key)
-            if not Planet.my_user_id:
+            Planet.my_hash = self.redis.get(key)
+            if not Planet.my_hash:
                 api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/my-dog-hash'
                 resp = requests.post(api, json={}, headers=Planet.headers).json()
                 Planet.my_hash = resp['uid_hash']

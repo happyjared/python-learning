@@ -31,15 +31,12 @@ log = logging.getLogger()
 
 class Planet(object):
     # Postgres配置
-    pgs_host = 'localhost'
-    pgs_port = 15234
+    pgs_port = 12432
     pgs_db_name = 'planet'
     pgs_user = pgs_db_name
     pgs_pwd = pgs_db_name
     # Redis配置
-    rds_host = pgs_host
-    rds_port = 16937
-    rds_db = 1
+    rds_port = 12379
     rds_pwd = pgs_user
     my_hash = None
     my_user_id = None
@@ -50,10 +47,9 @@ class Planet(object):
     }
 
     def __init__(self):
-        self.postgres = pgs.Pgs(host=Planet.pgs_host, port=Planet.pgs_port, db_name=Planet.pgs_db_name,
+        self.postgres = pgs.Pgs(port=Planet.pgs_port, db_name=Planet.pgs_db_name,
                                 user=Planet.pgs_user, password=Planet.pgs_pwd)
-        self.redis = rds.Rds(host=Planet.rds_host, port=Planet.rds_port, db=Planet.rds_db,
-                             password=Planet.rds_pwd).redis_cli
+        self.redis = rds.Rds(port=Planet.rds_port, password=Planet.rds_pwd).redis_cli
         Planet.my_hash = self.__get_my_hash()
         Planet.my_user_id = self.__get_my_user_id()
         log.info('Init my hash : %s and my user id : %s', Planet.my_hash, Planet.my_user_id)

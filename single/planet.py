@@ -41,9 +41,9 @@ class Planet(object):
     my_hash = None
     my_user_id = None
     headers = {
-        'Authorization': 'token djM6xZStuyhZask3vssgz8xMtjrrIAGR7JsU6gSvwp8ClkkGrVQRI6K34_BnjyVriHZEopaxBT1'
-                         'zwkt11eEO8bHnw-JAESD3Kv4E4IdfW7lg2GEP46eyRP_ccFLo6VKwDjRRA48B4hW9Mp7L5pRPaBwCpcIU'
-                         'PKbN_oQLnVRIiI1ZEY9k'
+        'Authorization': 'token djM6wsX7KA2Kfa6xRP96i5HYpDrz9NF8uRndy_rkCY-F-O1FBRjnzmnHYrsJAIvk5Ooh4Flb'
+                         'scMsSSFsNRTaah9-V6J_jaMh5QBDkVXlLSLLG9W3vj8Xf3zO8_2186qHOpG9dXEGYeSH3TQO4J4s2R'
+                         '7ChFQMvKA6pMmeKcEUtIWi8lhb'
     }
 
     def __init__(self):

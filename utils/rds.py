@@ -14,13 +14,4 @@ class Rds:
             self.redis_cli = redis.Redis(connection_pool=pool)
             self.redis_cli.ping()
         except:
-            logging.warning('Redis error')
-            self.redis_cli = None
-
-
-if __name__ == '__main__':
-    rds = Rds(host='139.199.162.33', port=1937, password='planet')
-    rds_cli = rds.redis_cli
-    if rds_cli:
-        print(rds.redis_cli.get('a'))
-        print(rds.redis_cli.get('fff'))
+            logging.exception('Redis error')

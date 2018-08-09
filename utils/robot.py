@@ -21,14 +21,10 @@ def call_text_v1(msg, user_id, key=default_key):
         'info': msg,
         'userid': user_id,
     }
-    try:
-        resp = requests.post(api, data=data).json()
-        reply_text = resp.get('text')
-        log.info('Call : %s . V1 Turing Response : %s', msg, reply_text)
-        return reply_text if reply_text else default_reply
-    except:
-        log.exception('Call V1 Turing Response Error')
-        return default_reply
+    resp = requests.post(api, data=data).json()
+    reply_text = resp.get('text')
+    log.info('Call : %s . V1 Turing Response : %s', msg, reply_text)
+    return reply_text if reply_text else default_reply
 
 
 def call_text_v2(msg, user_id, key=default_key):
@@ -53,22 +49,18 @@ def call_text_v2(msg, user_id, key=default_key):
             "userId": user_id[1:33]
         }
     }
-    try:
-        resp = requests.post(api, json=data).json()
-        result = resp.get('results')[0]
-        values = result.get('values')
-        result_type = result['resultType']
+    resp = requests.post(api, json=data).json()
+    result = resp.get('results')[0]
+    values = result.get('values')
+    result_type = result['resultType']
 
-        reply_text = None
-        if result_type == 'text':
-            # 文字回复
-            reply_text = values.get('text')
-        elif result_type == 'url':
-            # URL回复
-            reply_text = values.get('url')
+    reply_text = None
+    if result_type == 'text':
+        # 文字回复
+        reply_text = values.get('text')
+    elif result_type == 'url':
+        # URL回复
+        reply_text = values.get('url')
 
-        log.info('Call : %s . V2 Turing Response : %s', msg, reply_text)
-        return reply_text if reply_text else default_reply
-    except:
-        log.exception('Call V2 Turing Response Error')
-        return default_reply
+    log.info('Call : %s . V2 Turing Response : %s', msg, reply_text)
+    return reply_text if reply_text else default_reply

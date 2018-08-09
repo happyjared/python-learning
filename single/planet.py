@@ -1,12 +1,12 @@
+import logger
 import logging
 import requests
 from utils import pgs
 from utils import rds
-from logger import setup_logging
 
 
 class Planet(object):
-    setup_logging()
+    logger.Logger()
     # Postgres配置
     pgs_port = 12432
     pgs_db_name = 'planet'

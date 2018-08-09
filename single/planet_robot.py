@@ -107,15 +107,16 @@ class PlanetRobot:
         data = {"tl_id": msg_id, "message": comment_msg, "hash": tl_hash, "to_user_id": to_user_id}
         resp = requests.post(api, json=data, headers=Planet.headers).json()
 
-        comment = resp['comment']
-        comment_id = comment['id']  # 评论id
-        comment_time = comment['ctime']  # 评论时间
+        comment = resp.get('comment')
+        if comment:
+            comment_id = comment['id']  # 评论id
+            comment_time = comment['ctime']  # 评论时间
 
-        key = 'planet:u:{0}:m:{1}:comment'.format(to_user_id, msg_id)
-        self.spider.redis.sadd(key, comment_id)
+            key = 'planet:u:{0}:m:{1}:comment'.format(to_user_id, msg_id)
+            self.spider.redis.sadd(key, comment_id)
 
-        self.spider.handler(planet_sql.add_user_comment(),
-                            (comment_id, Planet.my_user_id, msg_id, comment_msg, comment_time, datetime.now()))
+            self.spider.handler(planet_sql.add_user_comment(),
+                                (comment_id, Planet.my_user_id, msg_id, comment_msg, comment_time, datetime.now()))
 
 
 # 程序入口

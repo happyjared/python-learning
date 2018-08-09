@@ -47,6 +47,7 @@ class Planet(object):
     }
 
     def __init__(self):
+        setup_logging()
         self.postgres = pgs.Pgs(port=Planet.pgs_port, db_name=Planet.pgs_db_name,
                                 user=Planet.pgs_user, password=Planet.pgs_pwd)
         self.redis = rds.Rds(port=Planet.rds_port, password=Planet.rds_pwd).redis_cli

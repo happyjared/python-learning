@@ -1,5 +1,8 @@
+import os
+import yaml
 import logging
 import requests
+import logging.config
 from utils import pgs
 from utils import rds
 
@@ -27,6 +30,7 @@ class Planet(object):
     }
 
     def __init__(self):
+        self.__setup_logging()
         self.postgres = pgs.Pgs(host=Planet.pgs_host, port=Planet.pgs_port, db_name=Planet.pgs_db_name,
                                 user=Planet.pgs_user, password=Planet.pgs_pwd)
         self.redis = rds.Rds(host=Planet.rds_host, port=Planet.rds_port, db=Planet.rds_db, password=Planet.rds_pwd)
@@ -69,3 +73,22 @@ class Planet(object):
             resp = requests.post(api, json={}, headers=Planet.headers).json()
             Planet.my_hash = resp['uid_hash']
         return Planet.my_hash
+
+    @staticmethod
+    def __setup_logging():
+        """日志相关配置
+
+        """
+
+        path = 'logs'
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+        path = '../config/logging.yml'
+        if os.path.exists(path):
+            with open(path, 'r', encoding='utf-8') as f:
+                config = yaml.load(f)
+                logging.config.dictConfig(config)
+        else:
+            logging.basicConfig(level='INFO', filename='robot.log',
+                                format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')

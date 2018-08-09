@@ -6,16 +6,6 @@ import planet_sql
 from planet import Planet
 from datetime import datetime
 
-
-# 程序入口
-def run():
-    ps = PlanetSpider()
-    # 随机爬取用户
-    ps.find_random_member()
-    # 爬取附近用户
-    # ps.find_nearby_member()
-
-
 log = logging.getLogger()
 
 
@@ -182,3 +172,12 @@ class PlanetSpider(Planet):
             # tb_user_photo
             self.handler(planet_sql.add_user_photo(), (self.user_id, member_photo['url'], now))
         self.photos_data = json.dumps(member_photos, ensure_ascii=False)
+
+
+# 程序入口
+if __name__ == '__main__':
+    ps = PlanetSpider()
+    # 随机爬取用户
+    ps.find_random_member()
+    # 爬取附近用户
+    # ps.find_nearby_member()

@@ -6,6 +6,8 @@ import planet_sql
 from utils import robot
 from planet import Planet
 from datetime import datetime
+from threading import Thread
+from planet_spider import PlanetSpider
 
 log = logging.getLogger()
 
@@ -44,9 +46,8 @@ class PlanetRobot:
 
                 if not disable_comment:
                     recent_comment = resp['recent_comments'][index]
-                    # 无评论或评论列表里没有机器人的回复
-                    if not (recent_comment or list(
-                            filter(lambda rc: rc['user_id'] == Planet.my_user_id, recent_comment))):
+                    # 无评论或评论里没有机器人的回复
+                    if recent_comment and list(filter(lambda rc: rc['user_id'] == Planet.my_user_id, recent_comment)):
                         comment_msg = robot.call_text_v1(comment, msg_user_id)
                         self.__robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
 
@@ -107,3 +108,15 @@ class PlanetRobot:
 
         self.spider.handler(planet_sql.add_user_comment(),
                             (comment_id, Planet.my_user_id, msg_id, comment_msg, comment_time, datetime.now()))
+
+
+# 程序入口
+if __name__ == '__main__':
+    ps = PlanetSpider()
+    pr = PlanetRobot(ps)
+
+    t1 = Thread(target=pr.user_dynamic, name='Thread-1')
+    t2 = Thread(target=pr.reply_robot, name='Thread-2')
+
+    t1.start()
+    t2.start()

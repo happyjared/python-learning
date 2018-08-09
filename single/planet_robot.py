@@ -42,7 +42,9 @@ class PlanetRobot:
 
                 user = resp['users'][index]
                 user_hash = resp['uid_hashes'][index]
-                self.spider.parse(user, user_hash)
+                key = 'planet:u:{0}:m:{1}:comment'.format(msg_user_id, msg_id)
+                if not self.spider.redis.exists(key):
+                    self.spider.parse(user, user_hash)
 
                 if not disable_comment:
                     recent_comment = resp['recent_comments'][index]
@@ -75,15 +77,20 @@ class PlanetRobot:
                 comment_id = comment['id']  # 评论id
                 user_id = comment['user_id']  # 评论用户id
                 msg_id = comment['tl_id']  # 动态id
-                comment_time = comment['ctime']  # 回复时间
-                text = comment['message']['text']['Text']  # 回复内容
 
-                effect_count = self.spider.handler(planet_sql.add_user_comment(),
-                                                   (comment_id, user_id, msg_id, text, comment_time, now))
-                if effect_count != 0:
-                    comment_msg = robot.call_text_v1(text, user_id)
-                    tl_hash = resp['tl_hashes'][index]
-                    self.__robot_comment(msg_id, comment_msg, tl_hash, user_id)
+                key = 'planet:u:{0}:m:{1}:comment'.format(user_id, msg_id)
+                is_member = self.spider.redis.sismember(key, comment_id)
+                if not is_member:
+                    self.spider.redis.sadd(key, comment_id)
+                    comment_time = comment['ctime']  # 回复时间
+                    text = comment['message']['text']['Text']  # 回复内容
+
+                    effect_count = self.spider.handler(planet_sql.add_user_comment(),
+                                                       (comment_id, user_id, msg_id, text, comment_time, now))
+                    if effect_count != 0:
+                        comment_msg = robot.call_text_v1(text, user_id)
+                        tl_hash = resp['tl_hashes'][index]
+                        self.__robot_comment(msg_id, comment_msg, tl_hash, user_id)
 
             log.info('Reply robot to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
@@ -106,6 +113,9 @@ class PlanetRobot:
         comment = resp['comment']
         comment_id = comment['id']  # 评论id
         comment_time = comment['ctime']  # 评论时间
+
+        key = 'planet:u:{0}:m:{1}:comment'.format(to_user_id, msg_id)
+        self.spider.redis.sadd(key, comment_id)
 
         self.spider.handler(planet_sql.add_user_comment(),
                             (comment_id, Planet.my_user_id, msg_id, comment_msg, comment_time, datetime.now()))

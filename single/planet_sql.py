@@ -1,13 +1,3 @@
-def find_user():
-    """ The SQL for get user 
-
-    :return: sql
-    """
-
-    sql = 'SELECT id FROM tb_user where user_id = %s'
-    return sql
-
-
 def add_user():
     """ The SQL for add user 
     

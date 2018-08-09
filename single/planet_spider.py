@@ -6,8 +6,6 @@ import planet_sql
 from planet import Planet
 from datetime import datetime
 
-log = logging.getLogger()
-
 
 class PlanetSpider(Planet):
     max_page_size = 1000  # 每页最大多少条数据
@@ -38,7 +36,7 @@ class PlanetSpider(Planet):
 
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/dog-all-random'
         data = {"hash": Planet.my_hash, "pagesize": 50, "seed": 655572327}  # "location": "P3569589400"
-        log.info("Start find random member")
+        logging.info("Start find random member")
         for offset in range(PlanetSpider.max_size):
             data["offset"] = offset
             resp = requests.post(api, json=data, headers=Planet.headers).json()
@@ -48,9 +46,9 @@ class PlanetSpider(Planet):
                 self.parse(member)
 
             if len(members) == 0:
-                log.info("End Find random member : %d", offset)
+                logging.info("End Find random member : %d", offset)
                 break
-            log.info("Find random member : %d", offset)
+            logging.info("Find random member : %d", offset)
 
     def find_nearby_member(self):
         """发现页 -> 附近 -> 爬取距离用户信息
@@ -61,7 +59,7 @@ class PlanetSpider(Planet):
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/dog-nearby-members'
         data = {"hash": Planet.my_hash, "pagesize": 50, "geo_type": "wgs84", "geo_lat": 23.122986,
                 "geo_lng": 113.389, "gender": 2}
-        log.info("Start find nearby member")
+        logging.info("Start find nearby member")
         while True:
             data["offset"] = next_pos
             resp = requests.post(api, json=data, headers=Planet.headers).json()
@@ -76,9 +74,9 @@ class PlanetSpider(Planet):
                 self.parse(member)
 
             if next_pos == 0:
-                log.info("End Find nearby member : %d", next_pos)
+                logging.info("End Find nearby member : %d", next_pos)
                 break
-            log.info("Find nearby member : %d", next_pos)
+            logging.info("Find nearby member : %d", next_pos)
 
     def parse(self, user, user_hash=None):
         """parse member info (It's a Dict)

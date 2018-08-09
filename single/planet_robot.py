@@ -9,8 +9,6 @@ from datetime import datetime
 from threading import Thread
 from planet_spider import PlanetSpider
 
-log = logging.getLogger()
-
 
 class PlanetRobot:
     def __init__(self, spider):
@@ -25,7 +23,7 @@ class PlanetRobot:
         data = {"list": 'explore', "offset": 0, "pagesize": 20}
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/list'
 
-        log.info('Start to get users dynamic')
+        logging.info('Start to get users dynamic')
         while True:
             resp = requests.post(api, json=data, headers=Planet.headers).json()
 
@@ -54,10 +52,10 @@ class PlanetRobot:
                         comment_msg = robot.call_text_v1(comment, msg_user_id)
                         self.__robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
 
-            log.info('Dynamic to sleep , sleep time is %d', sleep_time)
+            logging.info('Dynamic to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
             sleep_time = random.randint(180, 300)
-            log.info('Dynamic end sleep , next sleep time is %d', sleep_time)
+            logging.info('Dynamic end sleep , next sleep time is %d', sleep_time)
 
     def reply_robot(self):
         """回复机器人的评论
@@ -67,7 +65,7 @@ class PlanetRobot:
         data = {"offset": 0}
         sleep_time = random.randint(60, 90)
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/tlmsg/comments/my-received'
-        log.info('Start to get reply robot')
+        logging.info('Start to get reply robot')
         while True:
             resp = requests.post(api, json=data, headers=Planet.headers).json()
 
@@ -92,10 +90,10 @@ class PlanetRobot:
                         tl_hash = resp['tl_hashes'][index]
                         self.__robot_comment(msg_id, comment_msg, tl_hash, user_id)
 
-            log.info('Reply robot to sleep , sleep time is %d', sleep_time)
+            logging.info('Reply robot to sleep , sleep time is %d', sleep_time)
             time.sleep(sleep_time)
             sleep_time = random.randint(60, 90)
-            log.info('Reply robot end sleep , next sleep time is %d', sleep_time)
+            logging.info('Reply robot end sleep , next sleep time is %d', sleep_time)
 
     def __robot_comment(self, msg_id, comment_msg, tl_hash, to_user_id):
         """机器人评论动态或回复评论

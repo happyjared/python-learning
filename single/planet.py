@@ -1,43 +1,22 @@
-import os
-import yaml
 import logging
 import requests
-import logging.config
 from utils import pgs
 from utils import rds
-
-
-def setup_logging():
-    """日志相关配置
-
-    """
-
-    path = 'logs'
-    if not os.path.exists(path):
-        os.mkdir(path)
-
-    path = '../config/logging.yml'
-    if os.path.exists(path):
-        with open(path, 'r', encoding='utf-8') as f:
-            config = yaml.load(f)
-            logging.config.dictConfig(config)
-    else:
-        logging.basicConfig(level='INFO', filename='info.log',
-                            format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
-
-
-log = logging.getLogger()
+from logger import setup_logging
 
 
 class Planet(object):
+    setup_logging()
     # Postgres配置
     pgs_port = 12432
     pgs_db_name = 'planet'
     pgs_user = pgs_db_name
     pgs_pwd = pgs_db_name
+    postgres = pgs.Pgs(port=pgs_port, db_name=pgs_db_name, user=pgs_user, password=pgs_pwd)
     # Redis配置
     rds_port = 12379
     rds_pwd = 'redis6379'
+    redis = rds.Rds(port=rds_port, password=rds_pwd).redis_cli
     my_hash = None
     my_user_id = None
     headers = {
@@ -47,13 +26,11 @@ class Planet(object):
     }
 
     def __init__(self):
-        setup_logging()
-        self.postgres = pgs.Pgs(port=Planet.pgs_port, db_name=Planet.pgs_db_name,
-                                user=Planet.pgs_user, password=Planet.pgs_pwd)
-        self.redis = rds.Rds(port=Planet.rds_port, password=Planet.rds_pwd).redis_cli
+        self.redis = Planet.redis
+        self.postgres = Planet.postgres
         Planet.my_hash = self.__get_my_hash()
         Planet.my_user_id = self.__get_my_user_id()
-        log.info('Init my hash : %s and my user id : %s', Planet.my_hash, Planet.my_user_id)
+        logging.info('Init my hash : %s and my user id : %s', Planet.my_hash, Planet.my_user_id)
 
     def handler(self, sql, params):
         """ 处理数据

@@ -9,7 +9,7 @@ def setup_logging():
 
     """
 
-    path = 'logs2'
+    path = 'logs'
     if not os.path.exists(path):
         os.mkdir(path)
 
@@ -22,6 +22,4 @@ def setup_logging():
         logging.basicConfig(level='INFO', filename='info.log',
                             format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
 
-    log = logging.getLogger()
-    log.info(">>> Load logger config")
-    return log
+    logging.info(">>> Load logger config")

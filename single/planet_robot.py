@@ -46,8 +46,9 @@ class PlanetRobot:
 
                 if not disable_comment:
                     recent_comment = resp['recent_comments'][index]
-                    # 无评论或评论里没有机器人的回复
-                    if recent_comment and list(filter(lambda rc: rc['user_id'] == Planet.my_user_id, recent_comment)):
+                    # 无评论或者评论里没有机器人的回复
+                    if not recent_comment or not list(
+                            filter(lambda rc: rc['user_id'] == Planet.my_user_id, recent_comment)):
                         comment_msg = robot.call_text_v1(comment, msg_user_id)
                         self.__robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
 

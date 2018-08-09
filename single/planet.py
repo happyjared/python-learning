@@ -37,7 +37,7 @@ class Planet(object):
     pgs_pwd = pgs_db_name
     # Redis配置
     rds_port = 12379
-    rds_pwd = pgs_user
+    rds_pwd = 'redis6379'
     my_hash = None
     my_user_id = None
     headers = {

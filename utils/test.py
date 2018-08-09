@@ -1,8 +1,8 @@
 import rds
 import psycopg2
 
-redis = rds.Rds(host='', port='', password='')
-conn_info = "host={0} port={1} dbname={2} user={3} password={4}"
+redis = rds.Rds(host='localhost', port='12379', password='redis6379')
+conn_info = "host=localhost port=12432 dbname=planet user=planet password=planet"
 conn = psycopg2.connect(conn_info)
 cur = conn.cursor()
 
@@ -14,7 +14,8 @@ def user():
     for record in rows:
         key = 'planet:u:{0}'.format(record[0])
         value = record[1].strftime('%Y-%m-%d %H:%M:%S')
-        redis.redis_cli.set(key, value)
+        result = redis.redis_cli.set(key, value)
+        print(result)
 
 
 def user_talk():
@@ -23,7 +24,8 @@ def user_talk():
     rows = cur.fetchall()
     for record in rows:
         key = 'planet:u:{0}:talk'.format(record[0])
-        redis.redis_cli.sadd(key, record[1])
+        result = redis.redis_cli.sadd(key, record[1])
+        print(result)
 
 
 def user_photo():
@@ -32,7 +34,8 @@ def user_photo():
     rows = cur.fetchall()
     for record in rows:
         key = 'planet:u:{0}:photo'.format(record[0])
-        redis.redis_cli.set(key, record[1])
+        result = redis.redis_cli.sadd(key, record[1])
+        print(result)
 
 
 def user_comment():
@@ -41,4 +44,12 @@ def user_comment():
     rows = cur.fetchall()
     for record in rows:
         key = 'planet:u:{0}:m:{1}:comment'.format(record[0], record[1])
-        redis.redis_cli.set(key, record[2])
+        result = redis.redis_cli.sadd(key, record[2])
+        print(result)
+
+
+if __name__ == '__main__':
+    user()
+    user_talk()
+    user_photo()
+    user_comment()

@@ -7,12 +7,14 @@
 from imooc import items
 from utils import pgs
 
-postgres = pgs.Pgs(host='', port='', db_name='', user='', password='')
-
 
 class ImoocPipeline(object):
+    def __init__(self):
+        self.db = pgs.Pgs(host='', port='', db_name='', user='', password='')
+
     def process_item(self, item, spider):
         if isinstance(item, items.ImoocItem):
+            course_id = item['course_id']
             course_name = item['course_name']
             course_difficult = item['course_difficult']
             course_student = item['course_student']
@@ -20,8 +22,8 @@ class ImoocPipeline(object):
             course_label = item['course_label']
             course_banner = item['course_banner']
             course_detail = item['course_detail']
-            course_id = item['course_id']
-            sql = "insert into tb_imooc(`course_id`,`course_name`,`course_difficult`,`course_student`,`course_desc`) " \
-                  "values(%s,%s,%s,%s,%s,%s,%s,%s)".format(course_id, course_name, course_difficult, course_student, course_desc)
-            pass
+            sql = "insert into tb_imooc(course_id,course_name,course_difficult,course_student,course_desc," \
+                  "course_label,course_banner,course_detail) values(%s,%s,%s,%s,%s,%s,%s,%s)"
+            self.db.handler(sql, (course_id, course_name, course_difficult, course_student, course_desc, course_label,
+                                  course_banner, course_detail))
         return item

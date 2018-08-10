@@ -29,7 +29,7 @@ class QMM(object):
         for link in t_body.find_all('a'):
             detail = link.get('href')
             text = link.text
-            if '8月' not in text:
+            if '8月10' not in text:
                 continue
             resp = requests.get(detail)
             bs = BeautifulSoup(resp.text, 'html.parser')
@@ -38,7 +38,6 @@ class QMM(object):
                 for a in t_body.find_all('a'):
                     href = a.get('href')
                     detail = self.get_url(href)
-                    # print(href, "  +++++   ", detail)
                     if detail not in self.list_detail:
                         self.list_detail.append(detail)
         print('一共抓取了 %d 个领取页面' % (len(self.list_detail)))

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import scrapy
-from imooc import items
+from imooc.items import ImoocItem
 
 
 class ImoocCourseSpider(scrapy.Spider):
@@ -10,9 +10,11 @@ class ImoocCourseSpider(scrapy.Spider):
     start_urls = ['https://www.imooc.com/course/list/']
 
     def parse(self, response):
+        # self.log self.name self.settings.get('xxx')
+        # ItemLoader
         course_list = response.xpath('//div[@class="course-card-container"]')
         for index, course in enumerate(course_list):
-            item = items.ImoocItem()
+            item = ImoocItem()
             item['course_name'] = course.xpath('.//h3[@class="course-card-name"]/text()').extract()[0]
             item['course_difficult'] = course.xpath('.//div[@class="course-card-info"]/span[1]/text()').extract()[0]
             course_student = course.xpath('.//div[@class="course-card-info"]/span[2]/text()').extract()[0]

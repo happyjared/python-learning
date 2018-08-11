@@ -42,7 +42,10 @@ class PlanetRobot:
                 user_hash = resp['uid_hashes'][index]
                 key = 'planet:u:{0}:m:{1}:comment'.format(msg_user_id, msg_id)
                 if not self.spider.redis.exists(key):
+                    # 获取用户个人、相册、动态等信息
                     self.spider.parse(user, user_hash)
+                    # 给当前动态点赞
+                    self.__robot_vote(msg_id, tl_hash)
 
                 if not disable_comment:
                     recent_comment = resp['recent_comments'][index]
@@ -117,6 +120,18 @@ class PlanetRobot:
 
             self.spider.handler(planet_sql.add_user_comment(),
                                 (comment_id, Planet.my_user_id, msg_id, comment_msg, comment_time, datetime.now()))
+
+    @staticmethod
+    def __robot_vote(msg_id, tl_hash):
+        """机器人点赞
+        
+        :return: 
+        """
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/vote'
+        data = {"tl_id": msg_id, "hash": tl_hash}
+        resp = requests.post(api, json=data, headers=Planet.headers).json()
+        voted = resp.get('Voted')
+        logging.debug('Robot vote result %d', voted)
 
 
 # 程序入口

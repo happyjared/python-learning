@@ -123,7 +123,7 @@ class PlanetRobot:
 
     @staticmethod
     def __robot_vote(msg_id, tl_hash):
-        """机器人点赞
+        """机器人进行点赞
         
         :return: 
         """
@@ -132,6 +132,19 @@ class PlanetRobot:
         resp = requests.post(api, json=data, headers=Planet.headers).json()
         voted = resp.get('Voted')
         logging.debug('Robot vote result %d', voted)
+
+    @staticmethod
+    def __robot_dynamic():
+        """机器人发表动态
+        
+        :return: 
+        """
+
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/post'
+        data = {"comment": "", "photo_ids": [], "sync_photo_to_album": False}
+        resp = requests.post(api, json=data, headers=Planet.headers).json()
+        msg_id = resp.get('id')
+        logging.debug('Robot dynamic result %d', msg_id)
 
 
 # 程序入口

@@ -19,7 +19,7 @@ class CourseItem(Item):
     student = Field()  # 学习人数
     desc = Field()  # 课程描述
     label = Field()  # 分类标签
-    image_urls = Field(output_processor=TakeFirst())  # 封面图片
+    image_urls = Field()  # 封面图片
     detail = Field()  # 详情地址
     course_id = Field()  # 课程id
     duration = Field()  # 课程时长

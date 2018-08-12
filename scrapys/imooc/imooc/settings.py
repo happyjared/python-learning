@@ -65,7 +65,10 @@ ROBOTSTXT_OBEY = False
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'imooc.pipelines.ImoocPipeline': 300,
+    'scrapy.pipelines.images.ImagesPipeline': 1,
 }
+IMAGES_STORE = 'images'
+IMAGES_THUMBS = {'small': (100, 100)}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html

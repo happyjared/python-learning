@@ -28,40 +28,41 @@ class PlanetRobot:
             resp = requests.post(api, json=data, headers=Planet.headers).json()
             errcode = resp.get('errorcode')
             if errcode and errcode == 1001:
-                logging.warning('>>> Single Unauthenticated')
-                pass
+                logging.error('>>> Single Unauthenticated')
+                key = 'planet:my:token'
+                Planet.headers['Authorization'] = self.spider.redis.get(key)
+            else:
+                messages = resp['messages']
+                for index, message in enumerate(messages):
+                    msg_id = message['id']  # 消息id
+                    msg_user_id = message['user_id']  # 用户id
+                    comment = message['comment']  # 动态内容
+                    disable_comment = message['disable_comment']  # 是否关闭了评论
+                    tl_hash = resp['tl_hashes'][index]  # 动态hash值
+                    msg_type = message['msg_type']  # 消息类型
+                    if msg_type == 'Text':
+                        comment = message['message']['text']['Text']
 
-            messages = resp['messages']
-            for index, message in enumerate(messages):
-                msg_id = message['id']  # 消息id
-                msg_user_id = message['user_id']  # 用户id
-                comment = message['comment']  # 动态内容
-                disable_comment = message['disable_comment']  # 是否关闭了评论
-                tl_hash = resp['tl_hashes'][index]  # 动态hash值
-                msg_type = message['msg_type']  # 消息类型
-                if msg_type == 'Text':
-                    comment = message['message']['text']['Text']
+                    user = resp['users'][index]
+                    user_hash = resp['uid_hashes'][index]
+                    key = 'planet:u:{0}:m:{1}:comment'.format(msg_user_id, msg_id)
+                    if not self.spider.redis.exists(key):
+                        # 获取用户个人、相册、动态等信息
+                        self.spider.parse(user, user_hash)
+                        # 给当前动态点赞
+                        self.__robot_vote(msg_id, tl_hash)
 
-                user = resp['users'][index]
-                user_hash = resp['uid_hashes'][index]
-                key = 'planet:u:{0}:m:{1}:comment'.format(msg_user_id, msg_id)
-                if not self.spider.redis.exists(key):
-                    # 获取用户个人、相册、动态等信息
-                    self.spider.parse(user, user_hash)
-                    # 给当前动态点赞
-                    self.__robot_vote(msg_id, tl_hash)
+                    if not disable_comment:
+                        recent_comment = resp['recent_comments'][index]
+                        # 无评论或者评论里没有机器人的回复
+                        if not recent_comment:
+                            comment_msg = robot.call_text_v1(comment, msg_user_id)
+                            self.__robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
 
-                if not disable_comment:
-                    recent_comment = resp['recent_comments'][index]
-                    # 无评论或者评论里没有机器人的回复
-                    if not recent_comment:
-                        comment_msg = robot.call_text_v1(comment, msg_user_id)
-                        self.__robot_comment(msg_id, comment_msg, tl_hash, msg_user_id)
-
-            logging.info('Dynamic to sleep , sleep time is %d', sleep_time)
-            time.sleep(sleep_time)
-            sleep_time = random.randint(180, 300)
-            logging.info('Dynamic end sleep , next sleep time is %d', sleep_time)
+                logging.info('Dynamic to sleep , sleep time is %d', sleep_time)
+                time.sleep(sleep_time)
+                sleep_time = random.randint(180, 300)
+                logging.info('Dynamic end sleep , next sleep time is %d', sleep_time)
 
     def reply_robot(self):
         """回复机器人的评论

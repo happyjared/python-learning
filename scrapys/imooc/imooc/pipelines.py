@@ -13,7 +13,7 @@ class ImoocPipeline(object):
         self.db = pgs.Pgs(host='', port='', db_name='', user='', password='')
 
     def process_item(self, item, spider):
-        if isinstance(item, items.ImoocItem):
+        if isinstance(item, items.CourseItem):
             course_id = item['course_id']
             course_name = item['course_name']
             course_difficult = item['course_difficult']

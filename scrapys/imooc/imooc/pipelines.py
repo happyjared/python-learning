@@ -22,7 +22,7 @@ class ImoocPipeline(object):
                                      password=password, dbname=db_name)
         self.cur = self.conn.cursor()
         # Redis
-        self.redis = rds.Rds(port=12379, db=1, password='redis6379').redis_cli
+        self.redis = rds.Rds(host=host, port=12379, db=1, password='redis6379').redis_cli
 
     def process_item(self, item, spider):
         if isinstance(item, items.CourseItem):

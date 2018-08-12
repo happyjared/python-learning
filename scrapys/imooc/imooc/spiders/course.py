@@ -43,7 +43,7 @@ class CourseSpider(scrapy.Spider):
             course_item['label'] = ', '.join(course_label)
             # 课程封面
             course_banner = course.xpath('.//div[@class="course-card-top"]/img/@src').extract_first()
-            course_item['image_urls'] = "{0}{1}".format(CourseSpider.https, course_banner)
+            course_item['image_urls'] = ["{0}{1}".format(CourseSpider.https, course_banner)]
             # 详情地址
             course_detail = course.xpath('.//a/@href').extract_first()
             course_item['detail'] = parse.urljoin(url, course_detail)

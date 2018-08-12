@@ -26,6 +26,10 @@ class PlanetRobot:
         logging.info('Start to get users dynamic')
         while True:
             resp = requests.post(api, json=data, headers=Planet.headers).json()
+            errcode = resp.get('errorcode')
+            if errcode and errcode == 1001:
+                logging.warning('>>> Single Unauthenticated')
+                pass
 
             messages = resp['messages']
             for index, message in enumerate(messages):

@@ -6,6 +6,7 @@
 # https://doc.scrapy.org/en/latest/topics/items.html
 
 from scrapy.item import Item, Field
+from scrapy.loader.processors import TakeFirst
 
 
 # 课程
@@ -13,12 +14,12 @@ class CourseItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
 
-    name = Field()  # 课程名
+    name = Field()  # 课程名称
     difficult = Field()  # 难度级别
     student = Field()  # 学习人数
     desc = Field()  # 课程描述
     label = Field()  # 分类标签
-    image_urls = Field()  # 封面图
+    image_urls = Field()  # 封面图片
     detail = Field()  # 详情地址
     course_id = Field()  # 课程id
     duration = Field()  # 课程时长
@@ -35,8 +36,8 @@ class CourseItem(Item):
 
 
 # 课程详情
-class CourseDetail(Item):
-    course_id = Field()  # 课程id
+class CourseDetailItem(Item):
+    course_id = Field(output_processor=TakeFirst())  # 课程id
     chapter = Field()  # 课程章节
     chapter_desc = Field()  # 章节描述
     chapter_section = Field()  # 章节小节

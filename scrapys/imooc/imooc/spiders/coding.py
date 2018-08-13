@@ -50,9 +50,9 @@ class CodingSpider(scrapy.Spider):
             coding_item['overall_score'] = coding.xpath('.//span[@class="r"]/text()').extract_first().replace('评价：', '')
             # 教师昵称
             coding_item['teacher_nickname'] = response.xpath(
-                '//div[@class="lecturer-info"]/span/text()').extract_first()
+                './/div[@class="lecturer-info"]/span/text()').extract_first()
             # 教师头像
-            avatar = response.xpath('//img[@class="shizhan-course-img"]/@src').extract_first()
+            avatar = response.xpath('.//img[@class="shizhan-course-img"]/@src').extract_first()
             coding_item['teacher_avatar'] = "{0}{1}".format(CodingSpider.https, avatar)
 
             self.log("Item: %s" % coding_item)

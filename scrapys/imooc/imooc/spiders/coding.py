@@ -74,7 +74,7 @@ class CodingSpider(scrapy.Spider):
             '//div[@class="static-item static-time"]/span/strong/text()').extract_first()
         # 演示视频
         video = response.xpath('//div[@id="js-video-content"]/@data-vurl').extract_first()
-        coding_item['video'] = parse.urlparse(CodingSpider.https, video)
+        coding_item['video'] = parse.urljoin(CodingSpider.https, video)
         # 详情标题
         coding_item['small_title'] = response.xpath('//div[@class="title-box "]/h2/text()').extract_first()
         # 详情简介

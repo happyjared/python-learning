@@ -8,15 +8,16 @@ from logger import log
 class Planet(object):
     log.Logger()
     # Postgres配置
+    host = 'localhost'
     pgs_port = 12432
     pgs_db_name = 'planet'
     pgs_user = pgs_db_name
     pgs_pwd = pgs_db_name
-    postgres = pgs.Pgs(port=pgs_port, db_name=pgs_db_name, user=pgs_user, password=pgs_pwd)
+    postgres = pgs.Pgs(host=host, port=pgs_port, db_name=pgs_db_name, user=pgs_user, password=pgs_pwd)
     # Redis配置
     rds_port = 12379
     rds_pwd = 'redis6379'
-    redis = rds.Rds(port=rds_port, password=rds_pwd).redis_cli
+    redis = rds.Rds(host=host, port=rds_port, password=rds_pwd).redis_cli
     my_hash = None
     my_user_id = None
     token = 'djM6kGdI04LxK4zk9C2reI50szrReqT90NSVbjxv3WkvxXYkQqXRGyngiR2zX0EASm1GswTTk7RQepcmx6YtLCNqAyFcRC67z9O' \

@@ -51,7 +51,7 @@ class CodingSpider(scrapy.Spider):
             # 教师昵称
             coding_item['teacher_nickname'] = coding.xpath('.//div[@class="lecturer-info"]/span/text()').extract_first()
             # 教师头像
-            avatar = coding.xpath('.//img[@class="shizhan-course-img"]/@src').extract_first()
+            avatar = coding.xpath('.//div[@class="lecturer-info"]/img/@src').extract_first()
             coding_item['teacher_avatar'] = "{0}{1}".format(CodingSpider.https, avatar)
 
             self.log("Item: %s" % coding_item)

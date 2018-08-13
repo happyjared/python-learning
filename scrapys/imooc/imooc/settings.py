@@ -10,9 +10,14 @@
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 BOT_NAME = 'imooc'
-
 SPIDER_MODULES = ['imooc.spiders']
 NEWSPIDER_MODULE = 'imooc.spiders'
+
+# LOG_ENABLED 默认: True，启用logging
+# LOG_ENCODING 默认: ‘utf-8’，logging使用的编码
+# 默认: None，在当前目录里创建logging输出文件的文件名
+LOG_FILE = 'logs'
+LOG_LEVEL = 'INFO'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'imooc (+http://www.yourdomain.com)'

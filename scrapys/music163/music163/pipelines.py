@@ -12,7 +12,6 @@ from datetime import datetime
 
 
 class Music163Pipeline(object):
-
     def __init__(self):
         # PostgreSQL
         host = 'localhost'
@@ -35,11 +34,18 @@ class Music163Pipeline(object):
             key = 'music:163:{0}'.format(music_id)
             if not self.redis.exists(key):
                 params = (music_id, music_name, music_url, music_lyric, 0, now)
-                self.postgres.handler(add_music(), params)
+                effect_count = self.postgres.handler(add_music(), params)
+                if effect_count > 0:
+                    self.redis.set(key, now.strftime('%Y-%m-%d %H:%M:%S'))
         return item
 
 
 def add_music():
+    """Save data to Music
+
+     :return: 
+     """
+
     sql = 'insert into tb_music_163 values(music_id,music_name,music_url,music_lyric,"count",create_time)' \
           'values(%s,%s,%s,%s,%s,%s)'
     return sql

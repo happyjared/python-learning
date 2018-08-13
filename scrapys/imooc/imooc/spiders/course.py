@@ -93,6 +93,7 @@ class CourseSpider(scrapy.Spider):
             '//div[@class="course-info-tip"]/dl[not(@class)]/dd/text()').extract_first()
         yield course_item
 
+        # 以下用于提取课程详情信息(暂不处理)
         # course_detail_item = CourseDetailItem()
         # # 课程id
         # course_detail_item['course_id'] = course_item['course_id']

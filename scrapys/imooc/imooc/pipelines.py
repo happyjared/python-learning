@@ -74,7 +74,6 @@ class ImoocPipeline(object):
                 params = (student, price, overall_score, now, teacher_nickname, teacher_avatar, coding_id)
                 self.postgres.handler(update_coding(), params)
             else:
-                self.redis.set(key, str_now)
                 params = (coding_id, name, difficult, student, desc, image_urls, price, detail,
                           overall_score, teacher_nickname, teacher_avatar, duration, video, small_title,
                           detail_desc, teacher_job, now, now)

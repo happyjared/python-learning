@@ -18,3 +18,4 @@ def get_lyric(song_id):
     if lrc:
         lyric = lrc.get('lyric')
         return re.sub(pattern, '', lyric)
+    return

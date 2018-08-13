@@ -49,7 +49,7 @@ def reply(msg):
 
     # 判断是否开启机器对话
     if flag:
-        if ex <= int(redis.get(key.format('min:ex'))):
+        if redis.ttl(from_user_id) <= int(redis.get(key.format('min:ex'))):
             # 倒计时10分钟内还在聊天，延长Key过期时间
             redis.set(from_user_id, True, ex=ex)
         if mat.is_emoji(receive_text):

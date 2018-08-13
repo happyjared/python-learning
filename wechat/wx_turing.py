@@ -34,7 +34,7 @@ def reply(msg):
             redis.set(from_user_id, True, ex=ex)
         else:
             redis.delete(from_user_id)
-        return hello if switch else bye
+        return bye if switch else hello
     if receive_text == jared:
         # 自己控制机器人
         switch = redis.get(to_user_id)
@@ -42,7 +42,7 @@ def reply(msg):
             redis.set(to_user_id, True, ex=ex)
         else:
             redis.delete(to_user_id)
-        itchat.send_msg(hello, to_user_id) if switch else itchat.send_msg(bye, to_user_id)
+        itchat.send_msg(bye, to_user_id) if switch else itchat.send_msg(hello, to_user_id)
 
     flag = redis.get(from_user_id)
 

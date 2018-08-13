@@ -71,7 +71,7 @@ class ImoocPipeline(object):
 
             key = 'imooc:coding:{0}'.format(coding_id)
             if self.redis.exists(key):
-                params = (student, price, overall_score, now, teacher_nickname, teacher_avatar, coding_id)
+                params = (student, price, overall_score, now, coding_id)
                 self.postgres.handler(update_coding(), params)
             else:
                 params = (coding_id, name, difficult, student, desc, image_urls, price, detail,
@@ -129,6 +129,5 @@ def update_coding():
     :return:
     """
 
-    sql = 'update tb_imooc_coding set student=%s,price=%s,overall_score=%s,update_time=%s,' \
-          'teacher_nickname=%s,teacher_avatar=%s where coding_id = %s'
+    sql = 'update tb_imooc_coding set student=%s,price=%s,overall_score=%s,update_time=%s where coding_id = %s'
     return sql

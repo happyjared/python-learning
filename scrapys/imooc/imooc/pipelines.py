@@ -4,8 +4,8 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-import psycopg2
 from utils import rds
+from utils import pgs
 from imooc import items
 from datetime import datetime
 
@@ -18,9 +18,7 @@ class ImoocPipeline(object):
         db_name = 'scrapy'
         username = db_name
         password = db_name
-        self.conn = psycopg2.connect(host=host, port=port, user=username,
-                                     password=password, dbname=db_name)
-        self.cur = self.conn.cursor()
+        self.postgres = pgs.Pgs(host=host, port=port, db_name=db_name, user=username, password=password)
         # Redis
         self.redis = rds.Rds(host=host, port=12379, db=1, password='redis6379').redis_cli
 
@@ -53,13 +51,15 @@ class ImoocPipeline(object):
             key = 'imooc:course:{0}'.format(course_id)
             if self.redis.exists(key):
                 params = (student, overall_score, content_score, concise_score, logic_score, now, course_id)
-                self.cur.execute(update_course(), params)
+                self.postgres.handler(update_course(), params)
             else:
-                self.redis.set(key, str_now)
                 params = (course_id, name, difficult, student, desc, label, image_urls, detail, duration,
                           overall_score, content_score, concise_score, logic_score, summary, teacher_nickname,
                           teacher_avatar, teacher_job, tip, can_learn, now, now)
-                self.cur.execute(add_course(), params)
+                effect_count = self.postgres.handler(add_course(), params)
+                if effect_count > 0:
+                    self.redis.set(key, str_now)
+
         if isinstance(item, items.CodingItem):
             # 实战课程
             price = item['price']
@@ -71,25 +71,20 @@ class ImoocPipeline(object):
             key = 'imooc:coding:{0}'.format(coding_id)
             if self.redis.exists(key):
                 params = (student, price, overall_score, now, coding_id)
-                self.cur.execute(update_coding(), params)
+                self.postgres.handler(update_coding(), params)
             else:
                 self.redis.set(key, str_now)
                 params = (coding_id, name, difficult, student, desc, image_urls, price, detail,
                           overall_score, teacher_nickname, teacher_avatar, duration, video, small_title,
                           detail_desc, teacher_job, now, now)
-                self.cur.execute(add_coding(), params)
+                effect_count = self.postgres.handler(add_coding(), params)
+                if effect_count > 0:
+                    self.redis.set(key, str_now)
 
-        self.conn.commit()
         return item
 
     def close_spider(self, spider):
-        """ Release connection
-        
-        :param spider: 
-        :return: 
-        """
-        self.cur.close()
-        self.conn.close()
+        self.postgres.close()
 
 
 def add_course():

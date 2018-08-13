@@ -64,3 +64,9 @@ class Pgs:
         else:
             self.conn.commit()
         return rows
+
+    def close(self):
+        """ Release connection"""
+
+        self.cur.close()
+        self.conn.close()

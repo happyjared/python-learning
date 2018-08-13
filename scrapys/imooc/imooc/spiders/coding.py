@@ -39,7 +39,7 @@ class CodingSpider(scrapy.Spider):
             coding_banner = coding.xpath('.//img[@class="shizhan-course-img"]/@src').extract_first()
             coding_item['image_urls'] = ["{0}{1}".format(CodingSpider.https, coding_banner)]
             # 课程价格
-            coding_item['price'] = response.xpath('.//div[@class="course-card-price"]/text()').extract_first()
+            coding_item['price'] = coding.xpath('.//div[@class="course-card-price"]/text()').extract_first()
             # 详情地址
             coding_detail = coding.xpath('.//a/@href').extract_first()
             coding_item['detail'] = parse.urljoin(url, coding_detail)
@@ -49,10 +49,9 @@ class CodingSpider(scrapy.Spider):
             # 评价得分
             coding_item['overall_score'] = coding.xpath('.//span[@class="r"]/text()').extract_first().replace('评价：', '')
             # 教师昵称
-            coding_item['teacher_nickname'] = response.xpath(
-                './/div[@class="lecturer-info"]/span/text()').extract_first()
+            coding_item['teacher_nickname'] = coding.xpath('.//div[@class="lecturer-info"]/span/text()').extract_first()
             # 教师头像
-            avatar = response.xpath('.//img[@class="shizhan-course-img"]/@src').extract_first()
+            avatar = coding.xpath('.//img[@class="shizhan-course-img"]/@src').extract_first()
             coding_item['teacher_avatar'] = "{0}{1}".format(CodingSpider.https, avatar)
 
             self.log("Item: %s" % coding_item)

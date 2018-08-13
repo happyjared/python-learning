@@ -30,7 +30,7 @@ class ImoocPipeline(object):
         image_urls = item['image_urls'][0]
         detail = item['detail']
         duration = item['duration']
-        overall_score = float(item['overall_score'])
+        overall_score = item['overall_score']
         teacher_nickname = item['teacher_nickname']
         teacher_avatar = item.get('teacher_avatar')
         teacher_job = item['teacher_job']
@@ -41,6 +41,7 @@ class ImoocPipeline(object):
             # 免费课程
             course_id = item['course_id']
             label = item['label']
+            overall_score = float(overall_score)
             content_score = float(item['content_score'])
             concise_score = float(item['concise_score'])
             logic_score = float(item['logic_score'])

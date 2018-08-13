@@ -1,14 +1,17 @@
 import random
 import itchat
 from utils import mat
+from utils import rds
 from utils import robot
-from itchat.content import *
 
-switch = {}
-cmd = '管家'
-jared = '贾里德'
-hello = "[愉快] 您好, 管家\"贾里德\"为你服务 ☺"
-bye = '[流淚] Bye. This is Jared [再见]'
+redis = rds.Rds(port=12379, db=15, password='redis6379').redis_cli
+
+key = 'turing:{0}'
+cmd = redis.get(key.format('cmd'))
+jared = redis.get(key.format('jared'))
+hello = redis.get(key.format('hello'))
+bye = redis.get(key.format('bye'))
+ex = int(redis.get(key.format('ex')))
 
 
 @itchat.msg_register(itchat.content.TEXT)
@@ -25,21 +28,23 @@ def reply(msg):
     from_user_id = msg['FromUserName']  # 发送人
     if receive_text == cmd:
         # 用户控制机器人开关
-        if switch.get(from_user_id) is None:
-            switch[from_user_id] = True
+        switch = redis.get(from_user_id)
+        if not switch:
+            # None or False -> True
+            redis.set(from_user_id, True, ex=ex)
         else:
-            switch[from_user_id] = not switch[from_user_id]
-        return hello if switch[from_user_id] else bye
+            redis.delete(from_user_id)
+        return hello if switch else bye
     if receive_text == jared:
         # 自己控制机器人
-        if switch.get(to_user_id) is None:
-            switch[to_user_id] = True
+        switch = redis.get(to_user_id)
+        if not switch:
+            redis.set(to_user_id, True, ex=ex)
         else:
-            switch[to_user_id] = not switch[to_user_id]
-        itchat.send_msg(hello, to_user_id) if switch[to_user_id] else itchat.send_msg(bye, to_user_id)
+            redis.delete(to_user_id)
+        itchat.send_msg(hello, to_user_id) if switch else itchat.send_msg(bye, to_user_id)
 
-    # print('----------' + str(switch))
-    flag = switch.get(from_user_id)
+    flag = redis.get(from_user_id)
 
     # 判断是否开启机器对话
     if flag:
@@ -55,59 +60,6 @@ def reply(msg):
             return text or default_reply
 
 
-@itchat.msg_register([MAP, CARD, NOTE, SHARING, PICTURE, RECORDING, ATTACHMENT, VIDEO, FRIENDS])
-def reply(msg):
-    """注册除文本外的其它类型消息
-    
-    :param msg: 消息
-    :return: 回应内容
-    """
-
-    from_user_id = msg['FromUserName']  # 发送人
-    flag = switch.get(from_user_id)
-
-    # 判断是否开启机器对话
-    if flag:
-        msg_type = msg['Type']
-        content = msg['Content']
-        filename = msg['FileName']
-        print('Type: %s , FileName: %s , Content: %s' % (msg_type, filename, content))
-        default_reply = "[疑问] Is't a " + msg_type
-        return default_reply
-
-
 # 登录微信机器人
 itchat.auto_login(hotReload=True, enableCmdQR=2)
 itchat.run()
-
-# # 注册微信语音消息
-# @itchat.msg_register(itchat.content.RECORDING)
-# def reply(msg):
-#     file = msg['FileName']
-#     path = 'voices/' + file
-#     msg['Text'](path)
-#     default_reply = 'I received recording : ' + file
-#     print('2.Call: ' + file, end='')
-#     text = tuling.get_text_response(transfer_record(path), msg['FromUserName'])
-#     # a or b的意思是，如果a有内容(非空或者非None)，那么返回a，否则返回b
-#     return text or default_reply
-#
-#
-# # 读取本地文件
-# def get_file_content(file_path):
-#     with open(file_path, 'rb') as fp:
-#         return fp.read()
-#
-#
-# # 通过百度AI将语音消息转换为文本消息
-# def transfer_record(path):
-#     app_id = '11618209'
-#     api_key = 'Mva5lMkVyUSzNta0f4G7Dt4K'
-#     secret_key = 'aAwUgOKPzYPgnrzAeRl2G0F5EZg6r70d'
-#
-#     client = AipSpeech(app_id, api_key, secret_key)
-#     # 识别本地文件
-#     result = client.asr(get_file_content(path))
-#     err_no = result['err_no']
-#     print(' Code: ' + str(err_no), end='')
-#     return result['result'] if err_no == 0 else result['err_msg']

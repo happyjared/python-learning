@@ -3,10 +3,12 @@ import random
 import logging
 import requests
 import planet_sql
+from utils import pgs
+from utils import cron
 from utils import robot
 from planet import Planet
-from datetime import datetime
 from threading import Thread
+from datetime import datetime
 from planet_spider import PlanetSpider
 
 
@@ -139,17 +141,29 @@ class PlanetRobot:
         logging.debug('Robot vote result %d', voted)
 
     @staticmethod
-    def __robot_dynamic():
+    def robot_dynamic():
         """机器人发表动态
         
         :return: 
         """
 
+        scrapy = 'scrapy'
+        postgres = pgs.Pgs(host='localhost', port=12432, db_name=scrapy, user=scrapy, password=scrapy)
+        rows = postgres.fetch_all(planet_sql.find_random_music(), ())
+        row = rows[0]
+        music_name = row[1]
+        music_lyric = row[2]
+        comment = '{0}\n{1}'.format(music_name, music_lyric)
+
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/post'
-        data = {"comment": "", "photo_ids": [], "sync_photo_to_album": False}
+        data = {"comment": comment, "photo_ids": [], "sync_photo_to_album": False}
         resp = requests.post(api, json=data, headers=Planet.headers).json()
         msg_id = resp.get('id')
-        logging.debug('Robot dynamic result %d', msg_id)
+        logging.info('Robot dynamic msg_id %d', msg_id)
+        if msg_id:
+            table_id = row[0]
+            postgres.handler(planet_sql.update_music_count(), (table_id,))
+        postgres.close()
 
 
 # 程序入口
@@ -157,6 +171,7 @@ if __name__ == '__main__':
     ps = PlanetSpider()
     pr = PlanetRobot(ps)
 
+    cron.cron_background(PlanetRobot.robot_dynamic, day_of_week='0-6', hour='6,18')
     t1 = Thread(target=pr.user_dynamic, name='Thread-1')
     t2 = Thread(target=pr.reply_robot, name='Thread-2')
 

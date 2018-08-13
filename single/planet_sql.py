@@ -53,3 +53,24 @@ def add_user_comment():
     sql = 'INSERT INTO tb_user_comment(comment_id, user_id,msg_id,"comment",c_time,create_time) ' \
           'VALUES (%s,%s,%s,%s,%s,%s)'
     return sql
+
+
+def find_random_music():
+    """ The SQL to get random music 
+
+    :return: sql
+    """
+
+    sql = 'select id,music_name,music_lyric from tb_music_163 where music_lyric is not null order by ' \
+          'random() limit 1'
+    return sql
+
+
+def update_music_count():
+    """ The SQL to update music count
+
+    :return: sql
+    """
+
+    sql = 'update tb_music_163 set "count"="count"+1 where id =%s'
+    return sql

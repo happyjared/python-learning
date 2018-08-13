@@ -3,7 +3,7 @@ from apscheduler.schedulers.background import *
 cron = 'cron'
 
 
-def cron_background(job, day_of_week, hour, minute):
+def cron_background(job, day_of_week, hour, minute=0):
     """ 后台运行的定时任务
     
     :param job: 
@@ -18,7 +18,7 @@ def cron_background(job, day_of_week, hour, minute):
     scheduler.start()
 
 
-def cron_blocking(job, day_of_week, hour, minute):
+def cron_blocking(job, day_of_week, hour, minute=0):
     """ 阻塞的定时任务
     
     :param job: 

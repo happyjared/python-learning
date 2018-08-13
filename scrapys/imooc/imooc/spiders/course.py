@@ -84,11 +84,11 @@ class CourseSpider(scrapy.Spider):
             course_item['teacher_avatar'] = "{0}{1}".format(CourseSpider.https, avatar)
         # 教师职位
         course_item['teacher_job'] = response.xpath('//span[@class="job"]/text()').extract_first()
-        auto_wrap = response.xpath('//dd[@class="autowrap"]/text()').extract()
-        # 课程须知 fixme
-        course_item['tip'] = auto_wrap[0]
+        # 课程须知
+        course_item['tip'] = response.xpath('//dl[@class="first"]/dd/text()').extract_first()
         # 能学什么
-        course_item['can_learn'] = auto_wrap[1]
+        course_item['can_learn'] = response.xpath(
+            '//div[@class="course-info-tip"]/dl[not(@class)]/dd/text()').extract_first()
         yield course_item
 
         # course_detail_item = CourseDetailItem()

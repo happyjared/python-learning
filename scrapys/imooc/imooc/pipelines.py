@@ -41,7 +41,7 @@ class ImoocPipeline(object):
             logic_score = float(item['logic_score'])
             summary = item['summary']
             teacher_nickname = item['teacher_nickname']
-            teacher_avatar = item['teacher_avatar']
+            teacher_avatar = item.get('teacher_avatar')
             teacher_job = item['teacher_job']
             tip = item['tip']
             can_learn = item['can_learn']

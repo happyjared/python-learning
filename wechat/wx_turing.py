@@ -29,19 +29,20 @@ def reply(msg):
     if receive_text == cmd:
         # 用户控制机器人开关
         switch = redis.get(from_user_id)
-        if not switch:
-            # None or False -> True
-            redis.set(from_user_id, True, ex=ex)
-        else:
+        if switch:
+            # True -> None
             redis.delete(from_user_id)
+        else:
+            # None -> True
+            redis.set(from_user_id, True, ex=ex)
         return bye if switch else hello
     if receive_text == jared:
         # 自己控制机器人
         switch = redis.get(to_user_id)
-        if not switch:
-            redis.set(to_user_id, True, ex=ex)
-        else:
+        if switch:
             redis.delete(to_user_id)
+        else:
+            redis.set(to_user_id, True, ex=ex)
         itchat.send_msg(bye, to_user_id) if switch else itchat.send_msg(hello, to_user_id)
 
     flag = redis.get(from_user_id)

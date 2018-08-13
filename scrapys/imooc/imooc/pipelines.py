@@ -51,8 +51,7 @@ class ImoocPipeline(object):
 
             key = 'imooc:course:{0}'.format(course_id)
             if self.redis.exists(key):
-                params = (student, overall_score, content_score, concise_score, logic_score, now,
-                          teacher_nickname, teacher_avatar, course_id)
+                params = (student, overall_score, content_score, concise_score, logic_score, now, course_id)
                 self.postgres.handler(update_course(), params)
             else:
                 params = (course_id, name, difficult, student, desc, label, image_urls, detail, duration,
@@ -72,7 +71,7 @@ class ImoocPipeline(object):
 
             key = 'imooc:coding:{0}'.format(coding_id)
             if self.redis.exists(key):
-                params = (student, price, overall_score, now, coding_id)
+                params = (student, price, overall_score, now, teacher_nickname, teacher_avatar, coding_id)
                 self.postgres.handler(update_coding(), params)
             else:
                 self.redis.set(key, str_now)

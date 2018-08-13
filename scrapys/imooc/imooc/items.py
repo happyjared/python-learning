@@ -9,7 +9,7 @@ from scrapy.item import Item, Field
 from scrapy.loader.processors import TakeFirst
 
 
-# 课程
+# 免费课程
 class CourseItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
@@ -35,11 +35,32 @@ class CourseItem(Item):
     can_learn = Field()  # 能学什么
 
 
-# 课程详情
+# 免费课程详情
 class CourseDetailItem(Item):
     course_id = Field(output_processor=TakeFirst())  # 课程id
     chapter = Field()  # 课程章节
     chapter_desc = Field()  # 章节描述
     chapter_section = Field()  # 章节小节
     chapter_section_detail = Field()  # 小节地址
-    pass
+
+
+# 实战课程
+class CodingItem(Item):
+    name = Field()  # 课程名称
+    difficult = Field()  # 难度级别
+    student = Field()  # 学习人数
+    desc = Field()  # 课程描述
+    image_urls = Field()  # 封面图片
+    price = Field()  # 课程价格
+    detail = Field()  # 详情地址
+    coding_id = Field()  # 课程id
+    overall_score = Field()  # 评价得分
+    teacher_nickname = Field()  # 教师昵称
+    teacher_avatar = Field()  # 教师头像
+    duration = Field()  # 课程时长
+    video = Field()  # 演示视频
+    small_title = Field()  # 详情标题
+    detail_desc = Field()  # 详情简介
+    teacher_job = Field()  # 教师职位
+    suit_crowd = Field()  # 适合人群
+    skill_require = Field()  # 技术要求

@@ -61,6 +61,8 @@ class CourseSpider(scrapy.Spider):
         :return: 
         """
         url = response.url
+        self.log("Response url is %s" % url)
+
         course_item = response.meta['course_item']
         meta_value = response.xpath('//span[@class="meta-value"]/text()').extract()
         # 课程时长

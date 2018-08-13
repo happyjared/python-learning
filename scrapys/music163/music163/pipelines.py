@@ -46,6 +46,6 @@ def add_music():
      :return: 
      """
 
-    sql = 'insert into tb_music_163 values(music_id,music_name,music_url,music_lyric,"count",create_time) ' \
+    sql = 'insert into tb_music_163 (music_id,music_name,music_url,music_lyric,"count",create_time) ' \
           'values(%s,%s,%s,%s,%s,%s)'
     return sql

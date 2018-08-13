@@ -29,7 +29,7 @@ class PlanetRobot:
         while True:
             resp = requests.post(api, json=data, headers=Planet.headers).json()
             errcode = resp.get('errorcode')
-            if errcode and errcode == 1001:
+            if errcode:
                 logging.error('>>> Single Unauthenticated')
                 key = 'planet:my:token'
                 Planet.headers['Authorization'] = self.spider.redis.get(key)

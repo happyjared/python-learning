@@ -8,9 +8,9 @@ from . import models
 # Create your views here.
 def list(request):
     # return HttpResponse('hello world')
-    # return render(request, 'blog/list.html', {'hello': 'hello,django'})
+    # return render(request, 'blog/list.html', {'hello': 'hello,mydjango'})
     # article = models.Article.objects.get(pk=1)
-    # return render(request, 'blog/list.html', {'hello': 'hello，django', 'article': article})
+    # return render(request, 'blog/list.html', {'hello': 'hello，mydjango', 'article': article})
     articles = models.Article.objects.all()
     return render(request, 'blog/list.html', {'articles': articles})
 

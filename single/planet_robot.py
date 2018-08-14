@@ -36,8 +36,10 @@ class PlanetRobot:
             else:
                 messages = resp['messages']
                 for index, message in enumerate(messages):
-                    msg_id = message['id']  # 消息id
                     msg_user_id = message['user_id']  # 用户id
+                    if msg_user_id == Planet.my_user_id:
+                        continue
+                    msg_id = message['id']  # 消息id
                     comment = message['comment']  # 动态内容
                     disable_comment = message['disable_comment']  # 是否关闭了评论
                     tl_hash = resp['tl_hashes'][index]  # 动态hash值

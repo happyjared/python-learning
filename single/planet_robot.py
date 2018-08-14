@@ -171,7 +171,7 @@ if __name__ == '__main__':
     ps = PlanetSpider()
     pr = PlanetRobot(ps)
 
-    cron.cron_background(PlanetRobot.robot_dynamic, day_of_week='0-6', hour='6,18')
+    cron.cron_background(PlanetRobot.robot_dynamic, day_of_week='0-6', hour='0,6,12,18')
     t1 = Thread(target=pr.user_dynamic, name='Thread-1')
     t2 = Thread(target=pr.reply_robot, name='Thread-2')
 

@@ -6,7 +6,6 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from utils import pgs
 from utils import rds
-from .util import imjad
 from music163 import items
 from datetime import datetime
 
@@ -28,7 +27,7 @@ class Music163Pipeline(object):
             music_id = item['music_id']
             music_name = item['music_name']
             music_url = item['music_url']
-            music_lyric = imjad.get_lyric(music_id)
+            music_lyric = item['music_lyric']
             now = datetime.now()
 
             key = 'music:163:{0}'.format(music_id)

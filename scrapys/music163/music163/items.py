@@ -15,3 +15,4 @@ class Music163Item(Item):
     music_id = Field()
     music_name = Field()
     music_url = Field()
+    music_lyric = Field()

@@ -39,6 +39,9 @@ ROBOTSTXT_OBEY = False
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
 
+# REDIRECT_ENABLED = False  # 关掉重定向,不会重定向到新的地址
+# HTTPERROR_ALLOWED_CODES = [301, 302]  # 返回302时,按正常返回对待,可以正常写入cookie
+
 # Override the default request headers:
 # DEFAULT_REQUEST_HEADERS = {
 #   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -66,7 +69,7 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'music163.pipelines.Music163Pipeline': 300,
+    # 'music163.pipelines.Music163Pipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

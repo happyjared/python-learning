@@ -11,7 +11,7 @@ class Pgs:
         # self.conn = psycopg2.connect(conn_info)
         # self.cur = self.conn.cursor()
 
-    def handler(self, sql, params):
+    def handler(self, sql, params=()):
         """Save or Update or Delete data from PostgreSQL
 
         :param sql: SQL
@@ -43,7 +43,7 @@ class Pgs:
             conn.commit()
         return effect_count
 
-    def fetch_all(self, sql, params):
+    def fetch_all(self, sql, params=()):
         """Select data from PostgreSQL
 
         :param sql: SQL

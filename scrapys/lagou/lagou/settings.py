@@ -34,6 +34,7 @@ ROBOTSTXT_OBEY = False
 
 # Disable cookies (enabled by default)
 COOKIES_ENABLED = False
+COOKIES_DEBUG = True  # 在log中能看到每次请求发出了和接收到什么Cookie
 
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False

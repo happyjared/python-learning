@@ -37,7 +37,7 @@ class PlanetRobot:
                 messages = resp['messages']
                 for index, message in enumerate(messages):
                     msg_user_id = message['user_id']  # 用户id
-                    if msg_user_id == Planet.my_user_id:
+                    if str(msg_user_id) == Planet.my_user_id:
                         continue
                     msg_id = message['id']  # 消息id
                     comment = message['comment']  # 动态内容

@@ -106,8 +106,7 @@ class JobSpider(scrapy.Spider):
         item['job_description'] = '\n'.join(description)
         work_address = response.xpath('//div[@class="work_addr"]/a[not(@id="mapPreview")]/text()').extract()
         work_address_detail = response.xpath('//input[@name="positionAddress"]/@value').extract_first()
-        item['company_location'] = ''.join(
-            work_address) + work_address_detail  # todo compare latitude and longitude with baidu
+        item['company_location'] = ''.join(work_address) + work_address_detail
         item['company_index'] = response.xpath('//ul[@class="c_feature"]/li/a/@href').extract_first()
 
         yield item

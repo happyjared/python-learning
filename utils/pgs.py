@@ -5,11 +5,14 @@ log = logging.getLogger()
 
 
 class Pgs:
-    def __init__(self, host='localhost', port=5432, db_name='postgres', user='postgres', password='postgres'):
+    def __init__(self, host='localhost', port=5432, db_name='postgres',
+                 user='postgres', password='postgres', singleton=True):
+        self.singleton = singleton
         self.conn_info = "host={0} port={1} dbname={2} user={3} password={4}".format(
             host, port, db_name, user, password)
-        # self.conn = psycopg2.connect(conn_info)
-        # self.cur = self.conn.cursor()
+        if singleton:
+            self.conn = psycopg2.connect(self.conn_info)
+            self.cur = self.conn.cursor()
 
     def handler(self, sql, params=()):
         """Save or Update or Delete data from PostgreSQL
@@ -22,8 +25,12 @@ class Pgs:
         conn = None
         effect_count = 0
         try:
-            conn = psycopg2.connect(self.conn_info)
-            cur = conn.cursor()
+            if self.singleton:
+                cur = self.cur
+                conn = self.conn
+            else:
+                conn = psycopg2.connect(self.conn_info)
+                cur = conn.cursor()
             cur.execute(sql, params)
             effect_count = cur.rowcount
         except psycopg2.OperationalError:
@@ -54,8 +61,12 @@ class Pgs:
         conn = None
         rows = None
         try:
-            conn = psycopg2.connect(self.conn_info)
-            cur = conn.cursor()
+            if self.singleton:
+                cur = self.cur
+                conn = self.conn
+            else:
+                conn = psycopg2.connect(self.conn_info)
+                cur = conn.cursor()
             cur.execute(sql, params)
             rows = cur.fetchall()
         except psycopg2.OperationalError:
@@ -72,6 +83,6 @@ class Pgs:
 
     def close(self):
         """ Release connection"""
-        pass
-        # self.cur.close()
-        # self.conn.close()
+        if self.singleton:
+            self.cur.close()
+            self.conn.close()

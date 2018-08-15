@@ -13,7 +13,7 @@ class Planet(object):
     pgs_db_name = 'planet'
     pgs_user = pgs_db_name
     pgs_pwd = pgs_db_name
-    postgres = pgs.Pgs(host=host, port=pgs_port, db_name=pgs_db_name, user=pgs_user, password=pgs_pwd)
+    postgres = pgs.Pgs(host=host, port=pgs_port, db_name=pgs_db_name, user=pgs_user, password=pgs_pwd, singleton=False)
     # Redis配置
     rds_port = 12379
     rds_pwd = 'redis6379'

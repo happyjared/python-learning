@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
 import scrapy
-from utils import pgs
-from utils import uniid
-from utils import mytime
 from lagou.items import LaGouItem
+from utils import pgs, uniid, mytime, map
 from scrapy.http import Request, FormRequest
 
 
@@ -106,9 +104,23 @@ class JobSpider(scrapy.Spider):
         item['job_description'] = '\n'.join(description)
         work_address = response.xpath('//div[@class="work_addr"]/a[not(@id="mapPreview")]/text()').extract()
         work_address_detail = response.xpath('//input[@name="positionAddress"]/@value').extract_first()
-        item['company_location'] = ''.join(work_address) + work_address_detail
+        address = '{0}{1}'.format(''.join(work_address), work_address_detail)
+        item['company_location'] = address
         item['company_index'] = response.xpath('//ul[@class="c_feature"]/li/a/@href').extract_first()
 
+        api = map.getApi(address)
+        yield Request(api, meta={'item': item}, callback=self.handle_location)
+
+    def handle_location(self, response):
+        item = response.meta['item']
+        resp = json.loads(response.body_as_unicode())
+
+        status = resp['status']
+        if 0 == status:
+            result = resp['result']
+            location = result['location']
+            lng = location['lng']  # 经度
+            lat = location['lat']  # 纬度
         yield item
 
     @staticmethod

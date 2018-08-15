@@ -12,5 +12,5 @@ class TableType(object):
     tables = {'1': 'java', '2': 'php', '3': 'python', '4': 'android', '5': 'ios'}
 
     @staticmethod
-    def get_table(t_id):
-        return TableType.prefix.format(TableType.tables.get(str(t_id)))
+    def get_table(type_id):
+        return TableType.prefix.format(TableType.tables.get(str(type_id)))

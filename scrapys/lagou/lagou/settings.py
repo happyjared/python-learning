@@ -33,22 +33,25 @@ ROBOTSTXT_OBEY = False
 # CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-# COOKIES_ENABLED = False
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
 
+REDIRECT_ENABLED = False  # 关掉重定向,不会重定向到新的地址
+HTTPERROR_ALLOWED_CODES = [301, 302]  # 返回302时,按正常返回对待,可以正常写入cookie
+
 # Override the default request headers:
-DEFAULT_REQUEST_HEADERS = {
-    'cookie': 'JSESSIONID=' + uniid.get_uuid4() + ';user_trace_token=' + uniid.get_uuid4()
-              + '; LGUID=' + uniid.get_uuid4() + '; index_location_city=%E6%88%90%E9%83%BD;SEARCH_ID='
-              + uniid.get_uuid4() + ';_gid=GA1.2.717841549.1514043316; _ga=GA1.2.952298646.1514043316; LGSID='
-              + uniid.get_uuid4() + ';LGRID=' + uniid.get_uuid4() + ';',
-    'accept-encoding': 'gzip, deflate, br',
-    'user-agent': 'Chrome/55.0.2883.87',
-    'referer': 'https://www.lagou.com/jobs/list_*',
-    'connection': 'keep-alive',
-}
+# DEFAULT_REQUEST_HEADERS = {
+#     'cookie': 'JSESSIONID=' + uniid.get_uuid4() + ';user_trace_token=' + uniid.get_uuid4()
+#               + '; LGUID=' + uniid.get_uuid4() + '; index_location_city=%E6%88%90%E9%83%BD;SEARCH_ID='
+#               + uniid.get_uuid4() + ';_gid=GA1.2.717841549.1514043316; _ga=GA1.2.952298646.1514043316; LGSID='
+#               + uniid.get_uuid4() + ';LGRID=' + uniid.get_uuid4() + ';',
+#     'accept-encoding': 'gzip, deflate, br',
+#     'user-agent': 'Chrome/55.0.2883.87',
+#     'referer': 'https://www.lagou.com/jobs/list_*',
+#     'connection': 'keep-alive',
+# }
 
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html

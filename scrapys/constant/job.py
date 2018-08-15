@@ -9,7 +9,7 @@ class SourceType(Enum):
 
 class TableType(object):
     prefix = 'tb_{0}'
-    tables = {'1': 'java', '2': 'php', '3': 'python', '4': 'android', '5': 'ios'}
+    tables = {'0': 'tmp', '1': 'java', '2': 'php', '3': 'python', '4': 'android', '5': 'ios'}
 
     @staticmethod
     def get_table(type_id):

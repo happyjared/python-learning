@@ -26,7 +26,8 @@ class JobSpider(scrapy.Spider):
         self.headers = {
             'Connection': 'keep-alive',
             'Accept-Encoding:': 'gzip, deflate, br',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko'
+                          ') Chrome/67.0.3396.79 Safari/537.36',
             'Cookie': 'JSESSIONID=' + uniid.get_uuid4() + ';user_trace_token=' + uniid.get_uuid4()
                       + '; LGUID=' + uniid.get_uuid4() + '; index_location_city=%E6%88%90%E9%83%BD;SEARCH_ID='
                       + uniid.get_uuid4() + ';_gid=GA1.2.717841549.1514043316; _ga=GA1.2.952298646.1514043316; LGSID='
@@ -105,7 +106,8 @@ class JobSpider(scrapy.Spider):
         item['job_description'] = '\n'.join(description)
         work_address = response.xpath('//div[@class="work_addr"]/a[not(@id="mapPreview")]/text()').extract()
         work_address_detail = response.xpath('//input[@name="positionAddress"]/@value').extract_first()
-        item['company_location'] = ''.join(work_address) + work_address_detail  # todo compare latitude and longitude with baidu
+        item['company_location'] = ''.join(
+            work_address) + work_address_detail  # todo compare latitude and longitude with baidu
         item['company_index'] = response.xpath('//ul[@class="c_feature"]/li/a/@href').extract_first()
 
         yield item
@@ -121,5 +123,5 @@ class JobSpider(scrapy.Spider):
     def get_type():
         """Get all type from tb_type"""
 
-        sql = 'select id,"name" from tb_type order by id asc'
+        sql = 'select id,"name" from tb_type where id > 0 order by id asc'
         return sql

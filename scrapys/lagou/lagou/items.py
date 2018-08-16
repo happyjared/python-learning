@@ -34,7 +34,6 @@ class LaGouItem(Item):
     company_industry = Field()
     company_scale = Field()
     company_zone = Field()
-    source_from = Field()
     source_url = Field()
 
 

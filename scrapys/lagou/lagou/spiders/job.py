@@ -4,7 +4,7 @@ import json
 import scrapy
 from lagou.spiders import sql
 from lagou.items import LaGouItem
-from utils import pgs, uniid, mytime, map
+from utils import pgs, uniid, mytime, mapapi
 from scrapy.http import Request, FormRequest
 
 
@@ -32,8 +32,7 @@ class JobSpider(scrapy.Spider):
 
     def start_requests(self):
         for kd in self.type_list:
-            type_id = kd[0]
-            form_kd = kd[1]
+            type_id, form_kd = kd[0], kd[1]
             for city in self.city_list:
                 form_city = city[1]
                 form_data = {'first': 'True', 'pn': '1', 'kd': form_kd}
@@ -71,9 +70,7 @@ class JobSpider(scrapy.Spider):
                 # 解析数据并抓取详情
                 item = LaGouItem()
 
-                item['city'] = city
-                item['city_id'] = city_id
-                item['type_id'] = type_id
+                item['city'], item['city_id'], item['type_id'] = city, city_id, type_id
                 position_id = result.get('positionId')
                 item['position_id'] = str(position_id)
                 item['job_name'] = result.get('positionName')
@@ -106,15 +103,14 @@ class JobSpider(scrapy.Spider):
         item = response.meta['item']
 
         description = response.xpath('//dd[@class="job_bt"]/div/p/text()').extract()
-        item['job_description'] = '\n'.join(description)
+        item['job_description'] = '\n'.join(map(str.strip, description))
         work_address = response.xpath('//div[@class="work_addr"]/a[not(@id="mapPreview")]/text()').extract()
         work_address_detail = response.xpath('//input[@name="positionAddress"]/@value').extract_first()
         address = '{0}{1}'.format(''.join(work_address), work_address_detail)
         item['company_location'] = address
         item['company_index'] = response.xpath('//ul[@class="c_feature"]/li/a/@href').extract_first()
 
-        api = map.getApi(address)
-        yield Request(api, meta={'item': item}, callback=self.handle_location)
+        yield Request(mapapi.getApi(address), meta={'item': item}, callback=self.handle_location)
 
     @staticmethod
     def handle_location(response):

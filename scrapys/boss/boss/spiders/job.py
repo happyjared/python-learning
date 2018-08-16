@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
 import scrapy
 from boss.spiders import sql
-from utils import pgs
+from utils import pgs, mapapi, mytime
 from scrapy.http import Request
 from boss.items import BossItem
 from urllib import parse
@@ -22,54 +23,71 @@ class JobSpider(scrapy.Spider):
         self.start = 'https://www.zhipin.com/c{0}-p{1}/'
 
     def start_requests(self):
-        for type in self.type_list:
-            type_id = type[0]
-            type_code = type[2]
+        for t in self.type_list:
+            type_id, type_code = t[0], t[2]
             for city in self.city_list:
-                city_id = city[0]
-                city_code = city[2]
-
+                city_id, city_code = city[0], city[2]
                 meta = {'city_id': city_id, 'city': city[1], 'type_id': type_id}
                 yield Request(self.start.format(city_code, type_code), meta=meta, callback=self.parse)
 
     def parse(self, response):
         url = response.url
-        city = response.meta('city')
-        city_id = response.meta('city_id')
-        type_id = response.meta('type_id')
+        city, city_id, type_id = response.meta('city'), response.meta('city_id'), response.meta('type_id')
 
         job_list = response.xpath('//div[@class="job-list"]/ul/li')
         for job in job_list:
             item = BossItem()
 
-            item['city'] = city
-            item['city_id'] = city_id
-            item['type_id'] = type_id
+            item['city'], item['city_id'], item['type_id'] = city, city_id, type_id
 
-            job_primary = job.xpath('.//div[@class="job-primary"]/div[@class="info-primary"]').extract_first()
-            position_id = job_primary.xpath('.//h3/a/@href').extract_first()
-            # /job_detail/33bcf9e9da92645d1XVy3NS0EVM~.html
+            job_primary = job.xpath('.//div[@class="job-primary"]/div[@class="info-primary"]')
+            position_id = job_primary.xpath('.//h3/a/@href').extract_first().split('/')[2].replace('.html', '')
             item['position_id'] = position_id
             item['job_name'] = job_primary.xpath('.//h3/a/div[@class="job-title"]/text()').extract_first()
             item['job_salary'] = job_primary.xpath('.//h3/a/span[@class="red"]/text()').extract_first()
-            item['job_experience'] = job_primary.xpath('.//p/text()').extract_first()
-            item['job_education'] = job_primary.xpath('.//p/text()').extract_first()
+            p_list = job_primary.xpath('.//p/text()').extract()
+            item['company_zone'] = json.dumps(p_list[0], ensure_ascii=False)
+            item['job_experience'], item['job_education'] = p_list[1], p_list[2]
 
-            # 发布于07月17日
-            item['post_job_time'] = job.xpath('.//div[@class="info-publis"]/p/text()').extract_first()
-
-            info_company = job.xpath('.//div[@class="job-primary"]/div[@class="info-company"]').extract_first()
-            # /gongsi/d2ba1c1af8bc62f003Z_2dW-.html
-            item['company_id'] = info_company.xpath('.//div[@class="company-text"]/h3/a/@href').extract_first()
+            info_company = job.xpath('.//div[@class="job-primary"]/div[@class="info-company"]')
+            item['company_id'] = info_company.xpath('.//div[@class="company-text"]/h3/a/@href') \
+                .extract_first().split('/')[2].replace('.html', '')
             item['company_short_name'] = info_company.xpath('.//div[@class="company-text"]/h3/a/text()').extract_first()
-            item['company_full_name'] = None
-            item['company_latitude'] = None
-            item['company_longitude'] = None
-            item['company_finance'] = info_company.xpath('.//div[@class="company-text"]/p/text()').extract_first()
-            item['company_industry'] = info_company.xpath('.//div[@class="company-text"]/p/text()').extract_first()
-            item['company_scale'] = info_company.xpath('.//div[@class="company-text"]/p/text()').extract_first()
-            item['source_url'] = parse.urljoin(url, position_id)
+            c_list = info_company.xpath('.//div[@class="company-text"]/p/text()').extract()
+            item['company_finance'], item['company_industry'], item['company_scale'] = c_list[0], c_list[1], c_list[2]
+            source_url = parse.urljoin(url, position_id)
+            item['source_url'] = source_url
 
-    def close(self, spider, reason):
-        self.postgres.close()
-        return super().close(spider, reason)
+            yield Request(source_url, meta={'item': item}, callback=self.parse_detail)
+
+    def parse_detail(self, response):
+        item = response.meta['item']
+
+        item['company_full_name'] = response.xpath('//div[@class="job-sec"]/div[@class="name"]/text()').extract_first()
+        item['company_index'] = response.xpath('//div[@class="info-company"]/p[2]/text()').extract_first()
+        job_tags = response.xpath('//div[@class="job-sec"]/div[@class="job-tags"]/span/text()').extract()
+        item['job_advantage'] = ' '.join(job_tags)
+        job_label = response.xpath('//div[@class="info-primary"]/div[@class="job-tags"]/span/text()').extract()
+        item['job_label'] = json.dumps(job_label, ensure_ascii=False)
+        job_desc = response.xpath('//div[@class="text"]/text()').extract()
+        item['job_description'] = '\n'.join(map(str.strip, job_desc))
+        post_time = response.xpath('//span[@class="time"]/text()').extract_first().replace('发布于', '')
+        item['post_job_time'] = mytime.str_to_date(post_time)
+        address = response.xpath('//div[@class="location-address"]/text()').extract_first()
+        item['company_location'] = address
+
+        yield Request(mapapi.getApi(address), meta={'item': item}, callback=self.handle_location)
+
+    @staticmethod
+    def handle_location(response):
+        item = response.meta['item']
+        resp = json.loads(response.body_as_unicode())
+
+        status = resp['status']
+        if 0 == status:
+            result = resp['result']
+            location = result['location']
+            item['company_latitude'] = location['lat']  # 纬度
+            item['company_longitude'] = location['lng']  # 经度
+
+        yield item

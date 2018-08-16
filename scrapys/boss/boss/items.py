@@ -6,9 +6,10 @@
 # https://doc.scrapy.org/en/latest/topics/items.html
 
 import scrapy
+from lagou.items import LaGouItem
 
 
-class BossItem(scrapy.Item):
+class BossItem(scrapy.Item, LaGouItem):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass

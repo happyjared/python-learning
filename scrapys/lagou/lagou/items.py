@@ -23,7 +23,7 @@ class LaGouItem(Item):
     job_label = Field()
     job_description = Field()
     post_job_time = Field()
-    companyId = Field()
+    company_id = Field()
     company_short_name = Field()
     company_full_name = Field()
     company_location = Field()

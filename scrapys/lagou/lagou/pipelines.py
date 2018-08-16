@@ -21,6 +21,7 @@ class LaGouPipeline(object):
         if isinstance(item, items.LaGouItem):
             position_id = item.get('position_id')
             city_id = item.get('city_id')
+            type_id = item.get('type_id')
             city = item.get('city')
             job_name = item.get('job_name')
             job_salary = item.get('job_salary')
@@ -30,7 +31,7 @@ class LaGouPipeline(object):
             job_label = item.get('job_label')
             job_description = item.get('job_description')
             post_job_time = item.get('post_job_time')
-            companyId = item.get('companyId')
+            company_id = item.get('company_id')
             company_short_name = item.get('company_short_name')
             company_full_name = item.get('company_full_name')
             company_location = item.get('company_location')
@@ -43,10 +44,23 @@ class LaGouPipeline(object):
             company_zone = item.get('company_zone')
             source_from = job.SourceType.lagou.value
             source_url = item.get('source_url')
+            now = mytime.now_date()
+            expired = False
+
+            effect_count = self.postgres.handler(self.save(type_id),
+                                                 (position_id, city_id, city, job_name, job_salary, job_experience,
+                                                  job_education, job_advantage, job_label, job_description,
+                                                  post_job_time, company_id, company_short_name, company_full_name,
+                                                  company_location, company_latitude, company_longitude,
+                                                  company_index, company_finance, company_industry, company_scale,
+                                                  company_zone, source_from, source_url, now, now, expired))
+            if effect_count > 0:
+                pass
 
         return item
 
-    def save(self, type_id):
+    @staticmethod
+    def save(type_id):
         sql = 'insert into {0}(position_id,city_id,city,job_name,job_salary,job_experience,job_education,' \
               'job_advantage,job_label,job_description,post_job_time,company_id,company_short_name,' \
               'company_full_name,company_location,company_latitude,company_longitude,company_index,' \

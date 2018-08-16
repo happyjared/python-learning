@@ -32,16 +32,17 @@ def save(type_id):
     return sql.format(nearjob.TableType.get_table(type_id))
 
 
-def get_data(tb_name):
+def get_data(tb_name, source_from):
     """根据表名获取数据
 
     :param tb_name:
+    :param source_from:
     :return:
     """
 
-    sql = 'select id,source_url from {0} where expired is False order by id asc'
+    sql = 'select id,source_url from {0} where source_from ={1} expired is False order by id asc'
 
-    return sql.format(tb_name)
+    return sql.format(tb_name, source_from)
 
 
 def expire_data(tb_name):

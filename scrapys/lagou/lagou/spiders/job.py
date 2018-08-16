@@ -28,10 +28,6 @@ class JobSpider(scrapy.Spider):
             'Accept-Encoding:': 'gzip, deflate, br',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko'
                           ') Chrome/67.0.3396.79 Safari/537.36',
-            'Cookie': 'JSESSIONID=' + uniid.get_uuid4() + ';user_trace_token=' + uniid.get_uuid4()
-                      + '; LGUID=' + uniid.get_uuid4() + '; index_location_city=%E6%88%90%E9%83%BD;SEARCH_ID='
-                      + uniid.get_uuid4() + ';_gid=GA1.2.717841549.1514043316; _ga=GA1.2.952298646.1514043316; LGSID='
-                      + uniid.get_uuid4() + ';LGRID=' + uniid.get_uuid4() + ';',
         }
 
     def start_requests(self):
@@ -42,6 +38,7 @@ class JobSpider(scrapy.Spider):
                 form_city = city[1]
                 form_data = {'first': 'True', 'pn': '1', 'kd': form_kd}
                 self.headers['Referer'] = self.referer.format(form_kd)
+                self.headers['Cookie'] = self.random_cookie()
                 meta = {'city_id': city[0], 'city': form_city, 'kd': form_kd, 'type_id': type_id}
                 yield FormRequest(self.start.format(form_city), formdata=form_data, callback=self.parse,
                                   headers=self.headers, meta=meta)
@@ -64,6 +61,7 @@ class JobSpider(scrapy.Spider):
                 next_page_no = str(page_no + 1)
                 form_data = {'first': 'False', 'pn': next_page_no, 'kd': kd}
                 self.headers['Referer'] = self.referer.format(kd)
+                self.headers['Cookie'] = self.random_cookie()
                 meta = {'city_id': city_id, 'city': city, 'kd': kd, 'type_id': type_id}
                 yield FormRequest(self.start.format(city), formdata=form_data, callback=self.parse,
                                   headers=self.headers, meta=meta)
@@ -118,7 +116,8 @@ class JobSpider(scrapy.Spider):
         api = map.getApi(address)
         yield Request(api, meta={'item': item}, callback=self.handle_location)
 
-    def handle_location(self, response):
+    @staticmethod
+    def handle_location(response):
         """ Compare lng and lat with Baidu API
 
         :param response:
@@ -136,7 +135,7 @@ class JobSpider(scrapy.Spider):
             lng = location['lng']  # 经度
             diff_lat = math.fabs(item['company_latitude'] - lat)
             diff_lng = math.fabs(item['company_longitude'] - lng)
-            if .1 < diff_lat < 1.0 and .1 < diff_lng < 1.0:
+            if .1 < diff_lat < 1 and .1 < diff_lng < 1:
                 item['type_id'] = 0  # 将数据归类为临时待处理数据
             else:
                 item['company_latitude'] = lat
@@ -144,6 +143,12 @@ class JobSpider(scrapy.Spider):
 
         yield item
 
-    def close(self, spider, reason):
-        self.postgres.close()
-        return super().close(spider, reason)
+    @staticmethod
+    def random_cookie():
+        """Return random cookie"""
+
+        cookie = 'JSESSIONID={0};user_trace_token={1}; LGUID={2}; index_location_city=%E6%88%90%E9%83%BD;' \
+                 'SEARCH_ID={3};_gid=GA1.2.717841549.1514043316; _ga=GA1.2.952298646.1514043316; LGSID={4};' \
+                 'LGRID={5};'.format(uniid.get_uuid4(), uniid.get_uuid4(), uniid.get_uuid4(), uniid.get_uuid4(),
+                                     uniid.get_uuid4(), uniid.get_uuid4())
+        return cookie

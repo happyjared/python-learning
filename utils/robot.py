@@ -3,8 +3,8 @@ import requests
 
 log = logging.getLogger()
 default_key_one = '6ad11c98a4da4cb986ff1d2d83b49347'
-default_key_two = 'a97ca573a691441b9a0cc7b9bb40528e'
-default_reply = 'What ???'
+default_key_two = '645105b675cf4422b75ca847fcc836a2'
+default_reply = '瓦特'
 
 
 def call_text_v1(msg, user_id, key=default_key_one):
@@ -23,6 +23,10 @@ def call_text_v1(msg, user_id, key=default_key_one):
         'userid': user_id,
     }
     resp = requests.post(api, data=data).json()
+    code = resp.get('code')
+    if code == 40004:  # 单日调用次数达上限1000
+        data['key'] = default_key_two
+        resp = requests.post(api, data=data).json()
     reply_text = resp.get('text')
     log.info('Call : %s . V1 Turing Response : %s', msg, reply_text)
     return reply_text if reply_text else default_reply
@@ -47,10 +51,15 @@ def call_text_v2(msg, user_id, key=default_key_one):
         },
         "userInfo": {
             "apiKey": key,
-            "userId": user_id[1:33]
+            "userId": str(user_id)[1:33]
         }
     }
     resp = requests.post(api, json=data).json()
+    code = resp.get('intent').get('code')
+    if code == 4003:  # 单日调用次数达上限1000
+        data['userInfo']['apiKey'] = default_key_two
+        resp = requests.post(api, data=data).json()
+
     result = resp.get('results')[0]
     values = result.get('values')
     result_type = result['resultType']

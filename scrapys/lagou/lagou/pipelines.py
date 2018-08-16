@@ -6,6 +6,7 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from const import job
 from lagou import items
+from lagou.spiders import sql
 from utils import pgs, rds, mytime
 
 
@@ -47,7 +48,7 @@ class LaGouPipeline(object):
             now = mytime.now_date()
             expired = False
 
-            effect_count = self.postgres.handler(self.save(type_id),
+            effect_count = self.postgres.handler(sql.save(type_id),
                                                  (position_id, city_id, city, job_name, job_salary, job_experience,
                                                   job_education, job_advantage, job_label, job_description,
                                                   post_job_time, company_id, company_short_name, company_full_name,
@@ -58,17 +59,6 @@ class LaGouPipeline(object):
                 pass
 
         return item
-
-    @staticmethod
-    def save(type_id):
-        sql = 'insert into {0}(position_id,city_id,city,job_name,job_salary,job_experience,job_education,' \
-              'job_advantage,job_label,job_description,post_job_time,company_id,company_short_name,' \
-              'company_full_name,company_location,company_latitude,company_longitude,company_index,' \
-              'company_finance,company_industry,company_scale,company_zone,source_from,source_url,update_time,' \
-              'create_time,expired) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,' \
-              '%s,%s,%s,%s,%s,%s,%s,%s)'
-
-        return sql.format(job.TableType.get_table(type_id))
 
     def close_spider(self, spider):
         self.postgres.close()

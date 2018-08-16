@@ -3,6 +3,7 @@ import math
 import json
 import scrapy
 from const import job
+from lagou.spiders import sql
 from lagou.items import LaGouItem
 from utils import pgs, uniid, mytime, map
 from scrapy.http import Request, FormRequest
@@ -18,8 +19,8 @@ class JobSpider(scrapy.Spider):
         super().__init__(**kwargs)
         near_job = 'nearjob'
         self.postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
-        self.city_list = self.postgres.fetch_all(self.get_city())
-        self.type_list = self.postgres.fetch_all(self.get_type())
+        self.city_list = self.postgres.fetch_all(sql.get_city())
+        self.type_list = self.postgres.fetch_all(sql.get_type())
         self.start = 'https://www.lagou.com/jobs/positionAjax.json?px=default&needAddtionalResult=false&city={0}'
         self.referer = 'https://www.lagou.com/jobs/list_{0}'
         self.source_url = 'https://www.lagou.com/jobs/{0}.html'
@@ -143,20 +144,6 @@ class JobSpider(scrapy.Spider):
                 item['company_longitude'] = lng
 
         yield item
-
-    @staticmethod
-    def get_city():
-        """Get all city from tb_city"""
-
-        sql = 'select id,"name" from tb_city order by id asc'
-        return sql
-
-    @staticmethod
-    def get_type():
-        """Get all type from tb_type"""
-
-        sql = 'select id,"name" from tb_type where id > 0 order by id asc'
-        return sql
 
     def close(self, spider, reason):
         self.postgres.close()

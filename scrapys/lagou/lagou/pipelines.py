@@ -4,7 +4,7 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-from const import job
+from const import nearjob
 from lagou import items
 from lagou.spiders import sql
 from utils import pgs, rds, mytime
@@ -43,7 +43,7 @@ class LaGouPipeline(object):
             company_industry = item.get('company_industry')
             company_scale = item.get('company_scale')
             company_zone = item.get('company_zone')
-            source_from = job.SourceType.lagou.value
+            source_from = nearjob.SourceType.lagou.value
             source_url = item.get('source_url')
             now = mytime.now_date()
             expired = False
@@ -55,6 +55,15 @@ class LaGouPipeline(object):
                                                   company_location, company_latitude, company_longitude,
                                                   company_index, company_finance, company_industry, company_scale,
                                                   company_zone, source_from, source_url, now, now, expired))
+            if effect_count > 0:
+                pass
+
+        if isinstance(item, items.ExpireItem):
+            tb_id = item['tb_id']
+            tb_name = item['tb_name']
+            expire_time = mytime.now_date()
+
+            effect_count = self.postgres.handler(sql.expire_data(tb_name), (tb_id, expire_time))
             if effect_count > 0:
                 pass
 

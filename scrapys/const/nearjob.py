@@ -14,3 +14,13 @@ class TableType(object):
     @staticmethod
     def get_table(type_id):
         return TableType.prefix.format(TableType.tables.get(str(type_id)))
+
+    @staticmethod
+    def get_all_table():
+        for value in TableType.tables.values():
+            yield TableType.prefix.format(value)
+
+
+if __name__ == '__main__':
+    for v in TableType.get_all_table():
+        print(v)

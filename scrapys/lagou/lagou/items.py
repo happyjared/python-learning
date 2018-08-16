@@ -36,3 +36,8 @@ class LaGouItem(Item):
     company_zone = Field()
     source_from = Field()
     source_url = Field()
+
+
+class ExpireItem(Item):
+    tb_id = Field()
+    tb_name = Field()

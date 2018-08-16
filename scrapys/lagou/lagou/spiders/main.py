@@ -1,3 +1,7 @@
 from scrapy.cmdline import execute
 
-execute(['scrapy', 'crawl', 'job'])
+# 爬取数据
+# execute(['scrapy', 'crawl', 'job'])
+
+# 判断过期
+execute(['scrapy', 'crawl', 'expire'])

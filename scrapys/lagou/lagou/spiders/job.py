@@ -2,7 +2,6 @@
 import math
 import json
 import scrapy
-from const import job
 from lagou.spiders import sql
 from lagou.items import LaGouItem
 from utils import pgs, uniid, mytime, map

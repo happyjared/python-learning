@@ -2,11 +2,12 @@ import logging
 import requests
 
 log = logging.getLogger()
-default_key = '6ad11c98a4da4cb986ff1d2d83b49347'
+default_key_one = '6ad11c98a4da4cb986ff1d2d83b49347'
+default_key_two = 'a97ca573a691441b9a0cc7b9bb40528e'
 default_reply = 'What ???'
 
 
-def call_text_v1(msg, user_id, key=default_key):
+def call_text_v1(msg, user_id, key=default_key_one):
     """发送数据给图灵机器人并返回响应(V1版本接口)
     
     :param msg: 文本消息
@@ -27,7 +28,7 @@ def call_text_v1(msg, user_id, key=default_key):
     return reply_text if reply_text else default_reply
 
 
-def call_text_v2(msg, user_id, key=default_key):
+def call_text_v2(msg, user_id, key=default_key_one):
     """发送数据给图灵机器人并返回响应(V2版本接口)
 
     :param msg: 文本消息

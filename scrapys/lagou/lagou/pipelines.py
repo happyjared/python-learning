@@ -69,3 +69,6 @@ class LaGouPipeline(object):
               '%s,%s,%s,%s,%s,%s,%s,%s)'
 
         return sql.format(job.TableType.get_table(type_id))
+
+    def close_spider(self, spider):
+        self.postgres.close()

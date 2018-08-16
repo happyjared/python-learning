@@ -17,9 +17,9 @@ class JobSpider(scrapy.Spider):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         near_job = 'nearjob'
-        postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
-        self.city_list = postgres.fetch_all(self.get_city())
-        self.type_list = postgres.fetch_all(self.get_type())
+        self.postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
+        self.city_list = self.postgres.fetch_all(self.get_city())
+        self.type_list = self.postgres.fetch_all(self.get_type())
         self.start = 'https://www.lagou.com/jobs/positionAjax.json?px=default&needAddtionalResult=false&city={0}'
         self.referer = 'https://www.lagou.com/jobs/list_{0}'
         self.source_url = 'https://www.lagou.com/jobs/{0}.html'
@@ -157,3 +157,7 @@ class JobSpider(scrapy.Spider):
 
         sql = 'select id,"name" from tb_type where id > 0 order by id asc'
         return sql
+
+    def close(self, spider, reason):
+        self.postgres.close()
+        return super().close(spider, reason)

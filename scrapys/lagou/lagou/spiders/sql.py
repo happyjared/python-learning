@@ -27,7 +27,7 @@ def save(type_id):
           'company_full_name,company_location,company_latitude,company_longitude,company_index,' \
           'company_finance,company_industry,company_scale,company_zone,source_from,source_url,update_time,' \
           'create_time,expired) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,' \
-          '%s,%s,%s,%s,%s,%s,%s,%s)'
+          '%s,%s,%s,%s,%s,%s,%s,%s) returning id'
 
     return sql.format(nearjob.TableType.get_table(type_id))
 

@@ -3,8 +3,8 @@ from enum import Enum, unique
 
 @unique
 class SourceType(Enum):
-    lagou = 0  # 拉勾网
-    boss = 1  # Boss直聘
+    lagou = 1  # 拉勾网
+    boss = 2  # Boss直聘
 
 
 class TableType(object):

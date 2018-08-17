@@ -7,7 +7,7 @@
 from const import nearjob
 from lagou import items
 from lagou.spiders import sql
-from utils import pgs, rds, mytime
+from utils import pgs, rds, es, mytime
 
 
 class LaGouPipeline(object):
@@ -17,6 +17,7 @@ class LaGouPipeline(object):
         near_job = 'nearjob'
         self.postgres = pgs.Pgs(host=host, port=12432, db_name=near_job, user=near_job, password=near_job)
         self.redis = rds.Rds(host=host, port=12379, db=3, password='redis6379').redis_cli
+        self.elastic = es.Es(host=host, index='nearjob')
 
     def process_item(self, item, spider):
         if isinstance(item, items.LaGouItem):
@@ -52,14 +53,14 @@ class LaGouPipeline(object):
                 now = mytime.now_date()
                 expired = False
 
-                effect_count = self.postgres.handler(sql.save(type_id),
-                                                     (position_id, city_id, city, job_name, job_salary, job_experience,
-                                                      job_education, job_advantage, job_label, job_description,
-                                                      post_job_time, company_id, company_short_name, company_full_name,
-                                                      company_location, company_latitude, company_longitude,
-                                                      company_index, company_finance, company_industry, company_scale,
-                                                      company_zone, source_from, source_url, now, now, expired))
-                if effect_count > 0:
+                row_id = self.postgres.handler(sql.save(type_id),
+                                               (position_id, city_id, city, job_name, job_salary, job_experience,
+                                                job_education, job_advantage, job_label, job_description,
+                                                post_job_time, company_id, company_short_name, company_full_name,
+                                                company_location, company_latitude, company_longitude,
+                                                company_index, company_finance, company_industry, company_scale,
+                                                company_zone, source_from, source_url, now, now, expired))
+                if row_id:
                     self.redis.sadd(key, position_id)
 
         if isinstance(item, items.ExpireItem):

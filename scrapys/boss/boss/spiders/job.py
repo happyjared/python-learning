@@ -20,7 +20,7 @@ class JobSpider(scrapy.Spider):
         self.postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
         self.city_list = self.postgres.fetch_all(sql.get_city())
         self.type_list = self.postgres.fetch_all(sql.get_type())
-        self.start = 'https://www.zhipin.com/c{0}-p{1}/'
+        self.start = 'https://www.zhipin.com/c{0}-p{1}'
 
     def start_requests(self):
         for t in self.type_list:
@@ -32,7 +32,7 @@ class JobSpider(scrapy.Spider):
 
     def parse(self, response):
         url = response.url
-        city, city_id, type_id = response.meta('city'), response.meta('city_id'), response.meta('type_id')
+        city, city_id, type_id = response.meta['city'], response.meta['city_id'], response.meta['type_id']
 
         job_list = response.xpath('//div[@class="job-list"]/ul/li')
         for job in job_list:
@@ -41,12 +41,12 @@ class JobSpider(scrapy.Spider):
             item['city'], item['city_id'], item['type_id'] = city, city_id, type_id
 
             job_primary = job.xpath('.//div[@class="job-primary"]/div[@class="info-primary"]')
-            position_id = job_primary.xpath('.//h3/a/@href').extract_first().split('/')[2].replace('.html', '')
-            item['position_id'] = position_id
+            position = job_primary.xpath('.//h3/a/@href').extract_first()
+            item['position_id'] = position.split('/')[2].replace('.html', '')
             item['job_name'] = job_primary.xpath('.//h3/a/div[@class="job-title"]/text()').extract_first()
             item['job_salary'] = job_primary.xpath('.//h3/a/span[@class="red"]/text()').extract_first()
             p_list = job_primary.xpath('.//p/text()').extract()
-            item['company_zone'] = json.dumps(p_list[0], ensure_ascii=False)
+            item['company_zone'] = json.dumps(p_list[0].split(' '), ensure_ascii=False)
             item['job_experience'], item['job_education'] = p_list[1], p_list[2]
 
             info_company = job.xpath('.//div[@class="job-primary"]/div[@class="info-company"]')
@@ -55,7 +55,7 @@ class JobSpider(scrapy.Spider):
             item['company_short_name'] = info_company.xpath('.//div[@class="company-text"]/h3/a/text()').extract_first()
             c_list = info_company.xpath('.//div[@class="company-text"]/p/text()').extract()
             item['company_finance'], item['company_industry'], item['company_scale'] = c_list[0], c_list[1], c_list[2]
-            source_url = parse.urljoin(url, position_id)
+            source_url = parse.urljoin(url, position)
             item['source_url'] = source_url
 
             yield Request(source_url, meta={'item': item}, callback=self.parse_detail)
@@ -72,8 +72,8 @@ class JobSpider(scrapy.Spider):
         job_desc = response.xpath('//div[@class="text"]/text()').extract()
         item['job_description'] = '\n'.join(map(str.strip, job_desc))
         post_time = response.xpath('//span[@class="time"]/text()').extract_first().replace('发布于', '')
-        item['post_job_time'] = mytime.str_to_date(post_time)
-        address = response.xpath('//div[@class="location-address"]/text()').extract_first()
+        item['post_job_time'] = mytime.str_to_date_with_format(post_time, '%Y-%m-%d %H:%M')
+        address = response.xpath('//div[@class="location-address"]/text()').extract_first().replace(' ', '')
         item['company_location'] = address
 
         yield Request(mapapi.getApi(address), meta={'item': item}, callback=self.handle_location)

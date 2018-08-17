@@ -5,7 +5,37 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import random
 from scrapy import signals
+from boss.settings import IP_PROXY_LIST
+from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
+from scrapy.contrib.downloadermiddleware.httpproxy import HttpProxyMiddleware
+
+
+class CustomIpProxyMiddleware(HttpProxyMiddleware):
+    """设置随机IP"""
+
+    def process_request(self, request, spider):
+        proxy_ip = random.choice(IP_PROXY_LIST)
+        print('--->>>: Proxy ip is: ' + proxy_ip)
+        request.meta["proxy"] = "http://{0}".format(proxy_ip)
+
+
+class CustomUserAgentMiddleware(UserAgentMiddleware):
+    """设置随机User-Agent"""
+
+    def __init__(self, user_agent):
+        super().__init__(user_agent)
+        self.user_agent = user_agent
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(user_agent=crawler.settings['USER_AGENT_LIST'])
+
+    def process_request(self, request, spider):
+        user_agent = random.choice(self.user_agent)
+        print("--->>>: User agent is: " + user_agent)
+        request.headers['User-Agent'] = user_agent
 
 
 class BossSpiderMiddleware(object):

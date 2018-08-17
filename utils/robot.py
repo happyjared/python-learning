@@ -20,7 +20,7 @@ def call_text_v1(msg, user_id):
 
     api = 'http://www.tuling123.com/openapi/api'
     data = {
-        'key': key_list[0] if int(user_id[-1]) % 2 == 0 else key_list[2],
+        'key': key_list[0] if int(str(user_id)[-1]) % 2 == 0 else key_list[2],
         'info': msg,
         'userid': user_id,
     }
@@ -53,7 +53,7 @@ def call_text_v2(msg, user_id):
             }
         },
         "userInfo": {
-            "apiKey": key_list[0] if int(user_id[-1]) % 2 == 0 else key_list[2],
+            "apiKey": key_list[0] if int(str(user_id)[-1]) % 2 == 0 else key_list[2],
             "userId": str(user_id)[1:33]
         }
     }

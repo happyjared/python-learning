@@ -46,6 +46,6 @@ def get_data(tb_name, source_from):
 
 
 def expire_data(tb_name):
-    sql = 'update {0} set expired = True,expired_time=%s where id = %s'
+    sql = 'update {0} set expired = True,expired_time=%s where id = %s returning position_id,company_id'
 
     return sql.format(tb_name)

@@ -1,7 +1,7 @@
 import logging
 import requests
 
-log = logging.getLogger(__name__)
+log = logging.getLogger()
 key_list = [
     '6ad11c98a4da4cb986ff1d2d83b49347',  # Big brother(24)
     '645105b675cf4422b75ca847fcc836a2',  # Two brother(23,备用)

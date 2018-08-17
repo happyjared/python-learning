@@ -82,7 +82,7 @@ class JobSpider(scrapy.Spider):
                 if position_labels:
                     item['job_label'] = json.dumps(position_labels, ensure_ascii=False)
                 item['post_job_time'] = mytime.str_to_date(result.get('createTime'))
-                item['company_id'] = str(result.get('company_id'))
+                item['company_id'] = str(result.get('companyId'))
                 item['company_short_name'] = result.get('companyShortName')
                 item['company_full_name'] = result.get('companyFullName')
                 item['company_latitude'] = float(result.get('latitude'))

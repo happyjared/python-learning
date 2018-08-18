@@ -19,7 +19,7 @@ class ExpireSpider(scrapy.Spider):
 
     def start_requests(self):
         for tb_name in nearjob.NearJob.get_all_table():
-            data_list = self.postgres.fetch_all(sql.get_data(tb_name, nearjob.SourceType.boss.value))
+            data_list = self.postgres.fetch_all(sql.get_data(tb_name), (nearjob.SourceType.boss.value,))
             for data in data_list:
                 tb_id, source_url = data[0], data[1]
 

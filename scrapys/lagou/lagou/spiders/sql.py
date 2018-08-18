@@ -1,6 +1,3 @@
-from const import nearjob
-
-
 def get_city():
     """Get all city from tb_city"""
 
@@ -15,10 +12,10 @@ def get_type():
     return sql
 
 
-def save(type_id):
+def save(tb_name):
     """Save data
 
-    :param type_id:
+    :param tb_name:
     :return:
     """
 
@@ -29,20 +26,19 @@ def save(type_id):
           'create_time,expired) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,' \
           '%s,%s,%s,%s,%s,%s,%s,%s) returning id'
 
-    return sql.format(nearjob.NearJob.get_table(type_id))
+    return sql.format(tb_name)
 
 
-def get_data(tb_name, source_from):
+def get_data(tb_name):
     """根据表名获取数据
 
     :param tb_name:
-    :param source_from:
     :return:
     """
 
-    sql = 'select id,source_url from {0} where source_from ={1} expired is False order by id asc'
+    sql = 'select id,source_url from {0} where source_from =%s expired is False order by id asc'
 
-    return sql.format(tb_name, source_from)
+    return sql.format(tb_name)
 
 
 def expire_data(tb_name):

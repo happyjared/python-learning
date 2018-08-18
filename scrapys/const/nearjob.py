@@ -44,8 +44,12 @@ class NearJob(object):
            }
          }'''
 
-        for k, v in NearJob.tables.items():
-            if int(k) == 0:
-                continue
-            else:
-                Es(host='localhost', port=12200, index='nearjob', doc=v, mapping=doc_mapping)
+        index_prefix = 'nearjob_'
+        for p_id, type_name in NearJob.tables.items():
+            if int(p_id) != 0:
+                index = '{0}{1}'.format(index_prefix, type_name)
+                Es(host='localhost', port=12900, index=index, doc=type_name, mapping=doc_mapping)
+
+
+if __name__ == '__main__':
+    NearJob.create_doc_with_mapping()

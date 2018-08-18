@@ -26,7 +26,7 @@ class BossPipeline(object):
             if not self.redis.sismember(key, position_id):
 
                 city_id = item.get('city_id')
-                type_id = item.get('type_id')
+                job_id = item.get('job_id')
                 city = item.get('city')
                 job_name = item.get('job_name')
                 job_salary = item.get('job_salary')
@@ -51,7 +51,7 @@ class BossPipeline(object):
                 now = mytime.now_date()
                 expired = False
 
-                row_id = self.postgres.handler(sql.save(type_id),
+                row_id = self.postgres.handler(sql.save(job_id),
                                                (position_id, city_id, city, job_name, job_salary, job_experience,
                                                 job_education, job_advantage, job_label, job_description,
                                                 post_job_time, company_id, company_short_name, company_full_name,

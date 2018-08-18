@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import scrapy
-from boss.spiders import sql
+from nearjob import sql
 from utils import pgs, mapapi, mytime
 from scrapy.http import Request
 from boss.items import BossItem
@@ -19,26 +19,26 @@ class JobSpider(scrapy.Spider):
         near_job = 'nearjob'
         self.postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
         self.city_list = self.postgres.fetch_all(sql.get_city())
-        self.type_list = self.postgres.fetch_all(sql.get_type())
+        self.job_list = self.postgres.fetch_all(sql.get_job())
         self.start = 'https://www.zhipin.com/c{0}-p{1}'
 
     def start_requests(self):
-        for t in self.type_list:
-            type_id, type_code = t[0], t[2]
+        for job in self.job_list:
+            job_id, job_code = job[0], job[2]
             for city in self.city_list:
                 city_id, city_code = city[0], city[2]
-                meta = {'city_id': city_id, 'city': city[1], 'type_id': type_id}
-                yield Request(self.start.format(city_code, type_code), meta=meta, callback=self.parse)
+                meta = {'city_id': city_id, 'city': city[1], 'job_id': job_id}
+                yield Request(self.start.format(city_code, job_code), meta=meta, callback=self.parse)
 
     def parse(self, response):
         url = response.url
-        city, city_id, type_id = response.meta['city'], response.meta['city_id'], response.meta['type_id']
+        city, city_id, job_id = response.meta['city'], response.meta['city_id'], response.meta['job_id']
 
         job_list = response.xpath('//div[@class="job-list"]/ul/li')
         for job in job_list:
             item = BossItem()
 
-            item['city'], item['city_id'], item['type_id'] = city, city_id, type_id
+            item['city'], item['city_id'], item['job_id'] = city, city_id, job_id
 
             job_primary = job.xpath('.//div[@class="job-primary"]/div[@class="info-primary"]')
             position = job_primary.xpath('.//h3/a/@href').extract_first()
@@ -89,5 +89,7 @@ class JobSpider(scrapy.Spider):
             location = result['location']
             item['company_latitude'] = location['lat']  # 纬度
             item['company_longitude'] = location['lng']  # 经度
+        else:
+            item['job_id'] = 0
 
         yield item

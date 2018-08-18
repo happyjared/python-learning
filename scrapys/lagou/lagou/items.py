@@ -11,7 +11,7 @@ from scrapy import Item, Field
 class LaGouItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    type_id = Field()
+    job_id = Field()
     position_id = Field()
     city_id = Field()
     city = Field()

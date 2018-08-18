@@ -26,9 +26,9 @@ class LaGouPipeline(object):
             key = 'nearjob:company:{0}'.format(company_id)
             if not self.redis.sismember(key, position_id):
 
-                city_id = item.get('city_id')
-                type_id = item.get('type_id')
                 city = item.get('city')
+                job_id = item.get('job_id')
+                city_id = item.get('city_id')
                 job_name = item.get('job_name')
                 job_salary = item.get('job_salary')
                 job_experience = item.get('job_experience')
@@ -51,7 +51,7 @@ class LaGouPipeline(object):
                 source_url = item.get('source_url')
                 now = mytime.now_date()
                 expired = False
-                tb_name = table.NearJob.get_table(type_id)
+                tb_name = table.NearJob.get_table(job_id)
 
                 row_id = self.postgres.handler(sql.save(tb_name),
                                                (position_id, city_id, city, job_name, job_salary, job_experience,
@@ -60,7 +60,7 @@ class LaGouPipeline(object):
                                                 company_location, company_latitude, company_longitude,
                                                 company_index, company_finance, company_industry, company_scale,
                                                 company_zone, source_from, source_url, now, now, expired))
-                if type_id != 0 and row_id:
+                if job_id != 0 and row_id:
                     self.redis.sadd(key, position_id)
                     keyword = '{0} {1} {2} {3}'.format(job_name, job_advantage, company_industry, company_zone)
                     json_data = {'city_id': city_id, 'location': {"lat": company_latitude, "lon": company_longitude},

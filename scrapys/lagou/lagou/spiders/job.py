@@ -21,7 +21,7 @@ class JobSpider(scrapy.Spider):
         near_job = 'nearjob'
         self.postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
         self.city_list = self.postgres.fetch_all(sql.get_city())
-        self.type_list = self.postgres.fetch_all(sql.get_job())
+        self.job_list = self.postgres.fetch_all(sql.get_job())
         self.start = 'https://www.lagou.com/jobs/positionAjax.json?px=default&needAddtionalResult=false&city={0}'
         self.referer = 'https://www.lagou.com/jobs/list_{0}'
         self.source_url = 'https://www.lagou.com/jobs/{0}.html'
@@ -33,24 +33,22 @@ class JobSpider(scrapy.Spider):
         }
 
     def start_requests(self):
-        for kd in self.type_list:
-            type_id, form_kd = kd[0], kd[1]
+        for kd in self.job_list:
+            job_id, form_kd = kd[0], kd[1]
             for city in self.city_list:
                 form_city = city[1]
                 form_data = {'first': 'True', 'pn': '1', 'kd': form_kd}
                 self.headers['Referer'] = self.referer.format(form_kd)
                 self.headers['Cookie'] = self.random_cookie()
-                meta = {'city_id': city[0], 'city': form_city, 'kd': form_kd, 'type_id': type_id}
+                meta = {'city_id': city[0], 'city': form_city, 'kd': form_kd, 'job_id': job_id}
                 yield FormRequest(self.start.format(form_city), formdata=form_data, callback=self.parse,
                                   headers=self.headers, meta=meta)
 
     def parse(self, response):
         resp = json.loads(response.body_as_unicode())
         if 0 == resp.get('code'):
-            kd = response.meta['kd']
-            city = response.meta['city']
-            type_id = response.meta['type_id']
-            city_id = response.meta['city_id']
+            kd, job_id = response.meta['kd'], response.meta['job_id']
+            city, city_id = response.meta['city'], response.meta['city_id']
 
             content = resp['content']
             page_no = content['pageNo']
@@ -63,7 +61,7 @@ class JobSpider(scrapy.Spider):
                 form_data = {'first': 'False', 'pn': next_page_no, 'kd': kd}
                 self.headers['Referer'] = self.referer.format(kd)
                 self.headers['Cookie'] = self.random_cookie()
-                meta = {'city_id': city_id, 'city': city, 'kd': kd, 'type_id': type_id}
+                meta = {'city_id': city_id, 'city': city, 'kd': kd, 'job_id': job_id}
                 yield FormRequest(self.start.format(city), formdata=form_data, callback=self.parse,
                                   headers=self.headers, meta=meta)
 
@@ -72,7 +70,7 @@ class JobSpider(scrapy.Spider):
                 # 解析数据并抓取详情
                 item = LaGouItem()
 
-                item['city'], item['city_id'], item['type_id'] = city, city_id, type_id
+                item['city'], item['city_id'], item['job_id'] = city, city_id, job_id
                 position_id = result.get('positionId')
                 item['position_id'] = str(position_id)
                 item['job_name'] = result.get('positionName')
@@ -99,7 +97,8 @@ class JobSpider(scrapy.Spider):
                 item['source_url'] = source_url
 
                 self.headers['Referer'] = None
-                yield Request(source_url, meta={'item': item}, headers=self.headers, callback=self.parse_detail)
+                yield Request(source_url, meta={'item': item},
+                              headers=self.headers, callback=self.parse_detail)
 
     def parse_detail(self, response):
         item = response.meta['item']
@@ -134,7 +133,7 @@ class JobSpider(scrapy.Spider):
             diff_lat = math.fabs(item['company_latitude'] - lat)
             diff_lng = math.fabs(item['company_longitude'] - lng)
             if .1 < diff_lat < 1 and .1 < diff_lng < 1:
-                item['type_id'] = 0  # 将数据归类为临时待处理数据
+                item['job_id'] = 0  # 将数据归类为tb_tmp数据
             else:
                 item['company_latitude'] = lat
                 item['company_longitude'] = lng

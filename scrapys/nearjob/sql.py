@@ -1,14 +1,14 @@
 def get_city():
-    """Get city from tb_city"""
+    """Get city from table_city"""
 
-    sql = 'select id,"name",boss_code from tb_city where enabled is True order by id asc'
+    sql = 'select id,"name",boss_code from table_city where enabled is True order by id asc'
     return sql
 
 
 def get_job():
-    """Get job from tb_job"""
+    """Get job from table_job"""
 
-    sql = 'select id,"name",boss_code from tb_job where enabled is True order by id asc'
+    sql = 'select id,"name",boss_code from table_job where enabled is True order by id asc'
     return sql
 
 

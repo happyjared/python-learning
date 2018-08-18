@@ -133,7 +133,7 @@ class JobSpider(scrapy.Spider):
             diff_lat = math.fabs(item['company_latitude'] - lat)
             diff_lng = math.fabs(item['company_longitude'] - lng)
             if .1 < diff_lat < 1 and .1 < diff_lng < 1:
-                item['job_id'] = 0  # 将数据归类为tb_tmp数据
+                item['job_id'] = 0  # 将数据归类为table_tmp数据
             else:
                 item['company_latitude'] = lat
                 item['company_longitude'] = lng

@@ -10,15 +10,17 @@ class SourceType(Enum):
 
 class NearJob(object):
     prefix = 'tb_{0}'
-    tables = {'0': 'tmp', '1': 'java', '2': 'php', '3': 'python', '4': 'android', '5': 'ios'}
+    jobs = {'0': 'tmp', '1': 'java', '2': 'php', '3': 'python', '4': 'android', '5': 'ios'}
 
     @staticmethod
     def get_table(type_id):
-        return NearJob.prefix.format(NearJob.tables.get(str(type_id)))
+        # sql ='SELECT "table_name" FROM information_schema.tables where
+        # table_schema='public' and "table_name" like '%tb_%''
+        return NearJob.prefix.format(NearJob.jobs.get(str(type_id)))
 
     @staticmethod
     def get_all_table():
-        for value in NearJob.tables.values():
+        for value in NearJob.jobs.values():
             yield NearJob.prefix.format(value)
 
     @staticmethod
@@ -45,7 +47,7 @@ class NearJob(object):
          }'''
 
         index_prefix = 'nearjob_'
-        for p_id, type_name in NearJob.tables.items():
+        for p_id, type_name in NearJob.jobs.items():
             if int(p_id) != 0:
                 index = '{0}{1}'.format(index_prefix, type_name)
                 Es(host='localhost', port=12900, index=index, doc=type_name, mapping=doc_mapping)

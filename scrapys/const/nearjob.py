@@ -1,3 +1,4 @@
+from utils.es import Es
 from enum import Enum, unique
 
 
@@ -7,20 +8,44 @@ class SourceType(Enum):
     boss = 2  # Boss直聘
 
 
-class TableType(object):
+class NearJob(object):
     prefix = 'tb_{0}'
     tables = {'0': 'tmp', '1': 'java', '2': 'php', '3': 'python', '4': 'android', '5': 'ios'}
 
     @staticmethod
     def get_table(type_id):
-        return TableType.prefix.format(TableType.tables.get(str(type_id)))
+        return NearJob.prefix.format(NearJob.tables.get(str(type_id)))
 
     @staticmethod
     def get_all_table():
-        for value in TableType.tables.values():
-            yield TableType.prefix.format(value)
+        for value in NearJob.tables.values():
+            yield NearJob.prefix.format(value)
 
+    @staticmethod
+    def create_doc_with_mapping():
+        """创建ES Document Mapping"""
 
-if __name__ == '__main__':
-    for v in TableType.get_all_table():
-        print(v)
+        doc_mapping = '''{
+           "properties": {
+             "city_id": {
+               "type": "integer"
+             },
+             "location": {
+               "type": "geo_point"
+             },
+             "source_from": {
+               "type": "integer"
+             },
+             "keyword":{
+               "type": "text",
+               "analyzer": "ik_max_word",
+               "search_analyzer": "ik_max_word"
+             }
+           }
+         }'''
+
+        for k, v in NearJob.tables.items():
+            if int(k) == 0:
+                continue
+            else:
+                Es(host='localhost', port=12200, index='nearjob', doc=v, mapping=doc_mapping)

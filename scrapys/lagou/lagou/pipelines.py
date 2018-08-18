@@ -11,13 +11,12 @@ from utils import pgs, rds, es, mytime
 
 
 class LaGouPipeline(object):
-
     def __init__(self):
         host = 'localhost'
         near_job = 'nearjob'
         self.postgres = pgs.Pgs(host=host, port=12432, db_name=near_job, user=near_job, password=near_job)
         self.redis = rds.Rds(host=host, port=12379, db=3, password='redis6379').redis_cli
-        self.elastic = es.Es(host=host, index='nearjob')
+        self.elastic = es.Es(host=host, port=12900, index=near_job)
 
     def process_item(self, item, spider):
         if isinstance(item, items.LaGouItem):
@@ -62,6 +61,10 @@ class LaGouPipeline(object):
                                                 company_zone, source_from, source_url, now, now, expired))
                 if row_id:
                     self.redis.sadd(key, position_id)
+                    keyword = '{0} {1} {2} {3}'.format(job_name, job_advantage, company_industry, company_zone)
+                    json_data = {'city_id': city_id, 'location': {"lat": company_latitude, "lon": company_longitude},
+                                 "source_from": source_from, "keyword": keyword}
+                    self.elastic.put_data(data_body=json_data, _id=row_id)
 
         if isinstance(item, items.ExpireItem):
             tb_id = item['tb_id']

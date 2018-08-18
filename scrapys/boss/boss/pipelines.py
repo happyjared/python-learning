@@ -7,7 +7,7 @@
 from boss import items
 from const import nearjob
 from lagou.spiders import sql
-from utils import pgs, rds, mytime
+from utils import pgs, rds, mytime, es
 
 
 class BossPipeline(object):
@@ -16,6 +16,7 @@ class BossPipeline(object):
         near_job = 'nearjob'
         self.postgres = pgs.Pgs(host=host, port=12432, db_name=near_job, user=near_job, password=near_job)
         self.redis = rds.Rds(host=host, port=12379, db=3, password='redis6379').redis_cli
+        self.elastic = es.Es(host=host, port=12900, index=near_job)
 
     def process_item(self, item, spider):
         if isinstance(item, items.BossItem):
@@ -51,15 +52,19 @@ class BossPipeline(object):
                 now = mytime.now_date()
                 expired = False
 
-                effect_count = self.postgres.handler(sql.save(type_id),
-                                                     (position_id, city_id, city, job_name, job_salary, job_experience,
-                                                      job_education, job_advantage, job_label, job_description,
-                                                      post_job_time, company_id, company_short_name, company_full_name,
-                                                      company_location, company_latitude, company_longitude,
-                                                      company_index, company_finance, company_industry, company_scale,
-                                                      company_zone, source_from, source_url, now, now, expired))
-                if effect_count > 0:
+                row_id = self.postgres.handler(sql.save(type_id),
+                                               (position_id, city_id, city, job_name, job_salary, job_experience,
+                                                job_education, job_advantage, job_label, job_description,
+                                                post_job_time, company_id, company_short_name, company_full_name,
+                                                company_location, company_latitude, company_longitude,
+                                                company_index, company_finance, company_industry, company_scale,
+                                                company_zone, source_from, source_url, now, now, expired))
+                if row_id:
                     self.redis.sadd(key, position_id)
+                    keyword = '{0} {1} {2} {3}'.format(job_name, job_advantage, company_industry, company_zone)
+                    json_data = {'city_id': city_id, 'location': {"lat": company_latitude, "lon": company_longitude},
+                                 "source_from": source_from, "keyword": keyword}
+                    self.elastic.put_data(data_body=json_data, _id=row_id)
 
         if isinstance(item, items.ExpireItem):
             tb_id = item['tb_id']

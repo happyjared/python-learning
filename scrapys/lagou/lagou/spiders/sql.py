@@ -29,7 +29,7 @@ def save(type_id):
           'create_time,expired) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,' \
           '%s,%s,%s,%s,%s,%s,%s,%s) returning id'
 
-    return sql.format(nearjob.TableType.get_table(type_id))
+    return sql.format(nearjob.NearJob.get_table(type_id))
 
 
 def get_data(tb_name, source_from):

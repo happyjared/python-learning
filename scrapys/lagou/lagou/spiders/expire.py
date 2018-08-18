@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy.http import Request
-from lagou.items import ExpireItem
 
-from const import nearjob
-from lagou.spiders import sql, job
+import table
+import sql
+from lagou.items import ExpireItem
+from lagou.spiders import job
 from utils import pgs
 
 
@@ -22,8 +23,8 @@ class ExpireSpider(scrapy.Spider):
         }
 
     def start_requests(self):
-        for tb_name in nearjob.NearJob.get_all_table():
-            data_list = self.postgres.fetch_all(sql.get_data(tb_name), (nearjob.SourceType.lagou.value,))
+        for tb_name in table.NearJob.get_all_table():
+            data_list = self.postgres.fetch_all(sql.get_data(tb_name), (table.SourceType.lagou.value,))
             for data in data_list:
                 tb_id, source_url = data[0], data[1]
 

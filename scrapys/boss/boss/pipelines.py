@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from boss import items
-from const import nearjob
-from lagou.spiders import sql
+from nearjob import sql
+from nearjob.table import SourceType
 from utils import pgs, rds, mytime, es
 
 
@@ -47,7 +46,7 @@ class BossPipeline(object):
                 company_industry = item.get('company_industry')
                 company_scale = item.get('company_scale')
                 company_zone = item.get('company_zone')
-                source_from = nearjob.SourceType.lagou.value
+                source_from = SourceType.lagou.value
                 source_url = item.get('source_url')
                 now = mytime.now_date()
                 expired = False

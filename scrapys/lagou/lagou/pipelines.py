@@ -4,9 +4,9 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-from const import nearjob
+import table
+import sql
 from lagou import items
-from lagou.spiders import sql
 from utils import pgs, rds, es, mytime
 
 
@@ -47,11 +47,11 @@ class LaGouPipeline(object):
                 company_industry = item.get('company_industry')
                 company_scale = item.get('company_scale')
                 company_zone = item.get('company_zone')
-                source_from = nearjob.SourceType.lagou.value
+                source_from = table.SourceType.lagou.value
                 source_url = item.get('source_url')
                 now = mytime.now_date()
                 expired = False
-                tb_name = nearjob.NearJob.get_table(type_id)
+                tb_name = table.NearJob.get_table(type_id)
 
                 row_id = self.postgres.handler(sql.save(tb_name),
                                                (position_id, city_id, city, job_name, job_salary, job_experience,

@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-import math
 import json
+import math
+
 import scrapy
-from lagou.spiders import sql
+from scrapy.http import Request, FormRequest
+
+import sql
 from lagou.items import LaGouItem
 from utils import pgs, uniid, mytime, mapapi
-from scrapy.http import Request, FormRequest
 
 
 class JobSpider(scrapy.Spider):
@@ -19,7 +21,7 @@ class JobSpider(scrapy.Spider):
         near_job = 'nearjob'
         self.postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
         self.city_list = self.postgres.fetch_all(sql.get_city())
-        self.type_list = self.postgres.fetch_all(sql.get_type())
+        self.type_list = self.postgres.fetch_all(sql.get_job())
         self.start = 'https://www.lagou.com/jobs/positionAjax.json?px=default&needAddtionalResult=false&city={0}'
         self.referer = 'https://www.lagou.com/jobs/list_{0}'
         self.source_url = 'https://www.lagou.com/jobs/{0}.html'

@@ -1,14 +1,14 @@
 def get_city():
-    """Get all city from tb_city"""
+    """Get city from tb_city"""
 
-    sql = 'select id,"name" from tb_city order by id asc'
+    sql = 'select id,"name",boss_code from tb_city where enabled is True order by id asc'
     return sql
 
 
-def get_type():
-    """Get all type from tb_type"""
+def get_job():
+    """Get job from tb_job"""
 
-    sql = 'select id,"name" from tb_type where id > 0 order by id asc'
+    sql = 'select id,"name",boss_code from tb_type where enabled is True order by id asc'
     return sql
 
 
@@ -30,7 +30,7 @@ def save(tb_name):
 
 
 def get_data(tb_name):
-    """根据表名获取数据
+    """根据tb_name获取数据
 
     :param tb_name:
     :return:

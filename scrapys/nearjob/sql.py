@@ -8,7 +8,7 @@ def get_city():
 def get_job():
     """Get job from tb_job"""
 
-    sql = 'select id,"name",boss_code from tb_type where enabled is True order by id asc'
+    sql = 'select id,"name",boss_code from tb_job where enabled is True order by id asc'
     return sql
 
 

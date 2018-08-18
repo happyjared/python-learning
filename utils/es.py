@@ -1,29 +1,31 @@
-import json
 import logging
+from logger import log
 from elasticsearch import Elasticsearch
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-log = logging.getLogger(__name__)
 
 
 class Es(object):
-    def __init__(self, index, host='localhost', port=9200, doc=None, mapping=None):
+    log.Logger()
+
+    def __init__(self, host='localhost', port=9200, index=None, doc=None, mapping=None):
+        logging.info('Es Init index: %s , document: %s , mapping %s', index, doc, mapping)
 
         self.els = Elasticsearch(hosts="{0}:{1}".format(host, port))
 
         ping_res = self.els.ping()
-        log.info('Es Ping : %s', ping_res)
+        logging.info('Es Ping : %s', ping_res)
 
         self.doc = doc
         self.index = index
-        log.info('Es Init index: %s , document: %s , mapping %s', index, doc, mapping)
-        if not self.els.indices.exists(index=index):
+
+        if index and not self.els.indices.exists(index=index):
+            # 创建Index
             create_index = self.els.indices.create(index=index)
-            log.info('Es create_index : %s', create_index)
+            logging.info('Es create_index : %s', create_index)
         if doc and not self.els.indices.exists_type(index=index, doc_type=doc):
+            # 创建Document with mapping
             # @See: http://cwiki.apachecn.org/pages/viewpage.action?pageId=7372806
             put_mapping = self.els.indices.put_mapping(index=index, doc_type=doc, body=mapping)
-            log.info('Es put_mapping : %s', put_mapping)
+            logging.info('Es put_mapping : %s', put_mapping)
 
     """ Example
     json_data = {
@@ -37,19 +39,32 @@ class Es(object):
     }
     """
 
-    def put_data(self, data_body, doc=None, _id=None):
+    def put_data(self, data_body, index=None, doc=None, _id=None):
         """ 添加数据到ES
         
         :param data_body: 数据 
+        :param index: 索引,可选
         :param doc: 文档,可选
         :param _id: 文档id, 可选
         :return: 
         """
 
-        return self.els.index(index=self.index, doc_type=doc if doc else self.doc, id=_id, body=data_body)
+        return self.els.index(index=index if index else self.index,
+                              doc_type=doc if doc else self.doc,
+                              id=_id, body=data_body)
 
-    def search_id(self, search_id, doc=None):
-        return self.els.get(index=self.index, doc_type=doc if doc else self.doc, id=search_id)
+    def search_id(self, _id, index=None, doc=None):
+        """ 根据id查找数据
+        
+        :param _id: 指定id
+        :param index: 索引
+        :param doc: 文档
+        :return: 
+        """
+
+        return self.els.get(index=index if index else self.index,
+                            doc_type=doc if doc else self.doc,
+                            id=_id)
 
     """ Example:
     search_body = '''{
@@ -86,7 +101,17 @@ class Es(object):
     }'''
     """
 
-    def search_body(self, body=None):
+    def search_body(self, body=None, index=None, doc=None):
+        """ 自定义DSL查询
+        
+        :param body: DSL Body 
+        :param index: 索引
+        :param doc: 文档
+        :return: 
+        """
+
         if body is None:
             body = {"query": {"match_all": {}}}
-        return self.els.search(index=self.index, doc_type=self.doc, body=body)
+        return self.els.search(index=index if index else self.index,
+                               doc_type=doc if doc else self.doc,
+                               body=body)

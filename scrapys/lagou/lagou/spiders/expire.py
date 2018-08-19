@@ -2,11 +2,9 @@
 import scrapy
 from scrapy.http import Request
 
-import table
-import sql
-from lagou.items import ExpireItem
-from lagou.spiders import job
 from utils import pgs
+from lagou.spiders import job
+from nearjob import sql, table, items
 
 
 class ExpireSpider(scrapy.Spider):
@@ -36,7 +34,7 @@ class ExpireSpider(scrapy.Spider):
         send_btn = response.xpath('//div[@class="resume-deliver"]/a/@data-position-id').extract_first()
 
         if not send_btn:
-            item = ExpireItem()
+            item = items.ExpireItem()
             item['ta_id'] = response.meta['tb_id']
             item['tb_name'] = response.meta['tb_name']
 

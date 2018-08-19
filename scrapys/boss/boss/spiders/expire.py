@@ -2,10 +2,8 @@
 import scrapy
 from scrapy.http import Request
 
-import table
-import sql
-from lagou.items import ExpireItem
 from utils import pgs
+from nearjob import sql, table, items
 
 
 class ExpireSpider(scrapy.Spider):
@@ -30,7 +28,7 @@ class ExpireSpider(scrapy.Spider):
         send_btn = response.xpath('//a[@class="btn btn-startchat"]/@redirect-url').extract_first()
 
         if not send_btn:
-            item = ExpireItem()
+            item = items.ExpireItem()
             item['ta_id'] = response.meta['tb_id']
             item['tb_name'] = response.meta['tb_name']
 

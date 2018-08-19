@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-import table
-import sql
-from lagou import items
+# -*- coding: utf-8 -*-
+
+from nearjob import items, table, sql
 from utils import pgs, rds, es, mytime
 
 
@@ -19,7 +17,7 @@ class LaGouPipeline(object):
         self.elastic = es.Es(host=host, port=12900)
 
     def process_item(self, item, spider):
-        if isinstance(item, items.LaGouItem):
+        if isinstance(item, items.JobItem):
             company_id = item.get('company_id')
             position_id = item.get('position_id')
 

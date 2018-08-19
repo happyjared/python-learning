@@ -5,10 +5,10 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/items.html
 
-from scrapy import Field, Item
+from scrapy import Item, Field
 
 
-class BossItem(Item):
+class JobItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     job_id = Field()

@@ -6,7 +6,7 @@ import scrapy
 from scrapy.http import Request, FormRequest
 
 import sql
-from lagou.items import LaGouItem
+from items import JobItem
 from utils import pgs, uniid, mytime, mapapi
 
 
@@ -68,7 +68,7 @@ class JobSpider(scrapy.Spider):
             result_list = position_result['result']
             for result in result_list:
                 # 解析数据并抓取详情
-                item = LaGouItem()
+                item = JobItem()
 
                 item['city'], item['city_id'], item['job_id'] = city, city_id, job_id
                 position_id = result.get('positionId')

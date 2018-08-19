@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
 import scrapy
-from nearjob import sql
+from nearjob import sql, items
 from utils import pgs, mapapi, mytime
 from scrapy.http import Request
-from boss.items import BossItem
 from urllib import parse
 
 
@@ -36,7 +35,7 @@ class JobSpider(scrapy.Spider):
 
         job_list = response.xpath('//div[@class="job-list"]/ul/li')
         for job in job_list:
-            item = BossItem()
+            item = items.JobItem()
 
             item['city'], item['city_id'], item['job_id'] = city, city_id, job_id
 

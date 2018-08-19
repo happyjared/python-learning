@@ -22,7 +22,7 @@ class PlanetRobot:
         """
 
         sleep_time = random.randint(180, 300)
-        data = {"list": 'explore', "offset": 0, "pagesize": 50}
+        data = {"list": 'explore', "offset": 0, "pagesize": 20}
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/list'
 
         logging.info('Start to get users dynamic')

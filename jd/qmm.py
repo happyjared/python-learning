@@ -29,7 +29,8 @@ class QMM(object):
         for link in t_body.find_all('a'):
             detail = link.get('href')
             text = link.text
-            if '8月15' not in text:
+
+            if '8月19' not in text:
                 continue
             resp = requests.get(detail)
             bs = BeautifulSoup(resp.text, 'html.parser')

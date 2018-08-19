@@ -166,6 +166,15 @@ class PlanetRobot:
             table_id = row[0]
             postgres.handler(planet_sql.update_music_count(), (table_id,))
         postgres.close()
+        PlanetRobot.refresh_token()
+
+    @staticmethod
+    def refresh_token():
+        """刷新Token"""
+
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/push/access_token'
+        resp = requests.post(api, json={}, headers=Planet.headers)
+        logging.info('access_token: %s ', resp['access_token'])
 
 
 # 程序入口

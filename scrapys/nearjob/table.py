@@ -4,8 +4,7 @@ from enum import Enum, unique
 
 @unique
 class SourceType(Enum):
-    lagou = 1  # 拉勾网
-    boss = 2  # Boss直聘
+    lagou, boss = 1, 2  # 拉勾网, Boss直聘
 
 
 class NearJob(object):
@@ -14,8 +13,8 @@ class NearJob(object):
 
     @staticmethod
     def get_table(type_id):
-        # sql ='SELECT "table_name" FROM information_schema.tables where
-        # table_schema='public' and "table_name" like '%tb_%''
+        sql = 'SELECT "table_name" FROM information_schema.tables ' \
+              'where table_schema="public" and "table_name" like "%tb_%"'
         return NearJob.prefix.format(NearJob.jobs.get(str(type_id)))
 
     @staticmethod

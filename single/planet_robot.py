@@ -28,7 +28,7 @@ class PlanetRobot:
         logging.info('Start to get users dynamic')
         while True:
             resp = requests.post(api, json=data, headers=Planet.headers).json()
-            errcode = resp.get('errorcode')
+            errcode = resp.get('errcode')
             if errcode:
                 logging.error('>>> Single Unauthenticated')
                 key = 'planet:my:token'

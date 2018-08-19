@@ -20,8 +20,8 @@ class Planet(object):
     redis = rds.Rds(host=host, port=rds_port, password=rds_pwd).redis_cli
     my_hash = None
     my_user_id = None
-    token = 'djM6kGdI04LxK4zk9C2reI50szrReqT90NSVbjxv3WkvxXYkQqXRGyngiR2zX0EASm1GswTTk7RQepcmx6YtLCNqAyFcRC67z9O' \
-            'YGmxLrEE-Hl4ayz9p21TYKQVNWZXHQZBZVY4D5OEVnWORTtBV7lkuOy-2_bQyJCEkDBLO3ksR8o10'
+    token = 'djM6UiKpDJIE2PrbADgPEalHEToKII56YpPgiAg95DfqVcPwvRLNivllKFC5uGtEm4MxN9Spr9f1_EFGpL8c-pDPs93dYOZDma3Ki26KYF' \
+            '_Db2ujbQ9rUJ6XRH4m6T4xJkkoRIob1BjROK-PeOFc8Pksnwp2DzHb28PCpcVqMQuz7ThX'
     headers = {
         'Authorization': 'token {0}'.format(token)
     }

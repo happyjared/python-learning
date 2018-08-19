@@ -10,8 +10,7 @@ from utils import pgs, rds, es, mytime
 
 class LaGouPipeline(object):
     def __init__(self):
-        host = 'localhost'
-        near_job = 'nearjob'
+        host, near_job = 'localhost', 'nearjob'
         self.postgres = pgs.Pgs(host=host, port=12432, db_name=near_job, user=near_job, password=near_job)
         self.redis = rds.Rds(host=host, port=12379, db=3, password='redis6379').redis_cli
         self.elastic = es.Es(host=host, port=12900)

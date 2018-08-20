@@ -24,21 +24,23 @@ class JobSpider(scrapy.Spider):
 
     def start_requests(self):
         for job in self.job_list:
-            job_id, job_code = job[0], job[2]
+            job_id, job_code, tb_name = job[0], job[2], job[3]
             for city in self.city_list:
                 city_id, city_code = city[0], city[2]
-                meta = {'city_id': city_id, 'city': city[1], 'job_id': job_id}
+                meta = {'city_id': city_id, 'city': city[1], 'job_id': job_id, 'tb_name': tb_name}
                 yield Request(self.start.format(city_code, job_code), meta=meta, callback=self.parse)
 
     def parse(self, response):
         url = response.url
-        city, city_id, job_id = response.meta['city'], response.meta['city_id'], response.meta['job_id']
+        city, city_id = response.meta['city'], response.meta['city_id']
+        job_id, tb_name = response.meta['job_id'], response.meta['tb_name']
 
         job_list = response.xpath('//div[@class="job-list"]/ul/li')
         for job in job_list:
             item = items.JobItem()
 
-            item['city'], item['city_id'], item['job_id'] = city, city_id, job_id
+            item['city'], item['city_id'] = city, city_id
+            item['job_id'], item['tb_name'] = job_id, tb_name
 
             job_primary = job.xpath('.//div[@class="job-primary"]/div[@class="info-primary"]')
             position = job_primary.xpath('.//h3/a/@href').extract_first()
@@ -46,7 +48,7 @@ class JobSpider(scrapy.Spider):
             item['job_name'] = job_primary.xpath('.//h3/a/div[@class="job-title"]/text()').extract_first()
             item['job_salary'] = job_primary.xpath('.//h3/a/span[@class="red"]/text()').extract_first()
             p_list = job_primary.xpath('.//p/text()').extract()
-            item['company_zone'] = json.dumps(p_list[0].split(' '), ensure_ascii=False)
+            item['company_zone'] = p_list[0].split(' ')
             item['job_experience'], item['job_education'] = p_list[1], p_list[2]
 
             info_company = job.xpath('.//div[@class="job-primary"]/div[@class="info-company"]')

@@ -36,12 +36,9 @@ class QMM(object):
                 for shop_url in detail_body.find_all('a'):
                     url_detail = self.parse_url(shop_url.get('href'))
                     if url_detail not in self.shop_list:
-                        # 简单去重
-                        self.shop_list.append(url_detail)
+                        self.shop_list.append(url_detail)  # 简单去重
 
-        print('一共抓取了 %d 个待领取京豆店铺页面' % (len(self.shop_list)))
-        # self.list_detail.sort(reverse=True) # URL顺序排序后再抓取
-        # random.shuffle(self.list_detail) # URL随机排序后再抓取
+        print('共抓取了 %d 个待领取京豆店铺页面' % len(self.shop_list))
         self.wool()
 
     @staticmethod
@@ -85,7 +82,7 @@ class QMM(object):
                 wool_num = WebDriverWait(driver, self.timeout).until(
                     lambda d: d.find_element_by_class_name('d-num'))
                 gift_btn.click()
-                print(' 领取成功, 京豆数 %d ' % int(wool_num.text))
+                print(' 领取成功, 京豆数 %s ' % str(wool_num.text))
                 try:
                     # 2.点击"关闭"按钮
                     close_btn = WebDriverWait(driver, self.timeout).until(
@@ -95,7 +92,7 @@ class QMM(object):
                     subscribe_btn = WebDriverWait(driver, self.timeout).until(
                         lambda d: d.find_element_by_css_selector('span.d-header-icon.e-attention.current'))
                     subscribe_btn.click()
-                except:
+                except TimeoutException:
                     pass
 
     def financial(self, driver):

@@ -16,6 +16,7 @@ class JobItem(Item):
     city_id = Field()
     city = Field()
     job_name = Field()
+    tb_name = Field()
     job_salary = Field()
     job_experience = Field()
     job_education = Field()

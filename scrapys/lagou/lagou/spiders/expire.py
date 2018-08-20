@@ -2,9 +2,8 @@
 import scrapy
 from scrapy.http import Request
 
-from utils import pgs
-from lagou.spiders import job
-from nearjob import sql, table, items
+from lagou.spiders.job import JobSpider
+from nearjob import sql, table, items, app
 
 
 class ExpireSpider(scrapy.Spider):
@@ -13,20 +12,20 @@ class ExpireSpider(scrapy.Spider):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        near_job = 'nearjob'
-        self.postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
+        self.postgres = app.postgres()
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko'
                           ') Chrome/67.0.3396.79 Safari/537.36',
         }
 
     def start_requests(self):
-        for tb_name in table.NearJob.get_all_table():
+        for job in self.postgres.handler(sql.get_job()):
+            tb_name = job[3]
             data_list = self.postgres.fetch_all(sql.get_data(tb_name), (table.SourceType.lagou.value,))
             for data in data_list:
                 tb_id, source_url = data[0], data[1]
 
-                self.headers['Cookie'] = job.JobSpider.random_cookie()
+                self.headers['Cookie'] = JobSpider.random_cookie()
                 meta = {'tb_name': tb_name, 'tb_id': tb_id}
                 yield Request(source_url, headers=self.headers, meta=meta, callback=self.parse)
 

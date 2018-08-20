@@ -6,8 +6,9 @@ import scrapy
 from scrapy.http import Request, FormRequest
 
 import sql
+from nearjob import app
 from items import JobItem
-from utils import pgs, uniid, mytime, mapapi
+from utils import uniid, mytime, mapapi
 
 
 class JobSpider(scrapy.Spider):
@@ -18,8 +19,7 @@ class JobSpider(scrapy.Spider):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        near_job = 'nearjob'
-        self.postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
+        self.postgres = app.postgres()
         self.city_list = self.postgres.fetch_all(sql.get_city())
         self.job_list = self.postgres.fetch_all(sql.get_job())
         self.start = 'https://www.lagou.com/jobs/positionAjax.json?px=default&needAddtionalResult=false&city={0}'
@@ -34,13 +34,13 @@ class JobSpider(scrapy.Spider):
 
     def start_requests(self):
         for kd in self.job_list:
-            job_id, form_kd = kd[0], kd[1]
+            job_id, job_name = kd[0], kd[1]
             for city in self.city_list:
                 form_city = city[1]
-                form_data = {'first': 'True', 'pn': '1', 'kd': form_kd}
-                self.headers['Referer'] = self.referer.format(form_kd)
+                form_data = {'first': 'True', 'pn': '1', 'kd': job_name}
+                self.headers['Referer'] = self.referer.format(job_name)
                 self.headers['Cookie'] = self.random_cookie()
-                meta = {'city_id': city[0], 'city': form_city, 'kd': form_kd, 'job_id': job_id}
+                meta = {'city_id': city[0], 'city': form_city, 'kd': job_name, 'job_id': job_id}
                 yield FormRequest(self.start.format(form_city), formdata=form_data, callback=self.parse,
                                   headers=self.headers, meta=meta)
 
@@ -96,7 +96,7 @@ class JobSpider(scrapy.Spider):
                 source_url = self.source_url.format(position_id)
                 item['source_url'] = source_url
 
-                self.headers['Referer'] = None
+                self.headers['Referer'] = ''
                 yield Request(source_url, meta={'item': item},
                               headers=self.headers, callback=self.parse_detail)
 
@@ -132,7 +132,7 @@ class JobSpider(scrapy.Spider):
             lng = location['lng']  # 经度
             diff_lat = math.fabs(item['company_latitude'] - lat)
             diff_lng = math.fabs(item['company_longitude'] - lng)
-            if .1 < diff_lat < 1 and .1 < diff_lng < 1:
+            if .1 < diff_lat < .5 and .1 < diff_lng < .5:
                 item['job_id'] = 0  # 将数据归类为table_tmp数据
             else:
                 item['company_latitude'] = lat

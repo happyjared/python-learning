@@ -4,16 +4,15 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 # -*- coding: utf-8 -*-
 
-from nearjob import items, table, sql
-from utils import pgs, rds, es, mytime
+from utils import mytime
+from nearjob import items, table, sql, app
 
 
 class LaGouPipeline(object):
     def __init__(self):
-        host, near_job = 'localhost', 'nearjob'
-        self.postgres = pgs.Pgs(host=host, port=12432, db_name=near_job, user=near_job, password=near_job)
-        self.redis = rds.Rds(host=host, port=12379, db=3, password='redis6379').redis_cli
-        self.elastic = es.Es(host=host, port=12900)
+        self.redis = app.redis()
+        self.elastic = app.elastic()
+        self.postgres = app.postgres()
 
     def process_item(self, item, spider):
         if isinstance(item, items.JobItem):
@@ -26,6 +25,7 @@ class LaGouPipeline(object):
                 city = item.get('city')
                 job_id = item.get('job_id')
                 city_id = item.get('city_id')
+                tb_name = item.get('tb_name')
                 job_name = item.get('job_name')
                 job_salary = item.get('job_salary')
                 job_experience = item.get('job_experience')
@@ -46,9 +46,7 @@ class LaGouPipeline(object):
                 company_zone = item.get('company_zone')
                 source_from = table.SourceType.lagou.value
                 source_url = item.get('source_url')
-                now = mytime.now_date()
-                expired = False
-                tb_name = table.NearJob.get_table(job_id)
+                now, expired = mytime.now_date(), False
 
                 row_id = self.postgres.handler(sql.save(tb_name),
                                                (position_id, city_id, city, job_name, job_salary, job_experience,

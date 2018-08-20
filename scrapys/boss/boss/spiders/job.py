@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
-import scrapy
-from nearjob import sql, items
-from utils import pgs, mapapi, mytime
-from scrapy.http import Request
 from urllib import parse
+
+import scrapy
+from scrapy.http import Request
+
+from nearjob import sql, items, app
+from utils import mapapi, mytime
 
 
 class JobSpider(scrapy.Spider):
@@ -15,8 +17,7 @@ class JobSpider(scrapy.Spider):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        near_job = 'nearjob'
-        self.postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
+        self.postgres = app.postgres()
         self.city_list = self.postgres.fetch_all(sql.get_city())
         self.job_list = self.postgres.fetch_all(sql.get_job())
         self.start = 'https://www.zhipin.com/c{0}-p{1}'

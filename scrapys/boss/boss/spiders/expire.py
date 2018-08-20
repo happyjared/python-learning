@@ -2,8 +2,7 @@
 import scrapy
 from scrapy.http import Request
 
-from utils import pgs
-from nearjob import sql, table, items
+from nearjob import sql, table, items, app
 
 
 class ExpireSpider(scrapy.Spider):
@@ -12,11 +11,11 @@ class ExpireSpider(scrapy.Spider):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        near_job = 'nearjob'
-        self.postgres = pgs.Pgs(host='localhost', port=12432, db_name=near_job, user=near_job, password=near_job)
+        self.postgres = app.postgres()
 
     def start_requests(self):
-        for tb_name in table.NearJob.get_all_table():
+        for job in self.postgres.handler(sql.get_job()):
+            tb_name = job[3]
             data_list = self.postgres.fetch_all(sql.get_data(tb_name), (table.SourceType.boss.value,))
             for data in data_list:
                 tb_id, source_url = data[0], data[1]

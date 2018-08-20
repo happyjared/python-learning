@@ -56,11 +56,13 @@ class LaGouPipeline(object):
                                                 post_job_time, company_id, company_short_name, company_full_name,
                                                 company_location, company_latitude, company_longitude,
                                                 company_index, company_finance, company_industry, company_scale,
-                                                company_zone, source_from, source_url, now, now, expired))
+                                                company_zone, source_from, source_url, now, now, expired), fetch=True)
                 if job_id != 0 and row_id:
                     self.redis.sadd(key, position_id)
-                    keyword = '{0} {1} {2} {3}'.format(job_name, job_advantage,
-                                                       company_industry, item.get('company_zone'))
+                    if company_zone:
+                        keyword = '{0} {1} {2} {3}'.format(job_name, job_advantage, company_industry, company_zone)
+                    else:
+                        keyword = '{0} {1} {2}'.format(job_name, job_advantage, company_industry)
                     json_data = {'city_id': city_id, 'location': {"lat": company_latitude, "lon": company_longitude},
                                  "source_from": source_from, "keyword": keyword}
                     name = tb_name.replace('tb_', '')

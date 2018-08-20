@@ -8,6 +8,9 @@ class SourceType(Enum):
     lagou, boss = 1, 2  # 拉勾网, Boss直聘
 
 
+index_prefix = 'nearjob_'
+
+
 def create_doc_with_mapping():
     """创建ES Document Mapping"""
 
@@ -30,7 +33,6 @@ def create_doc_with_mapping():
         }
       }'''
 
-    index_prefix = 'nearjob_'
     postgres = app.postgres()
     rows = postgres.fetch_all(sql.get_job())
     for row in rows:

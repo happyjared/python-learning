@@ -25,7 +25,7 @@ class LaGouPipeline(object):
                 city = item.get('city')
                 job_id = item.get('job_id')
                 city_id = item.get('city_id')
-                tb_name = item.get('tb_name')
+                tb_name = item.get('tb_name') if job_id != 0 else 'table_tmp'
                 job_name = item.get('job_name')
                 job_salary = item.get('job_salary')
                 job_experience = item.get('job_experience')
@@ -60,20 +60,21 @@ class LaGouPipeline(object):
                     keyword = '{0} {1} {2} {3}'.format(job_name, job_advantage, company_industry, company_zone)
                     json_data = {'city_id': city_id, 'location': {"lat": company_latitude, "lon": company_longitude},
                                  "source_from": source_from, "keyword": keyword}
-                    # index doc
-                    self.elastic.put_data(data_body=json_data, _id=row_id)
+                    name = tb_name.replace('tb_', '')
+                    index = '{0}{1}'.format(table.index_prefix, name)
+                    self.elastic.put_data(data_body=json_data, _id=row_id, index=index, doc=name)
 
-        if isinstance(item, items.ExpireItem):
-            tb_id = item['tb_id']
-            tb_name = item['tb_name']
-            expire_time = mytime.now_date()
+        elif isinstance(item, items.ExpireItem):
+            tb_id, tb_name, expire_time = item['tb_id'], item['tb_name'], mytime.now_date()
 
             record = self.postgres.handler(sql.expire_data(tb_name), (tb_id, expire_time), fetch=True)
             if record:
-                company_id = record[0]
-                position_id = record[1]
+                company_id, position_id = record[0], record[1]
                 key = 'nearjob:company:{0}'.format(company_id)
                 self.redis.srem(key, position_id)
+                name = tb_name.replace('tb_', '')
+                index = '{0}{1}'.format(table.index_prefix, name)
+                self.elastic.remove_id(index=index, doc=name, _id=tb_id)
 
         return item
 

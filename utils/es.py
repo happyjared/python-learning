@@ -115,3 +115,15 @@ class Es(object):
         return self.els.search(index=index if index else self.index,
                                doc_type=doc if doc else self.doc,
                                body=body)
+
+    def remove_id(self, _id, index=None, doc=None):
+        """ 删除ES数据
+
+        :param _id: 文档id
+        :param index: 索引,可选
+        :param doc: 文档,可选
+        :return:
+        """
+
+        return self.els.delete(index=index if index else self.index,
+                               doc_type=doc if doc else self.doc, id=_id)

@@ -5,7 +5,7 @@ from urllib import parse
 import scrapy
 from scrapy.http import Request
 
-from nearjob import sql, items, app
+from scrapys.nearjob import sql, items, app
 from utils import mapapi, mytime
 
 

@@ -3,7 +3,7 @@ import scrapy
 from scrapy.http import Request
 
 from lagou.spiders.job import JobSpider
-from nearjob import sql, table, items, app
+from scrapys.nearjob import sql, table, items, app
 
 
 class ExpireSpider(scrapy.Spider):

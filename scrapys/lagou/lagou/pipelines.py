@@ -5,7 +5,7 @@
 # -*- coding: utf-8 -*-
 import json
 from utils import mytime
-from nearjob import items, table, sql, app
+from scrapys.nearjob import items, table, sql, app
 
 
 class LaGouPipeline(object):

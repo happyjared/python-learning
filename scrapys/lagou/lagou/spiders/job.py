@@ -5,8 +5,8 @@ import math
 import scrapy
 from scrapy.http import Request, FormRequest
 
-from nearjob import app, items, sql
 from utils import uniid, mytime, mapapi
+from scrapys.nearjob import app, items, sql
 
 
 class JobSpider(scrapy.Spider):

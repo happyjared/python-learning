@@ -11,9 +11,26 @@ from scrapy.http import FormRequest
 class PlaylistSpider(scrapy.Spider):
     name = 'playlist'
     allowed_domains = ['music.163.com']
-    start_urls = ['https://music.163.com/playlist?id=2068331353']
+    # start_urls = ['https://music.163.com/playlist?id=2068331353']
+    start_urls = ['https://music.163.com/discover/playlist']
 
     def parse(self, response):
+        url = response.url
+        self.log("Response url is %s" % url)
+
+        next_btn = response.xpath('//a[@class="zbtn znxt" and not(@class="js-disabled")]/@href').extract_first()
+        if next_btn:
+            next_page = parse.urljoin(url, next_btn)
+            yield Request(next_page, callback=self.parse)
+
+        playlist = response.xpath('//ul[@id="m-pl-container"]/li')
+        for play in playlist:
+            href = play.xpath('.//a[@class="msk"]/@href').extract_first()
+            detail = parse.urljoin(url, href)
+            # 爬取具体歌曲
+            yield Request(detail, callback=self.parse_detail)
+
+    def parse_detail(self, response):
         url = response.url
         self.log("Response url is %s" % url)
         item = items.Music163Item()

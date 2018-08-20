@@ -69,7 +69,7 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    # 'music163.pipelines.Music163Pipeline': 300,
+    'music163.pipelines.Music163Pipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -5,8 +5,7 @@ import math
 import scrapy
 from scrapy.http import Request, FormRequest
 
-import sql
-from nearjob import app, items
+from nearjob import app, items, sql
 from utils import uniid, mytime, mapapi
 
 

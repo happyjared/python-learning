@@ -1,6 +1,6 @@
-import sql, app
 from utils.es import Es
 from enum import Enum, unique
+from scrapys.nearjob import sql, app
 
 
 @unique

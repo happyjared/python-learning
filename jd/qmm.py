@@ -1,123 +1,105 @@
 import time
-import random
+from urllib.parse import parse_qs
+
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from utils import auth
-from urllib.parse import parse_qs
 from selenium.common.exceptions import *
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 
+from utils import auth
 
-# 券妈妈
+
 class QMM(object):
-    def __init__(self):
-        self.list_detail = []
+    """借助券妈妈平台简单褥京东京豆羊毛"""
 
-    def spider(self):
-        """爬取券妈妈的京豆汇总页及详情页获得具体的京东京豆领取页地址
+    def __init__(self, sleep_time=3):
+        self.shop_list = []
+        self.timeout = sleep_time
 
-        :return:
-        """
+    def start(self):
+        """ 抓取指定京豆汇总页 -> 抓取汇总详情页(获得店铺京豆领取地址)"""
 
-        # 京豆汇总页
-        url = 'http://www.quanmama.com/zhidemai/2459063.html'
+        url = 'http://www.quanmama.com/zhidemai/2459063.html'  # 京豆汇总页
         resp = requests.get(url)
         bs = BeautifulSoup(resp.text, 'html.parser')
-        t_body = bs.tbody
-        for link in t_body.find_all('a'):
-            detail = link.get('href')
+        detail_body = bs.tbody
+        for link in detail_body.find_all('a'):
             text = link.text
-
-            if '8月19' not in text:
+            url_detail = link.get('href')
+            if '8月20' not in text:
                 continue
-            resp = requests.get(detail)
+
+            resp = requests.get(url_detail)  # 汇总详情页
             bs = BeautifulSoup(resp.text, 'html.parser')
-            t_body_list = bs.find_all('tbody')
-            for t_body in t_body_list:
-                for a in t_body.find_all('a'):
-                    href = a.get('href')
-                    detail = self.get_url(href)
-                    if detail not in self.list_detail:
-                        self.list_detail.append(detail)
-        print('一共抓取了 %d 个领取页面' % (len(self.list_detail)))
-        # self.list_detail.sort(reverse=True)
-        random.shuffle(self.list_detail)
-        self.receive()
+            for detail_body in bs.find_all('tbody'):
+                for shop_url in detail_body.find_all('a'):
+                    url_detail = self.parse_url(shop_url.get('href'))
+                    if url_detail not in self.shop_list:
+                        # 简单去重
+                        self.shop_list.append(url_detail)
 
-    def receive(self, timeout=2):
-        """ 登录并领取详情页的店铺京豆
+        print('一共抓取了 %d 个待领取京豆店铺页面' % (len(self.shop_list)))
+        # self.list_detail.sort(reverse=True) # URL顺序排序后再抓取
+        # random.shuffle(self.list_detail) # URL随机排序后再抓取
+        self.wool()
 
-        :param timeout:
-        :return:
-        """
+    @staticmethod
+    def parse_url(detail):
+        """提取URL中的url参数"""
+
+        shop_url = parse_qs(detail).get('url')
+        return shop_url.pop() if shop_url else detail
+
+    def wool(self):
+        """ 登录京东，领取店铺京豆"""
+
+        # 登陆京东
 
         # 无浏览器模式
         # option = webdriver.ChromeOptions()
         # option.add_argument('headless')
 
-        # 登陆京东
-        # driver = webdriver.Chrome(chrome_options=option)
-        # driver = webdriver.PhantomJS()
         driver = webdriver.Chrome()
         jd_login = 'https://passport.jd.com/new/login.aspx'
         driver.get(jd_login)
 
-        # 窗口最大化
-        driver.maximize_window()
+        driver.maximize_window()  # 窗口最大化
 
-        # QQ授权登录
-        driver.find_element_by_xpath('//*[@id="kbCoagent"]/ul/li[1]/a').click()
-        auth.qq(driver, timeout)
+        driver.find_element_by_xpath('//*[@id="kbCoagent"]/ul/li[1]/a').click()  # QQ授权登录
+        auth.qq(driver, self.timeout)
+        time.sleep(self.timeout)
 
-        time.sleep(timeout)
+        # self.financial(driver) # 京东金融钢镚
 
-        self.financial(driver)
-
-        num = 0
-        for detail in self.list_detail:
-            num += 1
-            print('%d.Start spider %s' % (num, detail), end='')
+        for i, detail in enumerate(self.shop_list):
+            print('%d.Start spider %s' % (i + 1, detail), end='')
             driver.get(detail)
             try:
-                # 领取按钮
-                gift_btn = WebDriverWait(driver, timeout).until(
+                # 1.点击"领取"按钮
+                gift_btn = WebDriverWait(driver, self.timeout).until(
                     lambda d: d.find_element_by_css_selector("[class='J_drawGift d-btn']"))
-                gift_btn.click()
-                # 关闭按钮
-                close_btn = WebDriverWait(driver, timeout).until(
-                    lambda d: d.find_element_by_css_selector("[class='J_giftclose d-btn']"))
-                close_btn.click()
-                time.sleep(timeout)
-                # 取消关注
-                subscribe_btn = WebDriverWait(driver, timeout).until(
-                    lambda d: d.find_element_by_id('shop-attention'))
-                subscribe_btn.click()
             except TimeoutException:
                 print(' 领取失败, TimeoutException ')
             else:
-                print(' 领取成功 ')
+                wool_num = WebDriverWait(driver, self.timeout).until(
+                    lambda d: d.find_element_by_class_name('d-num'))
+                gift_btn.click()
+                print(' 领取成功, 京豆数 %d ' % int(wool_num.text))
+                try:
+                    # 2.点击"关闭"按钮
+                    close_btn = WebDriverWait(driver, self.timeout).until(
+                        lambda d: d.find_element_by_css_selector("[class='J_giftclose d-btn']"))
+                    close_btn.click()
+                    # 3.取消关注店铺
+                    subscribe_btn = WebDriverWait(driver, self.timeout).until(
+                        lambda d: d.find_element_by_css_selector('span.d-header-icon.e-attention.current'))
+                    subscribe_btn.click()
+                except:
+                    pass
 
-    @staticmethod
-    def get_url(detail):
-        """处理url
-
-        :param detail:
-        :return:
-        """
-
-        url = parse_qs(detail).get('url')
-        return detail if url is None else url.pop()
-
-    @staticmethod
-    def financial(driver, timeout=3):
-        """京东金融签到
-
-        :param driver:
-        :param timeout:
-        :return:
-        """
+    def financial(self, driver):
+        """京东金融签到领钢镚"""
 
         # 进入京东金融
         driver.find_element_by_xpath('//*[@id="navitems-group3"]/li[2]/a').click()
@@ -126,11 +108,11 @@ class QMM(object):
         window_handles = driver.window_handles
         driver.switch_to.window(window_handles[-1])
         # 点击签到
-        sign_btn = WebDriverWait(driver, timeout).until(
+        sign_btn = WebDriverWait(driver, self.timeout).until(
             lambda d: d.find_element_by_xpath('//*[@id="primeWrap"]/div[1]/div[3]/div[1]/a'))
         sign_btn.click()
 
 
 if __name__ == '__main__':
     qmm = QMM()
-    qmm.spider()
+    qmm.start()

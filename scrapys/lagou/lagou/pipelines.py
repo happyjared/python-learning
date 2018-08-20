@@ -3,7 +3,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 # -*- coding: utf-8 -*-
-
+import json
 from utils import mytime
 from nearjob import items, table, sql, app
 
@@ -44,6 +44,8 @@ class LaGouPipeline(object):
                 company_industry = item.get('company_industry')
                 company_scale = item.get('company_scale')
                 company_zone = item.get('company_zone')
+                if company_zone:
+                    company_zone = json.dumps(company_zone, ensure_ascii=False)
                 source_from = table.SourceType.lagou.value
                 source_url = item.get('source_url')
                 now, expired = mytime.now_date(), False
@@ -57,7 +59,8 @@ class LaGouPipeline(object):
                                                 company_zone, source_from, source_url, now, now, expired))
                 if job_id != 0 and row_id:
                     self.redis.sadd(key, position_id)
-                    keyword = '{0} {1} {2} {3}'.format(job_name, job_advantage, company_industry, company_zone)
+                    keyword = '{0} {1} {2} {3}'.format(job_name, job_advantage,
+                                                       company_industry, item.get('company_zone'))
                     json_data = {'city_id': city_id, 'location': {"lat": company_latitude, "lon": company_longitude},
                                  "source_from": source_from, "keyword": keyword}
                     name = tb_name.replace('tb_', '')

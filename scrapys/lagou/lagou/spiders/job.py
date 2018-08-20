@@ -6,8 +6,7 @@ import scrapy
 from scrapy.http import Request, FormRequest
 
 import sql
-from nearjob import app
-from items import JobItem
+from nearjob import app, items
 from utils import uniid, mytime, mapapi
 
 
@@ -34,21 +33,22 @@ class JobSpider(scrapy.Spider):
 
     def start_requests(self):
         for kd in self.job_list:
-            job_id, job_name = kd[0], kd[1]
+            job_id, job_name, tb_name = kd[0], kd[1], kd[3]
             for city in self.city_list:
                 form_city = city[1]
                 form_data = {'first': 'True', 'pn': '1', 'kd': job_name}
                 self.headers['Referer'] = self.referer.format(job_name)
                 self.headers['Cookie'] = self.random_cookie()
-                meta = {'city_id': city[0], 'city': form_city, 'kd': job_name, 'job_id': job_id}
+                meta = {'city_id': city[0], 'city': form_city, 'job_name': job_name, 'job_id': job_id,
+                        'tb_name': tb_name}
                 yield FormRequest(self.start.format(form_city), formdata=form_data, callback=self.parse,
                                   headers=self.headers, meta=meta)
 
     def parse(self, response):
         resp = json.loads(response.body_as_unicode())
         if 0 == resp.get('code'):
-            kd, job_id = response.meta['kd'], response.meta['job_id']
-            city, city_id = response.meta['city'], response.meta['city_id']
+            job_name, job_id = response.meta['job_name'], response.meta['job_id']
+            tb_name, city, city_id = response.meta['tb_name'], response.meta['city'], response.meta['city_id']
 
             content = resp['content']
             page_no = content['pageNo']
@@ -58,19 +58,20 @@ class JobSpider(scrapy.Spider):
             if page_no * page_size < total_count:
                 # 判断和抓取下一页数据
                 next_page_no = str(page_no + 1)
-                form_data = {'first': 'False', 'pn': next_page_no, 'kd': kd}
-                self.headers['Referer'] = self.referer.format(kd)
+                form_data = {'first': 'False', 'pn': next_page_no, 'kd': job_name}
+                self.headers['Referer'] = self.referer.format(job_name)
                 self.headers['Cookie'] = self.random_cookie()
-                meta = {'city_id': city_id, 'city': city, 'kd': kd, 'job_id': job_id}
+                meta = {'city_id': city_id, 'city': city, 'job_name': job_name, 'job_id': job_id, 'tb_name': tb_name}
                 yield FormRequest(self.start.format(city), formdata=form_data, callback=self.parse,
                                   headers=self.headers, meta=meta)
 
             result_list = position_result['result']
             for result in result_list:
                 # 解析数据并抓取详情
-                item = JobItem()
+                item = items.JobItem()
 
-                item['city'], item['city_id'], item['job_id'] = city, city_id, job_id
+                item['city'], item['city_id'] = city, city_id
+                item['job_id'], item['tb_name'] = job_id, tb_name
                 position_id = result.get('positionId')
                 item['position_id'] = str(position_id)
                 item['job_name'] = result.get('positionName')
@@ -85,14 +86,14 @@ class JobSpider(scrapy.Spider):
                 item['company_id'] = str(result.get('companyId'))
                 item['company_short_name'] = result.get('companyShortName')
                 item['company_full_name'] = result.get('companyFullName')
-                item['company_latitude'] = float(result.get('latitude'))
-                item['company_longitude'] = float(result.get('longitude'))
+                latitude = result.get('latitude')
+                longitude = result.get('longitude')
+                item['company_latitude'] = float(latitude) if latitude else .0
+                item['company_longitude'] = float(longitude) if longitude else .0
                 item['company_finance'] = result.get('financeStage')
                 item['company_industry'] = result.get('industryField')
                 item['company_scale'] = result.get('companySize')
-                business_zones = result.get('businessZones')
-                if business_zones:
-                    item['company_zone'] = json.dumps(business_zones, ensure_ascii=False)
+                item['company_zone'] = result.get('businessZones')
                 source_url = self.source_url.format(position_id)
                 item['source_url'] = source_url
 

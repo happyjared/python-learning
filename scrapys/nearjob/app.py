@@ -12,4 +12,4 @@ def redis():
 
 
 def elastic():
-    return es.Es(host=host, port=12900)
+    return es.Es(host=host, port=12900, index=near_job, doc='job')

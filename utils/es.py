@@ -6,6 +6,33 @@ from elasticsearch import Elasticsearch
 class Es(object):
     log.Logger()
 
+    """ Example
+    doc_mapping = '''{
+      "properties": {
+        "tp_id": {
+          "type": "integer"
+        },
+        "city_id": {
+          "type": "integer"
+        },
+        "job_id": {
+          "type": "integer"
+        },
+        "location": {
+          "type": "geo_point"
+        },
+        "source_from": {
+          "type": "integer"
+        },
+        "keyword":{
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_max_word"
+        }
+      }
+    }'''
+    """
+
     def __init__(self, host='localhost', port=9200, index=None, doc=None, mapping=None):
         logging.info('Es Init index: %s , document: %s , mapping %s', index, doc, mapping)
 
@@ -29,13 +56,13 @@ class Es(object):
 
     """ Example
     json_data = {
-        'city_id': 2, 
-        'location': {
-            'lat': 23.1686122210, 
-            'lon': 113.4204483032
-        },
-        'source_from': 1, 
-        'keyword': 'xxx'
+      'city_id': 2, 
+      'location': {
+        'lat': 23.1686122210, 
+        'lon': 113.4204483032
+      },
+      'source_from': 1, 
+      'keyword': 'xxx'
     }
     """
 

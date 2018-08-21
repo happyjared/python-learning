@@ -92,7 +92,9 @@ class JobSpider(scrapy.Spider):
                 item['company_finance'] = result.get('financeStage')
                 item['company_industry'] = result.get('industryField')
                 item['company_scale'] = result.get('companySize')
-                item['company_zone'] = result.get('businessZones')
+                business_zones = result.get('businessZones')
+                if business_zones:
+                    item['company_zone'] = json.dumps(business_zones, ensure_ascii=False)
                 source_url = self.source_url.format(position_id)
                 item['source_url'] = source_url
 

@@ -5,7 +5,7 @@
 # -*- coding: utf-8 -*-
 import json
 from utils import mytime
-from scrapys.nearjob import items, table, sql, app
+from scrapys.nearjob import items, enums, sql, app
 
 
 class LaGouPipeline(object):
@@ -44,9 +44,7 @@ class LaGouPipeline(object):
                 company_industry = item.get('company_industry')
                 company_scale = item.get('company_scale')
                 company_zone = item.get('company_zone')
-                if company_zone:
-                    company_zone = json.dumps(company_zone, ensure_ascii=False)
-                source_from = table.SourceType.lagou.value
+                source_from = enums.SourceType.lagou.value
                 source_url = item.get('source_url')
                 now, expired = mytime.now_date(), False
 
@@ -63,11 +61,10 @@ class LaGouPipeline(object):
                         keyword = '{0} {1} {2} {3}'.format(job_name, job_advantage, company_industry, company_zone)
                     else:
                         keyword = '{0} {1} {2}'.format(job_name, job_advantage, company_industry)
-                    json_data = {'city_id': city_id, 'location': {"lat": company_latitude, "lon": company_longitude},
-                                 "source_from": source_from, "keyword": keyword}
-                    name = tb_name.replace('tb_', '')
-                    index = '{0}{1}'.format(table.index_prefix, name)
-                    self.elastic.put_data(data_body=json_data, _id=row_id, index=index, doc=name)
+                    json_data = {"city_id": city_id, "location": {"lat": company_latitude, "lon": company_longitude},
+                                 "position_id": position_id, "job_id": job_id, "source_from": source_from,
+                                 "keyword": keyword}
+                    self.elastic.put_data(data_body=json_data, _id=position_id)
 
         elif isinstance(item, items.ExpireItem):
             tb_id, tb_name, expire_time = item['tb_id'], item['tb_name'], mytime.now_date()
@@ -77,9 +74,7 @@ class LaGouPipeline(object):
                 company_id, position_id = record[0], record[1]
                 key = 'nearjob:company:{0}'.format(company_id)
                 self.redis.srem(key, position_id)
-                name = tb_name.replace('tb_', '')
-                index = '{0}{1}'.format(table.index_prefix, name)
-                self.elastic.remove_id(index=index, doc=name, _id=tb_id)
+                self.elastic.remove_id(_id=position_id)
 
         return item
 

@@ -48,7 +48,7 @@ class JobSpider(scrapy.Spider):
             item['job_name'] = job_primary.xpath('.//h3/a/div[@class="job-title"]/text()').extract_first()
             item['job_salary'] = job_primary.xpath('.//h3/a/span[@class="red"]/text()').extract_first()
             p_list = job_primary.xpath('.//p/text()').extract()
-            item['company_zone'] = p_list[0].split(' ')
+            item['company_zone'] = json.dumps(p_list[0].split(' '), ensure_ascii=False)
             item['job_experience'], item['job_education'] = p_list[1], p_list[2]
 
             info_company = job.xpath('.//div[@class="job-primary"]/div[@class="info-company"]')

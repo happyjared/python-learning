@@ -9,8 +9,8 @@ class Es(object):
     """ Example
     doc_mapping = '''{
       "properties": {
-        "tp_id": {
-          "type": "integer"
+        "position_id": {
+          "type": "keyword"
         },
         "city_id": {
           "type": "integer"

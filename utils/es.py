@@ -1,11 +1,10 @@
 import logging
-from logger import log
 from elasticsearch import Elasticsearch
+
+log = logging.getLogger()
 
 
 class Es(object):
-    log.Logger()
-
     """ Example
     doc_mapping = '''{
       "properties": {
@@ -34,12 +33,12 @@ class Es(object):
     """
 
     def __init__(self, host='localhost', port=9200, index=None, doc=None, mapping=None):
-        logging.info('Es Init index: %s , document: %s , mapping %s', index, doc, mapping)
+        log.info('Es Init index: %s , document: %s , mapping %s', index, doc, mapping)
 
         self.els = Elasticsearch(hosts="{0}:{1}".format(host, port))
 
         ping_res = self.els.ping()
-        logging.info('Es Ping : %s', ping_res)
+        log.info('Es Ping : %s', ping_res)
 
         self.doc = doc
         self.index = index
@@ -47,12 +46,12 @@ class Es(object):
         if index and not self.els.indices.exists(index=index):
             # 创建Index
             create_index = self.els.indices.create(index=index)
-            logging.info('Es create_index : %s', create_index)
+            log.info('Es create_index : %s', create_index)
         if doc and not self.els.indices.exists_type(index=index, doc_type=doc):
             # 创建Document with mapping
             # @See: http://cwiki.apachecn.org/pages/viewpage.action?pageId=7372806
             put_mapping = self.els.indices.put_mapping(index=index, doc_type=doc, body=mapping)
-            logging.info('Es put_mapping : %s', put_mapping)
+            log.info('Es put_mapping : %s', put_mapping)
 
     """ Example
     json_data = {

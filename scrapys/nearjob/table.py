@@ -5,7 +5,7 @@ from scrapys.nearjob import sql, app
 
 @unique
 class SourceType(Enum):
-    lagou, boss = 1, 2  # 拉勾网, Boss直聘
+    lagou, boss = 1, 2  # 拉勾, Boss
 
 
 index_prefix = 'nearjob_'

@@ -166,7 +166,7 @@ class PlanetRobot:
             table_id = row[0]
             postgres.handler(planet_sql.update_music_count(), (table_id,))
         postgres.close()
-        PlanetRobot.refresh_token()
+        # PlanetRobot.refresh_token()
 
     @staticmethod
     def refresh_token():

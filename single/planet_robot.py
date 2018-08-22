@@ -174,7 +174,7 @@ class PlanetRobot:
 
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/push/access_token'
         resp = requests.post(api, json={}, headers=Planet.headers)
-        logging.info('access_token: %s ', resp['access_token'])
+        logging.info('access_token: %s ', resp.get('access_token'))
 
 
 # 程序入口

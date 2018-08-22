@@ -27,6 +27,10 @@ class Es(object):
           "type": "text",
           "analyzer": "ik_max_word",
           "search_analyzer": "ik_max_word"
+        },
+        "post_job_time": {
+          "type":   "date",
+          "format": "yyyy-MM-dd HH:mm:ss"
         }
       }
     }'''

@@ -18,7 +18,7 @@ class LaGouPipeline(object):
             company_id = item.get('company_id')
             position_id = item.get('position_id')
 
-            key = 'nearjob:company:{0}'.format(company_id)
+            key = 'nearjob:company:{}'.format(company_id)
             if not self.redis.sismember(key, position_id):
 
                 city = item.get('city')
@@ -56,13 +56,13 @@ class LaGouPipeline(object):
                                                 company_zone, source_from, source_url, now, now, expired), fetch=True)
                 if job_id != 0 and row_id:
                     self.redis.sadd(key, position_id)
-                    if company_zone:
-                        keyword = '{0} {1} {2} {3}'.format(job_name, job_advantage, company_industry, company_zone)
-                    else:
-                        keyword = '{0} {1} {2}'.format(job_name, job_advantage, company_industry)
+                    keyword = '{} {} {} {} {} {} {} {} {}'.format(job_name, job_advantage, company_short_name,
+                                                                  job_label, company_full_name, company_finance,
+                                                                  company_industry, company_zone, company_location
+                                                                  ).replace('None', '')
                     json_data = {"city_id": city_id, "location": {"lat": company_latitude, "lon": company_longitude},
                                  "position_id": position_id, "job_id": job_id, "source_from": source_from,
-                                 "keyword": keyword}
+                                 "keyword": keyword, "post_job_time": post_job_time}
                     self.elastic.put_data(data_body=json_data, _id=position_id)
 
         elif isinstance(item, items.ExpireItem):
@@ -71,7 +71,7 @@ class LaGouPipeline(object):
             record = self.postgres.handler(sql.expire_data(tb_name), (tb_id, expire_time), fetch=True)
             if record:
                 company_id, position_id = record[0], record[1]
-                key = 'nearjob:company:{0}'.format(company_id)
+                key = 'nearjob:company:{}'.format(company_id)
                 self.redis.srem(key, position_id)
                 self.elastic.remove_id(_id=position_id)
 

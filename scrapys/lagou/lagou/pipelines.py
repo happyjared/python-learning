@@ -60,9 +60,9 @@ class LaGouPipeline(object):
                                                                   job_label, company_full_name, company_finance,
                                                                   company_industry, company_zone, company_location
                                                                   ).replace('None', '')
-                    json_data = {"city_id": city_id, "location": {"lat": company_latitude, "lon": company_longitude},
-                                 "position_id": position_id, "job_id": job_id, "source_from": source_from,
-                                 "keyword": keyword, "post_job_time": post_job_time}
+                    json_data = {"cityId": city_id, "location": {"lat": company_latitude, "lon": company_longitude},
+                                 "positionId": position_id, "jobId": job_id, "sourceFrom": source_from,
+                                 "keyword": keyword, "postJobTime": post_job_time}
                     self.elastic.put_data(data_body=json_data, _id=position_id)
 
         elif isinstance(item, items.ExpireItem):

@@ -14,8 +14,8 @@ BOT_NAME = 'lagou'
 
 SPIDER_MODULES = ['lagou.spiders']
 NEWSPIDER_MODULE = 'lagou.spiders'
-LOG_FILE = 'info.log'
-LOG_LEVEL = 'INFO'
+LOG_FILE = 'debug.log'
+LOG_LEVEL = 'DEBUG'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'lagou (+http://www.yourdomain.com)'
 

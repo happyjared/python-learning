@@ -8,19 +8,19 @@ class Es(object):
     """ Example
     doc_mapping = '''{
       "properties": {
-        "position_id": {
+        "positionId": {
           "type": "keyword"
         },
-        "city_id": {
+        "cityId": {
           "type": "integer"
         },
-        "job_id": {
+        "jobId": {
           "type": "integer"
         },
         "location": {
           "type": "geo_point"
         },
-        "source_from": {
+        "sourceFrom": {
           "type": "integer"
         },
         "keyword":{
@@ -28,9 +28,8 @@ class Es(object):
           "analyzer": "ik_max_word",
           "search_analyzer": "ik_max_word"
         },
-        "post_job_time": {
-          "type":   "date",
-          "format": "yyyy-MM-dd HH:mm:ss"
+        "postJobTime": {
+          "type":   "date"
         }
       }
     }'''

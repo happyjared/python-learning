@@ -27,7 +27,7 @@ class QMM(object):
         for link in detail_body.find_all('a'):
             text = link.text
             url_detail = link.get('href')
-            if '8月20' not in text:
+            if '8月22' not in text:
                 continue
 
             resp = requests.get(url_detail)  # 汇总详情页
@@ -67,8 +67,6 @@ class QMM(object):
         auth.qq(driver, self.timeout)
         time.sleep(self.timeout)
 
-        # self.financial(driver) # 京东金融钢镚
-
         for i, detail in enumerate(self.shop_list):
             print('%d.Start spider %s' % (i + 1, detail), end='')
             driver.get(detail)
@@ -79,23 +77,25 @@ class QMM(object):
             except TimeoutException:
                 print(' 领取失败, TimeoutException ')
             else:
-                wool_num = WebDriverWait(driver, self.timeout).until(
-                    lambda d: d.find_element_by_class_name('d-num'))
                 gift_btn.click()
-                print(' 领取成功, 京豆数 %s ' % str(wool_num.text))
                 try:
+                    wool_num = WebDriverWait(driver, self.timeout).until(
+                        lambda d: d.find_element_by_class_name('d-num'))
+                    print(' 领取成功, 京豆数 %s ' % str(wool_num.text))
                     # 2.点击"关闭"按钮
                     close_btn = WebDriverWait(driver, self.timeout).until(
                         lambda d: d.find_element_by_css_selector("[class='J_giftclose d-btn']"))
                     close_btn.click()
+                    time.sleep(30)
                     # 3.取消关注店铺
                     subscribe_btn = WebDriverWait(driver, self.timeout).until(
                         lambda d: d.find_element_by_css_selector('span.d-header-icon.e-attention.current'))
                     subscribe_btn.click()
-                except TimeoutException:
+                except:
+                    print(' 领取成功')
                     pass
 
-    def financial(self, driver):
+    def signIn(self, driver):
         """京东金融签到领钢镚"""
 
         # 进入京东金融

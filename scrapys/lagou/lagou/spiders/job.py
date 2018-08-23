@@ -45,6 +45,7 @@ class JobSpider(scrapy.Spider):
 
     def parse(self, response):
         resp = json.loads(response.body_as_unicode())
+        self.logger.info('1. resp %s', resp)
         if 0 == resp.get('code'):
             job_name, job_id = response.meta['job_name'], response.meta['job_id']
             tb_name, city, city_id = response.meta['tb_name'], response.meta['city'], response.meta['city_id']
@@ -65,6 +66,7 @@ class JobSpider(scrapy.Spider):
                                   headers=self.headers, meta=meta)
 
             result_list = position_result['result']
+            self.logger.info('2. result_list %s', len(result_list))
             for result in result_list:
                 # 解析数据并抓取详情
                 item = items.JobItem()

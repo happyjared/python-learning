@@ -1,8 +1,8 @@
 # coding=utf-8
 import app
-import cron
 import logging
 import requests
+from utils import cron
 import multiprocessing
 from bs4 import BeautifulSoup
 from httpbin import judgeProxy

@@ -1,4 +1,4 @@
-import rds
+from utils import rds
 
 
 def redis():

@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from json import JSONDecodeError
 from requests.exceptions import Timeout, ProxyError
 
-logging.basicConfig(level='INFO', filename='xici.log',
+logging.basicConfig(level='DEBUG', filename='xici.log',
                     format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
 
 

@@ -45,11 +45,11 @@ def judgeProxy(ip, port, proxy_type):
         redis.sadd(proxy_type, schema)
 
 
-def checkProxy(proxy):
+def checkProxy(proxy, timeout=2):
     """检测代理的有效与否"""
 
     try:
-        resp = requests.get(http_bin, proxies=proxy, timeout=2).json()
+        resp = requests.get(http_bin, proxies=proxy, timeout=timeout).json()
     except JSONDecodeError:
         logging.info('1.---> JSONDecodeError')
     except Timeout:
@@ -68,7 +68,7 @@ def handleProxy(keys):
     for key in keys:
         for member in redis.smembers(key):
             proxy = {key: member}
-            if member != checkProxy(proxy):
+            if member != checkProxy(proxy, timeout=5):
                 logging.warning("Handle Proxy %s is invalid", member)
                 redis.srem(key, member)
 

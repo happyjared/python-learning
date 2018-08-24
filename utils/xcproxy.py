@@ -40,7 +40,7 @@ def judgeProxy(ip, port, proxy_type):
     schema = '{}://{}:{}'.format(proxy_type, ip, port)
     proxy = {proxy_type: schema}
     if ip == checkProxy(proxy):
-        logging.warning("Crawl Proxy %s success", schema)
+        logging.info("Crawl Proxy %s success", schema)
         redis.sadd(proxy_type, schema)
 
 
@@ -96,7 +96,8 @@ def cron_handle_proxy():
 
 if __name__ == '__main__':
     # cron_crawl_proxy()
+    days, hours = '0-6', '0-23'
     # 定时爬取
-    cron.cron_blocking(job=cron_crawl_proxy, day_of_week='0-6', hour='0-23', minute='0,15,30,45')
+    cron.cron_blocking(job=cron_crawl_proxy, day_of_week=days, hour=hours, minute='0')
     # 定时检测
-    cron.cron_blocking(job=cron_handle_proxy, day_of_week='0-6', hour='0-23', minute='5,15,25,35,45,55')
+    cron.cron_blocking(job=cron_handle_proxy, day_of_week=days, hour=hours, minute='30')

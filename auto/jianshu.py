@@ -9,7 +9,7 @@ class JianShu(object):
     @staticmethod
     def post(main, timeout, self_timeout=3):
         # 1.跳转登陆
-        login = 'https://www.jianshu.com/sign_in'
+        login = 'https://www.blogs.com/sign_in'
         driver = webdriver.Chrome()
         driver.get(login)
 

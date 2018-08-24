@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 
 # 简书用户的文章阅读总量统计
 class ReadCount(object):
-
     def __init__(self, uid):
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -22,7 +21,7 @@ class ReadCount(object):
         self.watch = 0  # 关注人数
         self.fans = 0  # 粉丝人数
         self.words = 0  # 写作字数
-        self.likes = 0  # 收货喜欢数
+        self.likes = 0  # 收获喜欢数
         self.time = 0  # 查询总耗时
         self.exit = True  # 用户是否存在的标志
         '''
@@ -50,8 +49,7 @@ class ReadCount(object):
         """
 
         start = time.time()
-        url = 'https://www.jianshu.com/u/' + self.uid
-        # print(url)
+        url = 'https://www.jianshu.com/u/{}'.format(self.uid)
         resp = requests.get(url, headers=self.headers)
         if resp.status_code == 200:
             bs = BeautifulSoup(resp.content, 'html.parser', from_encoding='UTF-8')
@@ -77,14 +75,13 @@ class ReadCount(object):
                 # 文章展示总页数
                 pages = int(math.ceil(self.articles / page_articles)) + 1
                 # 用多线程统计
-                cpu_count = multiprocessing.cpu_count()
-                # print(cpu_count)
-                pool = multiprocessing.Pool(cpu_count)
-                # 从第一页开始
-                page = range(1, pages)
+                # cpu_count = multiprocessing.cpu_count()
+                # pool = multiprocessing.Pool(cpu_count)
                 # 包含每页阅读量的列表
-                page_reading_list = pool.map(self.page_count, page)
-                # print(page_reading_list)
+                page_reading_list = []
+                # 从第一页开始
+                for page in range(1, pages):
+                    page_reading_list.append(self.page_count(page))
                 self.total_reading = numpy.sum(page_reading_list)
                 # print('用户：%s 总发表文章数为：%d , 文章总阅读量为: %s' % (input_uid, self.articles, self.total_reading))
         else:
@@ -101,7 +98,6 @@ class ReadCount(object):
         """
 
         url = 'https://www.jianshu.com/u/' + self.uid + '?page=' + str(page)
-        # print(url)
         resp = requests.get(url, headers=self.headers)
         bs = BeautifulSoup(resp.content, 'html.parser', from_encoding='UTF-8')
         divs = bs.find_all(class_='meta')
@@ -109,3 +105,13 @@ class ReadCount(object):
         for div in divs:
             page_reading += int(div.a.text)
         return page_reading
+
+    def get_info(self):
+        if self.exit:
+            info = '简书昵称: {}\n发表文章: {}\n总阅读量: {}\n' \
+                   '关注人数: {}\n粉丝人数: {}\n写作字数: {}\n' \
+                   '收获喜欢: {}\n查询总耗: {}\n'.format(self.nickname, self.articles, self.total_reading,
+                                                 self.watch, self.fans, self.words, self.likes, self.time)
+        else:
+            info = '用户不存在'
+        return info

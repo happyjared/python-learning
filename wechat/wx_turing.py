@@ -2,10 +2,12 @@ import random
 import itchat
 from utils import mat
 from utils import rds
+from blogs import read
 from utils import robot
 
 redis = rds.Rds(port=12379, db=15, password='redis6379').redis_cli
 
+js = "js:"  # 简书统计获取标志
 key = 'turing:{0}'
 cmd = redis.get(key.format('cmd'))
 jared = redis.get(key.format('jared'))
@@ -21,11 +23,21 @@ def reply(msg):
     :param msg: 消息
     :return: 回应消息
     """
-    receive_text = msg['Text']
-    print('Call: ' + receive_text, end='')
 
+    receive_text = msg['Text']
     to_user_id = msg['ToUserName']  # 接收人
     from_user_id = msg['FromUserName']  # 发送人
+
+    if receive_text.__contains__(js):
+        # 返回简书数据统计信息
+        uid = receive_text.split(js)[1]
+        rc = read.ReadCount(uid)
+        rc.count()
+        info = rc.get_info()
+        itchat.send_msg(info, to_user_id)
+
+    print('Call: ' + receive_text, end='')
+
     if receive_text == cmd:
         # 用户控制机器人开关
         switch = redis.get(from_user_id)

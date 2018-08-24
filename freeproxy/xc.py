@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from httpbin import judgeProxy
 
 redis = app.redis()
-logging.basicConfig(level='INFO', filename='xici.log',
+logging.basicConfig(level='INFO', filename='xc.log',
                     format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
 xc_index = 'http://www.xicidaili.com/{}/{}'
 headers = {

@@ -6,6 +6,22 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from scrapy.contrib.downloadermiddleware.httpproxy import HttpProxyMiddleware
+
+from scrapys.nearjob import app
+
+redis = app.redis_ip()
+
+
+class CustomIpProxyMiddleware(HttpProxyMiddleware):
+    """设置随机IP"""
+
+    def process_request(self, request, spider):
+        proxy = redis.srandmember("http", 1)
+        if not proxy:
+            proxy = redis.srandmember("https", 1)
+        print('----->>>: Proxy: ' + proxy)
+        request.meta["proxy"] = proxy
 
 
 class LagouSpiderMiddleware(object):

@@ -95,8 +95,8 @@ def cron_handle_proxy():
 
 
 if __name__ == '__main__':
-    cron_crawl_proxy()
+    # cron_crawl_proxy()
     # 定时爬取
-    # cron.cron_blocking(job=cron_crawl_proxy, day_of_week='0-6', hour='0-23', minute='0,15,30,45')
+    cron.cron_blocking(job=cron_crawl_proxy, day_of_week='0-6', hour='0-23', minute='0,15,30,45')
     # 定时检测
-    # cron.cron_blocking(job=cron_handle_proxy, day_of_week='0-6', hour='0-23', minute='5,15,25,35,45,55')
+    cron.cron_blocking(job=cron_handle_proxy, day_of_week='0-6', hour='0-23', minute='5,15,25,35,45,55')

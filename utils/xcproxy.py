@@ -48,7 +48,7 @@ def checkProxy(proxy):
     """检测代理的有效与否"""
 
     try:
-        resp = requests.get(http_bin, proxies=proxy, timeout=1).json()
+        resp = requests.get(http_bin, proxies=proxy, timeout=2).json()
     except JSONDecodeError:
         logging.info('1.---> JSONDecodeError')
     except Timeout:

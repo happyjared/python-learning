@@ -14,15 +14,16 @@ redis = app.redis_ip()
 
 
 class CustomIpProxyMiddleware(HttpProxyMiddleware):
-    """设置随机IP"""
+    """针对特定请求设置随机IP"""
 
     def process_request(self, request, spider):
-        proxy = redis.srandmember("http", 1)
-        if not proxy:
-            proxy = redis.srandmember("https", 1)
-        proxy = proxy[0]
-        print('----->>>: Proxy: ' + proxy)
-        request.meta["proxy"] = proxy
+        if request.url.__contains__('positionAjax'):
+            proxy = redis.srandmember("http", 1)
+            if not proxy:
+                proxy = redis.srandmember("https", 1)
+            proxy = proxy[0]
+            print('----->>>: Proxy: ' + proxy)
+            request.meta["proxy"] = proxy
 
 
 class LagouSpiderMiddleware(object):

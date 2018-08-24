@@ -8,7 +8,7 @@ from selenium import webdriver
 
 class Spider(object):
 
-    def __init__(self) -> None:
+    def __init__(self):
         self.list_data = []
         self.list_repeat = []
 

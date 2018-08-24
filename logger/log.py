@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 import yaml
 import logging
@@ -6,9 +7,7 @@ import logging.config
 
 class Logger(object):
     def __init__(self):
-        """日志相关配置
-
-        """
+        """日志相关配置"""
 
         path = 'logs'
         if not os.path.exists(path):

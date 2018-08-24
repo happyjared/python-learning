@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from json import JSONDecodeError
 from requests.exceptions import Timeout, ProxyError
 
-redis = rds.Rds(host='193.112.0.219', port=12379, db=14, password='redis6379').redis_cli
+redis = rds.Rds(host='localhost', port=12379, db=14, password='redis6379').redis_cli
 logging.basicConfig(level='INFO', filename='xici.log',
                     format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
 xc = 'http://www.xicidaili.com/{}/{}'

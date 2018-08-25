@@ -1,3 +1,10 @@
+def save_series():
+    """保存系列数据"""
+
+    sql = 'insert into tb_zealer_series("name",cp,platform,enabled) values(%s,%s,%s,%s)'
+    return sql
+
+
 def get_series():
     """获取所有系列"""
 

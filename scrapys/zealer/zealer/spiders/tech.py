@@ -21,7 +21,8 @@ class TechSpider(scrapy.Spider):
         super().__init__(**kwargs)
         self.postgres = app.postgres()
         self.series_list = self.postgres.fetch_all(sql.get_series())
-        self.stop = {}  # 用于判断系列抓取终止的集合
+        self.post_stop = {}  # 用于判断评论抓取终止
+        self.series_stop = {}  # 用于判断Media抓取终止
         self.max_page = sys.maxsize
         self.post = 'http://www.zealer.com/post/{}'
         self.sift = 'http://www.zealer.com/x/sift?cid={}&page={}&order=created_at'
@@ -31,11 +32,12 @@ class TechSpider(scrapy.Spider):
         for series in self.series_list:
             series_id, cp = series[0], series[1]
             for page in range(1, self.max_page):
-                if not self.stop.get(series_id):
+                if self.series_stop.get(series_id):
+                    self.logger.warning('Stop Media: {}'.format(series_id))
+                    break
+                else:
                     sift = self.sift.format(cp, page)
                     yield Request(sift, callback=self.parse, meta={'series_id': series_id})
-                else:
-                    break
 
     def parse(self, response):
 
@@ -63,16 +65,18 @@ class TechSpider(scrapy.Spider):
                 if comment_total:
                     """抓取评论数据"""
                     for page in range(1, self.max_page):
-                        if not self.stop.get(post_id):
+                        if self.series_stop.get(post_id):
+                            self.logger.warning('Stop Comment: {}'.format(post_id))
+                            break
+                        else:
                             yield Request(self.comment.format(post_id, page),
                                           callback=self.parse_comment, meta={'post_id': post_id})
-                        else:
-                            break
 
                 yield Request(detail_url, callback=self.parse_detail, meta={'item': item})
         else:
             # 终止条件
-            self.stop[series_id] = True
+            self.logger.warning('Judge Stop Media: {}'.format(series_id))
+            self.series_stop[series_id] = True
 
     @staticmethod
     def parse_detail(response):
@@ -114,7 +118,8 @@ class TechSpider(scrapy.Spider):
                 yield item
         else:
             # 终止条件
-            self.stop[post_id] = True
+            self.logger.warning('Judge Stop Comment: {}'.format(post_id))
+            self.post_stop[post_id] = True
 
     @staticmethod
     def handleCommentTime(comment_time):

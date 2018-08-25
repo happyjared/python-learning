@@ -2,6 +2,7 @@
 import sys
 import json
 import scrapy
+from utils import mytime
 from scrapy import Request
 from bs4 import BeautifulSoup
 from zealer.service import app, sql
@@ -107,9 +108,19 @@ class TechSpider(scrapy.Spider):
                 item['username'] = comment.find('span', class_='mb_name').text
                 item['avatar'] = comment.find('img')['src']
                 item['content'] = comment.find('p').text
-                item['commentTime'] = comment.find('span', class_='commentTime').text.strip()  # 1月1日 08:49
+                comment_time = comment.find('span', class_='commentTime').text.strip()
+                item['commentTime'] = self.handleCommentTime(comment_time)
 
                 yield item
         else:
             # 终止条件
             self.stop[post_id] = True
+
+    @staticmethod
+    def handleCommentTime(comment_time):
+        """处理日期问题"""
+
+        if comment_time.find('年') == -1:
+            comment_time = '{}年{}'.format(mytime.now_year(), comment_time)
+
+        return mytime.str_to_date_with_format(comment_time, '%Y年%m月%d日 %H:%M')

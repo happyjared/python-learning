@@ -5,6 +5,10 @@ def now_date():
     return datetime.now()
 
 
+def now_year():
+    return datetime.now().year
+
+
 def now_str():
     return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 

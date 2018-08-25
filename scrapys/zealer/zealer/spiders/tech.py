@@ -55,16 +55,16 @@ class TechSpider(scrapy.Spider):
                 item.add_value('coverPicture', message.get('cover'))
                 comment_total = int(message.get('comment_total'))
                 item.add_value('commentNum', comment_total)
-                item.add_value('liveTime', message.get('live_time'))  # TODO
+                item.add_value('liveTime', message.get('live_time'))
                 detail_url = self.post.format(post_id)
                 item.add_value('detailUrl', detail_url)
 
                 if comment_total:
                     """抓取评论数据"""
                     for page in range(1, self.max_page):
-                        if not self.stop.get(series_id):
-                            Request(self.comment.format(post_id, page),
-                                    callback=self.parse_comment, meta={'post_id': post_id})
+                        if not self.stop.get(post_id):
+                            yield Request(self.comment.format(post_id, page),
+                                          callback=self.parse_comment, meta={'post_id': post_id})
                         else:
                             break
 
@@ -107,7 +107,7 @@ class TechSpider(scrapy.Spider):
                 item['username'] = comment.find('span', class_='mb_name').text
                 item['avatar'] = comment.find('img')['src']
                 item['content'] = comment.find('p').text
-                item['commentTime'] = comment.find('span', class_='commentTime').text.strip()
+                item['commentTime'] = comment.find('span', class_='commentTime').text.strip()  # 1月1日 08:49
 
                 yield item
         else:

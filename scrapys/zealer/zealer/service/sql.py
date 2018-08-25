@@ -25,6 +25,6 @@ def save_comment():
     """保存评论数据"""
 
     sql = 'insert into tb_zealer_comment(post_id,username,avatar,content,comment_time,' \
-          'create_time,user_id) values(%s,%s,%s,%s,%s,%s,%s)'
+          'user_id,create_time) values(%s,%s,%s,%s,%s,%s,%s)'
 
     return sql

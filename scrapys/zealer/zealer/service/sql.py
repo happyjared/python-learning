@@ -8,7 +8,7 @@ def save_series():
 def get_series():
     """获取所有系列"""
 
-    sql = 'select "id",name from tb_zealer_series where enabled is True'
+    sql = 'select "id",cp from tb_zealer_series where enabled is True'
     return sql
 
 

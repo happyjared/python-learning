@@ -25,7 +25,8 @@ class MediaItem(Item):
 
 
 class CommentItem(Item):
-    mediaId = Field()
+    userId = Field()
+    postId = Field()
     username = Field()
     avatar = Field()
     content = Field()

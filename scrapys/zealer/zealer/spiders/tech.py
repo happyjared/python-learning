@@ -110,7 +110,8 @@ class TechSpider(scrapy.Spider):
                 item['userId'] = comment.find('div', class_='list_card')['card']
                 item['username'] = comment.find('span', class_='mb_name').text
                 item['avatar'] = comment.find('img')['src']
-                item['content'] = comment.find('p').text
+                comment_text = comment.find('p') or comment.find('dd')
+                item['content'] = comment_text.text
                 comment_time = comment.find('span', class_='commentTime').text.strip()
                 item['commentTime'] = self.handleCommentTime(comment_time)
 

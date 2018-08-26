@@ -27,13 +27,8 @@ class PlanetRobot:
 
         logging.info('Start to get users dynamic')
         while True:
-            resp = requests.post(api, json=data, headers=Planet.headers).json()
-            errcode = resp.get('errcode')
-            if errcode:
-                logging.error('>>> Single Unauthenticated')
-                key = 'planet:my:token'
-                Planet.headers['Authorization'] = self.spider.redis.get(key)
-            else:
+            resp = self.handle_request(api, data)
+            if resp:
                 messages = resp['messages']
                 for index, message in enumerate(messages):
                     msg_user_id = message['user_id']  # 用户id
@@ -78,33 +73,33 @@ class PlanetRobot:
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/tlmsg/comments/my-received'
         logging.info('Start to get reply robot')
         while True:
-            resp = requests.post(api, json=data, headers=Planet.headers).json()
+            resp = self.handle_request(api, data)
+            if resp:
+                now = datetime.now()
+                comments = resp['comments']
+                for index, comment in enumerate(comments):
+                    comment_id = comment['id']  # 评论id
+                    user_id = comment['user_id']  # 评论用户id
+                    msg_id = comment['tl_id']  # 动态id
 
-            now = datetime.now()
-            comments = resp['comments']
-            for index, comment in enumerate(comments):
-                comment_id = comment['id']  # 评论id
-                user_id = comment['user_id']  # 评论用户id
-                msg_id = comment['tl_id']  # 动态id
+                    key = 'planet:u:{0}:m:{1}:comment'.format(user_id, msg_id)
+                    is_member = self.spider.redis.sismember(key, comment_id)
+                    if not is_member:
+                        self.spider.redis.sadd(key, comment_id)
+                        comment_time = comment['ctime']  # 回复时间
+                        text = comment['message']['text']['Text']  # 回复内容
 
-                key = 'planet:u:{0}:m:{1}:comment'.format(user_id, msg_id)
-                is_member = self.spider.redis.sismember(key, comment_id)
-                if not is_member:
-                    self.spider.redis.sadd(key, comment_id)
-                    comment_time = comment['ctime']  # 回复时间
-                    text = comment['message']['text']['Text']  # 回复内容
+                        effect_count = self.spider.handler(planet_sql.add_user_comment(),
+                                                           (comment_id, user_id, msg_id, text, comment_time, now))
+                        if effect_count != 0:
+                            comment_msg = robot.call_text_v1(text, user_id)
+                            tl_hash = resp['tl_hashes'][index]
+                            self.__robot_comment(msg_id, comment_msg, tl_hash, user_id)
 
-                    effect_count = self.spider.handler(planet_sql.add_user_comment(),
-                                                       (comment_id, user_id, msg_id, text, comment_time, now))
-                    if effect_count != 0:
-                        comment_msg = robot.call_text_v1(text, user_id)
-                        tl_hash = resp['tl_hashes'][index]
-                        self.__robot_comment(msg_id, comment_msg, tl_hash, user_id)
-
-            logging.info('Reply robot to sleep , sleep time is %d', sleep_time)
-            time.sleep(sleep_time)
-            sleep_time = random.randint(60, 90)
-            logging.info('Reply robot end sleep , next sleep time is %d', sleep_time)
+                logging.info('Reply robot to sleep , sleep time is %d', sleep_time)
+                time.sleep(sleep_time)
+                sleep_time = random.randint(60, 90)
+                logging.info('Reply robot end sleep , next sleep time is %d', sleep_time)
 
     def __robot_comment(self, msg_id, comment_msg, tl_hash, to_user_id):
         """机器人评论动态或回复评论
@@ -173,8 +168,21 @@ class PlanetRobot:
         """刷新Token"""
 
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/push/access_token'
-        resp = requests.post(api, json={}, headers=Planet.headers)
+        resp = requests.post(api, json={}, headers=Planet.headers).json()
         logging.info('access_token: %s ', resp.get('access_token'))
+
+    def handle_request(self, api, data):
+        """统一处理请求"""
+
+        resp = requests.post(api, json=data, headers=Planet.headers).json()
+
+        errcode = resp.get('errcode')
+        if errcode:
+            logging.error('>>> Single Unauthenticated')
+            key = 'planet:my:token'
+            Planet.headers['Authorization'] = self.spider.redis.get(key)
+        else:
+            return resp
 
 
 # 程序入口

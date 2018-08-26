@@ -27,7 +27,7 @@ class QMM(object):
         for link in detail_body.find_all('a'):
             text = link.text
             url_detail = link.get('href')
-            if '8月22' not in text:
+            if '8月25' not in text:
                 continue
 
             resp = requests.get(url_detail)  # 汇总详情页
@@ -82,18 +82,8 @@ class QMM(object):
                     wool_num = WebDriverWait(driver, self.timeout).until(
                         lambda d: d.find_element_by_class_name('d-num'))
                     print(' 领取成功, 京豆数 %s ' % str(wool_num.text))
-                    # 2.点击"关闭"按钮
-                    close_btn = WebDriverWait(driver, self.timeout).until(
-                        lambda d: d.find_element_by_css_selector("[class='J_giftclose d-btn']"))
-                    close_btn.click()
-                    time.sleep(30)
-                    # 3.取消关注店铺
-                    subscribe_btn = WebDriverWait(driver, self.timeout).until(
-                        lambda d: d.find_element_by_css_selector('span.d-header-icon.e-attention.current'))
-                    subscribe_btn.click()
                 except:
                     print(' 领取成功')
-                    pass
 
     def signIn(self, driver):
         """京东金融签到领钢镚"""

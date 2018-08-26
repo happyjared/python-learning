@@ -11,95 +11,165 @@ from utils import auth
 
 
 class QMM(object):
-    """借助券妈妈平台简单褥京东京豆羊毛"""
+    """借助券妈妈平台褥京东京豆"""
 
-    def __init__(self, sleep_time=3):
-        self.shop_list = []
-        self.timeout = sleep_time
+    def __init__(self, sleep=3, months=None, days=None):
+        self.timeout, self.months, self.days = sleep, None, None
+        # 爬取规则
+        if months:
+            month_interval = months.split('-')
+            start_month, end_month = int(month_interval[0]), int(month_interval[-1])
+            self.months = list(map(lambda m: '{}月'.format(m), range(start_month, end_month + 1)))
+        if days:
+            day_interval = days.split('-')
+            start_day, end_day = int(day_interval[0]), int(day_interval[-1])
+            self.days = list(map(lambda d: '{}日'.format(d), range(start_day, end_day + 1)))
+        # 手机店铺(用作提醒输出，可复制链接到手机端领取)
+        self.m_shop = []
+        # 统计京豆总数
+        self.jing_dou = 0
 
-    def start(self):
-        """ 抓取指定京豆汇总页 -> 抓取汇总详情页(获得店铺京豆领取地址)"""
+    def _crawl_url(self):
+        """ 抓取京豆更新页, 获得店铺京豆领取地址"""
 
-        url = 'http://www.quanmama.com/zhidemai/2459063.html'  # 京豆汇总页
-        resp = requests.get(url)
-        bs = BeautifulSoup(resp.text, 'html.parser')
-        detail_body = bs.tbody
-        for link in detail_body.find_all('a'):
+        # 日期更新页
+        qmm_collect = 'http://www.quanmama.com/zhidemai/2459063.html'
+        bs = BeautifulSoup(requests.get(qmm_collect).text, 'html.parser')
+        for link in bs.tbody.find_all('a'):
             text = link.text
-            url_detail = link.get('href')
-            if '8月25' not in text:
-                continue
+            if self.months:
+                if not list(filter(lambda m: m in text, self.months)): continue
+            if self.days:
+                if not list(filter(lambda d: d in text, self.days)): continue
 
-            resp = requests.get(url_detail)  # 汇总详情页
+            qmm_detail = link.get('href')
+
+            # 店铺领取页
+            resp = requests.get(qmm_detail)
             bs = BeautifulSoup(resp.text, 'html.parser')
-            for detail_body in bs.find_all('tbody'):
-                for shop_url in detail_body.find_all('a'):
-                    url_detail = self.parse_url(shop_url.get('href'))
-                    if url_detail not in self.shop_list:
-                        self.shop_list.append(url_detail)  # 简单去重
-
-        print('共抓取了 %d 个待领取京豆店铺页面' % len(self.shop_list))
-        self.wool()
+            for body in bs.find_all('tbody'):
+                for mall in body.find_all('a'):
+                    url = self._parse_url(mall.get('href'))
+                    if 'shop.m.jd.com' in url:
+                        self.m_shop.append(url)
+                    else:
+                        yield url
 
     @staticmethod
-    def parse_url(detail):
+    def _parse_url(url):
         """提取URL中的url参数"""
 
-        shop_url = parse_qs(detail).get('url')
-        return shop_url.pop() if shop_url else detail
+        mall_url = parse_qs(url).get('url')
+        return mall_url.pop() if mall_url else url
 
-    def wool(self):
-        """ 登录京东，领取店铺京豆"""
+    def start(self):
+        """ 登录京东，领取店铺羊毛"""
 
-        # 登陆京东
+        malls = set(self._crawl_url())
+        print('共有 %d 个可褥羊毛PC端店铺页面' % len(malls))
 
-        # 无浏览器模式
-        # option = webdriver.ChromeOptions()
-        # option.add_argument('headless')
+        m_malls = self.m_shop
+        print('共有 %d 个可褥羊毛手机端店铺页面' % len(m_malls))
+        for m_mall in m_malls:
+            print(m_mall)
 
-        driver = webdriver.Chrome()
-        jd_login = 'https://passport.jd.com/new/login.aspx'
-        driver.get(jd_login)
+        if malls:
+            # 登陆京东(Chrome、PhantomJS or FireFox)
+            driver = webdriver.Chrome()  # driver = webdriver.PhantomJS()
+            jd_login = 'https://passport.jd.com/new/login.aspx'
+            driver.get(jd_login)
 
-        driver.maximize_window()  # 窗口最大化
+            # 窗口最大化
+            driver.maximize_window()
 
-        driver.find_element_by_xpath('//*[@id="kbCoagent"]/ul/li[1]/a').click()  # QQ授权登录
-        auth.qq(driver, self.timeout)
-        time.sleep(self.timeout)
+            # QQ授权登录
+            driver.find_element_by_xpath('//*[@id="kbCoagent"]/ul/li[1]/a').click()
+            auth.qq(driver)
+            time.sleep(self.timeout)
 
-        for i, detail in enumerate(self.shop_list):
-            print('%d.Start spider %s' % (i + 1, detail), end='')
-            driver.get(detail)
-            try:
-                # 1.点击"领取"按钮
-                gift_btn = WebDriverWait(driver, self.timeout).until(
-                    lambda d: d.find_element_by_css_selector("[class='J_drawGift d-btn']"))
-            except TimeoutException:
-                print(' 领取失败, TimeoutException ')
-            else:
-                gift_btn.click()
+            # 开始褥羊毛
+            for i, detail in enumerate(malls):
+                driver.get(detail)
+                print('%d.店铺: %s' % (i + 1, detail), end='')
                 try:
-                    wool_num = WebDriverWait(driver, self.timeout).until(
-                        lambda d: d.find_element_by_class_name('d-num'))
-                    print(' 领取成功, 京豆数 %s ' % str(wool_num.text))
-                except:
-                    print(' 领取成功')
+                    # 查找"领取"按钮
+                    btn = WebDriverWait(driver, self.timeout).until(
+                        lambda d: d.find_element_by_css_selector("[class='J_drawGift d-btn']"))
+                except TimeoutException:
+                    # 失败大多数情况下是无羊毛可褥(券妈妈平台只是简单汇总但不一定就有羊毛)
+                    print(' 领取失败, TimeoutException ')
+                else:
+                    try:
+                        # 输出羊毛战绩
+                        items = WebDriverWait(driver, self.timeout).until(
+                            lambda d: d.find_elements_by_css_selector("[class='d-item']"))
+                        for item in items:
+                            item_type = item.find_element_by_css_selector("[class='d-type']").text
+                            item_num = item.find_element_by_css_selector("[class='d-num']").text
+                            if item_type == '京豆': self.jing_dou += item_num
+                            print(' {}{} '.format(item_type, item_num), end='')
+                    except:
+                        # 此处异常不太重要, 忽略
+                        pass
+                    finally:
+                        btn.click()
+                        print(' 领取成功')
 
-    def signIn(self, driver):
+            # 以下附加功能可选
+            self._print_jing_dou()
+            self._un_subscribe(driver)
+            self._finance_sign(driver)
+
+    def _print_jing_dou(self):
+        print('O(∩_∩)O哈哈~, 共褥到了{}个京豆，相当于RMB{}元', self.jing_dou, self.jing_dou / 100)
+
+    def _un_subscribe(self, driver):
+        """批量取消店铺关注"""
+
+        # 进入关注店铺
+        subscribe_shop = 'https://t.jd.com/vender/followVenderList.action'
+        driver.get(subscribe_shop)
+
+        try:
+            # 批量操作
+            batch_btn = WebDriverWait(driver, self.timeout).until(
+                lambda d: d.find_element_by_xpath('//*[@id="main"]/div/div[2]/div[1]/div[2]/div[2]/div/a'))
+            batch_btn.click()
+            # 全选店铺
+            all_btn = WebDriverWait(driver, self.timeout).until(
+                lambda d: d.find_element_by_xpath('//*[@id="main"]/div/div[2]/div[1]/div[2]/div[2]/div/div/span[1]'))
+            all_btn.click()
+            # 取消关注
+            cancel_btn = WebDriverWait(driver, self.timeout).until(
+                lambda d: d.find_element_by_xpath('//*[@id="main"]/div/div[2]/div[1]/div[2]/div[2]/div/div/span[2]'))
+            cancel_btn.click()
+            # 弹框确认
+            confirm_btn = WebDriverWait(driver, self.timeout).until(
+                lambda d: d.find_element_by_xpath("/html/body/div[7]/div[3]/a[1]"))
+        except TimeoutException:
+            print(' 批量取关店铺失败, TimeoutException ')
+        else:
+            confirm_btn.click()
+            print(' 已批量取消关注店铺')
+
+    def _finance_sign(self, driver):
         """京东金融签到领钢镚"""
 
         # 进入京东金融
-        driver.find_element_by_xpath('//*[@id="navitems-group3"]/li[2]/a').click()
-        driver.close()
-        # 切换到最新打开的窗口
-        window_handles = driver.window_handles
-        driver.switch_to.window(window_handles[-1])
-        # 点击签到
-        sign_btn = WebDriverWait(driver, self.timeout).until(
-            lambda d: d.find_element_by_xpath('//*[@id="primeWrap"]/div[1]/div[3]/div[1]/a'))
-        sign_btn.click()
+        jr_login = 'https://jr.jd.com/'
+        driver.get(jr_login)
+
+        try:
+            # 点击签到按钮
+            sign_btn = WebDriverWait(driver, self.timeout).until(
+                lambda d: d.find_element_by_xpath('//*[@id="primeWrap"]/div[1]/div[3]/div[1]/a'))
+        except TimeoutException:
+            print(' 京东金融签到失败, TimeoutException ')
+        else:
+            sign_btn.click()
+            print(' 京东金融签到成功')
 
 
 if __name__ == '__main__':
-    qmm = QMM()
+    qmm = QMM(sleep=3, months='7', days='1-15')
     qmm.start()

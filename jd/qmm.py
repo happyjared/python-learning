@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.support.wait import WebDriverWait
 
+# 额外抽取的授权模块
 from utils import auth
 
 
@@ -171,5 +172,5 @@ class QMM(object):
 
 
 if __name__ == '__main__':
-    qmm = QMM(sleep=3, months='7', days='1-15')
+    qmm = QMM(sleep=3, months='7-8', days='16-31')
     qmm.start()

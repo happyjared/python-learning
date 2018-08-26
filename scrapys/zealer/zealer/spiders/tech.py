@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import json
+import math
 import scrapy
 from utils import mytime
 from scrapy import Request
@@ -21,7 +22,6 @@ class TechSpider(scrapy.Spider):
         super().__init__(**kwargs)
         self.postgres = app.postgres()
         self.series_list = self.postgres.fetch_all(sql.get_series())
-        self.post_stop = {}  # 用于判断评论抓取终止
         self.series_stop = {}  # 用于判断Media抓取终止
         self.max_page = sys.maxsize
         self.post = 'http://www.zealer.com/post/{}'
@@ -49,49 +49,48 @@ class TechSpider(scrapy.Spider):
         if messages:
             # 解析数据
             for message in messages:
-                item = ItemLoader(item=MediaItem())
-                item.default_output_processor = TakeFirst()
+                loader = ItemLoader(item=MediaItem())
+                loader.default_output_processor = TakeFirst()
                 post_id = message.get('id')
-                item.add_value('postId', int(post_id))
-                item.add_value('seriesId', series_id)
-                item.add_value('title', message.get('title'))
-                item.add_value('coverPicture', message.get('cover'))
+                loader.add_value('postId', int(post_id))
+                loader.add_value('seriesId', series_id)
+                loader.add_value('title', message.get('title'))
+                loader.add_value('coverPicture', message.get('cover'))
                 comment_total = int(message.get('comment_total'))
-                item.add_value('commentNum', comment_total)
-                item.add_value('liveTime', message.get('live_time'))
+                loader.add_value('commentNum', comment_total)
+                loader.add_value('liveTime', message.get('live_time'))
                 detail_url = self.post.format(post_id)
-                item.add_value('detailUrl', detail_url)
+                loader.add_value('detailUrl', detail_url)
 
-                if comment_total:
-                    """抓取评论数据"""
-                    for page in range(1, self.max_page):
-                        if self.series_stop.get(post_id):
-                            self.logger.warning('Stop Comment: {}'.format(post_id))
-                            break
-                        else:
-                            yield Request(self.comment.format(post_id, page),
-                                          callback=self.parse_comment, meta={'post_id': post_id})
-
-                yield Request(detail_url, callback=self.parse_detail, meta={'item': item})
+                yield Request(detail_url, callback=self.parse_detail, meta={'loader': loader})
         else:
             # 终止条件
             self.logger.warning('Judge Stop Media: {}'.format(series_id))
             self.series_stop[series_id] = True
 
-    @staticmethod
-    def parse_detail(response):
+    def parse_detail(self, response):
         """解析获取详情页的数据"""
 
-        item = response.meta['item']
+        loader = response.meta['loader']
         desc = response.xpath('//p[@class="des_content"]/text()').extract_first()
-        item.add_value('desc', desc)
+        loader.add_value('desc', desc)
         tag_list = response.xpath('//div[@class="right_tag"]/a/text()').extract()
-        item.add_value('label', '; '.join(map(str.strip, tag_list)))
+        loader.add_value('label', '; '.join(map(str.strip, tag_list)))
         media_info = response.xpath('//script[@type="text/javascript"]/text()[contains(.,"option")]').extract_first()
         media_info = media_info.split('=')[1].split(';')[0].replace(' ', '')
-        item.add_value('mediaInfo', media_info)
+        loader.add_value('mediaInfo', media_info)
 
-        yield item.load_item()
+        item = loader.load_item()
+        comment_num = item.get('commentNum')
+        if comment_num:
+            """抓取评论数据"""
+            post_id = item.get('postId')
+            comment_max_page = int(math.ceil(comment_num / 20))
+            for page in range(1, comment_max_page):
+                yield Request(self.comment.format(post_id, page),
+                              callback=self.parse_comment, meta={'post_id': post_id})
+
+        yield item
 
     def parse_comment(self, response):
         """解析获取评论数据"""
@@ -100,9 +99,9 @@ class TechSpider(scrapy.Spider):
         status, count = data.get('status'), int(data.get('count'))
         self.logger.info('Comment URL: {} , status: {} , count: {}'.format(response.url, status, count))
 
-        post_id = response.meta['post_id']
         if count:
             content = data.get('content')
+            post_id = response.meta['post_id']
             bs = BeautifulSoup(content, 'html.parser')
             comment_list = bs.find_all('li')
             for comment in comment_list:
@@ -116,10 +115,6 @@ class TechSpider(scrapy.Spider):
                 item['commentTime'] = self.handleCommentTime(comment_time)
 
                 yield item
-        else:
-            # 终止条件
-            self.logger.warning('Judge Stop Comment: {}'.format(post_id))
-            self.post_stop[post_id] = True
 
     @staticmethod
     def handleCommentTime(comment_time):

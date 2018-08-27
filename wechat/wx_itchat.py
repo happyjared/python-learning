@@ -220,8 +220,10 @@ class WxChat(object):
 
 if __name__ == '__main__':
     wx = WxChat()
+
     # 分析微信好友
     wx.analysis_friends()
     # 分析微信群聊
-    # wx.analysis_chat_rooms()
+    wx.analysis_chat_rooms()
+
     wx.logout()

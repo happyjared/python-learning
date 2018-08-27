@@ -1,10 +1,10 @@
-import app
 import logging
 import multiprocessing
 from utils import cron
+from freeproxy import app
 from httpbin import checkProxy
 
-redis = app.redis_ip()
+redis = app.redis()
 
 
 def handleProxy(keys):

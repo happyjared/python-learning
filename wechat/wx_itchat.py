@@ -6,7 +6,8 @@ import numpy as np
 import PIL.Image as Image
 import matplotlib.pyplot as plt
 
-from utils import mat
+# 抽取出来的工具类
+from utils import match_util
 
 
 class WxChat(object):
@@ -121,7 +122,7 @@ class WxChat(object):
     def _count_province(self, province_name):
         """统计省份情况"""
 
-        if not province_name or not mat.all_chinese(province_name):
+        if not province_name or not match_util.is_all_chinese(province_name):
             # 未设置省份名或非国内城市
             other_province_num = self.num_of_province.get(self.unknown_province)
             self.num_of_province.__setitem__(self.unknown_province,

@@ -1,6 +1,6 @@
 import random
 import itchat
-from utils import mat
+from utils import match_util
 from utils import rds
 from blogs import read
 from utils import robot
@@ -64,7 +64,7 @@ def reply(msg):
         if redis.ttl(from_user_id) <= int(redis.get(key.format('min:ex'))):
             # 倒计时10分钟内还在聊天，延长Key过期时间
             redis.set(from_user_id, True, ex=ex)
-        if mat.is_emoji(receive_text):
+        if match_util.is_emoji(receive_text):
             reply_text = random.randint(1, 3) * receive_text
             print(' Back: ' + reply_text)
             return reply_text

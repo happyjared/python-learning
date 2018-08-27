@@ -7,7 +7,7 @@ def is_emoji(text):
     return text.startswith('[') and text.endswith(']')
 
 
-def all_chinese(text):
+def is_all_chinese(text):
     """判断text是否全部为中文
     
     :param text: 

@@ -4,7 +4,7 @@ import multiprocessing
 from utils import cron
 from httpbin import checkProxy
 
-redis = app.redis()
+redis = app.redis_ip()
 
 
 def handleProxy(keys):
@@ -23,7 +23,7 @@ def cron_handle_proxy():
 
     logging.info("Cron handle proxy")
     # 对应http和https代理
-    keys = {"http", "https"}
+    keys = redis.keys()
     multi_pool = multiprocessing.Pool(len(keys))
     multi_pool.map(handleProxy, keys)
     multi_pool.close()

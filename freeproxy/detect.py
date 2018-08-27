@@ -14,14 +14,14 @@ def handleProxy(keys):
         for member in redis.smembers(key):
             proxy = {key: member}
             if member != checkProxy(proxy, timeout=5):
-                logging.warning("Handle Proxy %s is invalid", member)
+                # logging.warning("Handle Proxy %s is invalid", member)
                 redis.srem(key, member)
 
 
 def cron_handle_proxy():
     """定时判断Redis代理数据"""
 
-    logging.info("Cron handle proxy")
+    # logging.info("Cron handle proxy")
     # 对应http和https代理
     keys = redis.keys('http*')
     multi_pool = multiprocessing.Pool(len(keys))

@@ -23,7 +23,7 @@ def cron_handle_proxy():
 
     logging.info("Cron handle proxy")
     # 对应http和https代理
-    keys = redis.keys()
+    keys = redis.keys('http*')
     multi_pool = multiprocessing.Pool(len(keys))
     multi_pool.map(handleProxy, keys)
     multi_pool.close()

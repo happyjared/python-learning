@@ -7,188 +7,148 @@ from utils import pgs
 from datetime import datetime
 
 
-class WxMps:
-    host = 'localhost'
-    port = '12432'
-    db_name = 'wxmps'
-    user = db_name
-    pwd = db_name
+def postgres():
+    """获取Postgres操作实例"""
 
-    def __init__(self):
-        self.biz = 'MzU4NjA4NjMwNw=='  # 公众号标志
-        self.pass_ticket = 'syyvrYpIR5DlT5goq3tcdr1sw%25252BUhH%25252FByS6GimOsAWTbnh3eR94OSz9Xb665LkGfV'  # 通用票据(非固定)
+    wx_mps = 'wxmps'  # 这里数据库、用户、密码一致(需替换成实际的)
+    return pgs.Pgs(host='localhost', port='12432', db_name=wx_mps,
+                   user=wx_mps, password=wx_mps)
+
+
+class WxMps(object):
+    """微信公众号文章、评论抓取爬虫"""
+
+    def __init__(self, _biz, _pass_ticket, _app_msg_token, _cookie, _offset=0):
+        self.offset = _offset
+        self.biz = _biz  # 公众号标志
+        self.msg_token = _app_msg_token  # 票据(非固定)
+        self.pass_ticket = _pass_ticket  # 票据(非固定)
         self.headers = {
-            # 通用cookie(非固定)
-            'Cookie': 'pgv_pvi=6708115456; pgv_si=s4773475328; ptisp=cm; RK=XopsBML0RK; ptcz=73aac9f580839d2b9c7f634ca28f3e19c8bd037390a7f639e5332831aa13b8c4; uin=o1394223902; skey=@KWMdUovjK; pt2gguin=o1394223902; rewardsn=; wxuin=2089823341; devicetype=android-26; version=26060739; lang=zh_HK; pass_ticket=syyvrYpIR5DlT5goq3tcdr1sw+UhH/ByS6GimOsAWTbnh3eR94OSz9Xb665LkGfV; wap_sid2=CO3YwOQHEogBWFJhV2l3ajhMc0ZtZGFreFF0dGx1MGNaWi1XVE5Ubzk4QXFOMDRVclRCNkhLb1JSdjJqUXR2d1p4aTJheWZ3OWhFSVlvdmlaME1wSzhFMHRzUVBxT0tocFVna2t6QUVwQkoyQUNtUzdrZ1FLUHNGR1VwNEl0N1ZRUnlhT3V5MHV5QU1BQUF+fjDzpaXbBTgNQAE=; wxtokenkey=777',
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; WAS-AL00 Build/HUAWEIWAS-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/044203 Mobile Safari/537.36 MicroMessenger/6.6.7.1321(0x26060739) NetType/WIFI Language/zh_HK'
+            'Cookie': _cookie,  # Cookie(非固定)
+            'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 '
         }
-        self.postgres = pgs.Pgs(host=WxMps.host, port=WxMps.port, db_name=WxMps.db_name,
-                                user=WxMps.user, password=WxMps.pwd)
+        self.postgres = postgres()
 
-    def spider_articles(self, msg_token):
-        """抓取公众号的文章
-        
-        :return: 
-        """
+    def start(self):
+        """请求获取公众号的文章接口"""
 
-        offset = 0
+        offset = self.offset
         while True:
             api = 'https://mp.weixin.qq.com/mp/profile_ext?action=getmsg&__biz={0}&f=json&offset={1}' \
-                  '&count=10&is_ok=1&scene=124&uin=777&key=777&pass_ticket={2}&wxtoken=&appmsg_token' \
-                  '={3}&x5=1&f=json'.format(self.biz, offset, self.pass_ticket, msg_token)
+                  '&count=11&is_ok=1&scene=124&uin=777&key=777&pass_ticket={2}&wxtoken=&appmsg_token' \
+                  '={3}&x5=1&f=json'.format(self.biz, offset, self.pass_ticket, self.msg_token)
 
             resp = requests.get(api, headers=self.headers).json()
-            status = resp['errmsg']  # 状态码
-            if status == 'ok':
-                offset = resp['next_offset']  # 偏移量
-                msg_list = json.loads(resp['general_msg_list'])['list']
+            ret, status = resp.get('ret'), resp.get('errmsg')  # 状态信息
+            if ret == 0 or status == 'ok':
+                offset = resp['next_offset']  # 下一次请求偏移量
+                general_msg_list = resp['general_msg_list']
+                msg_list = json.loads(general_msg_list)['list']  # 获取文章列表
                 for msg in msg_list:
-                    comm_msg_info = msg['comm_msg_info']
-                    msg_id = comm_msg_info['id']  # 文章标志位
-                    date_time = datetime.fromtimestamp(comm_msg_info['datetime'])  # 发布时间
+                    comm_msg_info = msg['comm_msg_info']  # 该数据是本次推送多篇文章公共的
+                    msg_id = comm_msg_info['id']  # 文章id
                     msg_type = comm_msg_info['type']  # 文章类型
+                    post_time = datetime.fromtimestamp(comm_msg_info['datetime'])  # 发布时间
                     msg_data = json.dumps(comm_msg_info, ensure_ascii=False)  # msg原数据
 
                     app_msg_ext_info = msg.get('app_msg_ext_info')  # article原数据
                     if app_msg_ext_info:
-                        # 某推送的首条文章
-                        self.__parse_articles(app_msg_ext_info, msg_id, date_time, msg_type, msg_data)
-                        # 该推送的其余文章
+                        # 本次推送的首条文章
+                        self._parse_articles(app_msg_ext_info, msg_id, post_time, msg_type, msg_data)
+                        # 本次推送的其余文章
                         multi_app_msg_item_list = app_msg_ext_info.get('multi_app_msg_item_list')
                         if multi_app_msg_item_list:
                             for item in multi_app_msg_item_list:
-                                msg_id = item['fileid']  # 文章标志位
+                                msg_id = item['fileid']  # 文章id
                                 if msg_id == 0:
-                                    msg_id = int(time.time() * 1000)  # 部分历史文章有都为0的问题
-                                msg_data = '{}'  # 首条文章有该数据即可
-                                self.__parse_articles(item, msg_id, date_time, msg_type, msg_data)
-                if not msg_list:
-                    break
-                time.sleep(30)  # 必要的休眠
+                                    msg_id = int(time.time() * 1000)  # 设置唯一id,解决部分文章id=0出现唯一索引冲突的情况
+                                self._parse_articles(item, msg_id, post_time, msg_type)
                 print('next offset is %d' % offset)
             else:
-                print('Current end offset is %d' % offset)
+                print('Before break , Current offset is %d' % offset)
                 break
 
-    def __parse_articles(self, info, msg_id, date_time, msg_type, msg_data):
-        """解析文章列表接口数据并保存
+    def _parse_articles(self, info, msg_id, post_time, msg_type, msg_data=None):
+        """解析嵌套文章数据并保存入库"""
 
-        :param info:
-        :param msg_id:
-        :param date_time:
-        :param msg_type:
-        :param msg_data:
-        :return:
-        """
-
-        title = info['title']  # 标题
-        author = info['author']  # 作者
-        cover = info['cover']  # 封面图
+        title = info.get('title')  # 标题
+        cover = info.get('cover')  # 封面图
+        author = info.get('author')  # 作者
+        digest = info.get('digest')  # 关键字
         del_flag = info.get('del_flag')  # 标志位
-        digest = info['digest']  # 关键字
-        source_url = info['source_url']  # 原文地址
+        source_url = info.get('source_url')  # 原文地址
+        content_url = info.get('content_url')  # 微信地址
         ext_data = json.dumps(info, ensure_ascii=False)  # 原始数据
-        content_url = info['content_url']  # 微信地址
 
-        self.__handle_data(wx_mps_sql.add_article(), (msg_id, date_time, msg_type, msg_data, title,
-                                                      author, cover, digest, content_url, source_url,
-                                                      del_flag, ext_data, datetime.now()))
+        self.postgres.handler(wx_mps_sql.add_article(), (msg_id, post_time, msg_type, msg_data, title,
+                                                         author, cover, digest, content_url, source_url,
+                                                         del_flag, ext_data, datetime.now()))
 
-    def __parse_article_detail(self, content_url):
-        """从文章详情提取数据用于获取评论
+        self._parse_article_detail(content_url)
 
-        :param content_url: 微信地址
-        :return:
-        """
+    def _parse_article_detail(self, content_url):
+        """从文章页提取相关参数用于获取评论"""
 
         try:
-            api = content_url.replace('amp;', '')
+            api = content_url.replace('amp;', '').replace('http', 'https')
             html = requests.get(api, headers=self.headers).text
-        except requests.exceptions.MissingSchema:
-            print('requests.exceptions.MissingSchema = ' + content_url)
+        except:
+            print('获取评论失败' + content_url)
         else:
             # group(0) is current line
-            comment_str = re.search(r'var comment_id = "(.*)" \|\| "(.*)" \* 1;', html)
-            comment_id = comment_str.group(1)
-            app_msg_id_str = re.search(r"var appmsgid = '' \|\| '(.*)'\|\|", html)
-            app_msg_id = app_msg_id_str.group(1)
-            token_str = re.search(r'window.appmsg_token = "(.*)";', html)
-            token = token_str.group(1)
+            comment_id = re.search(r'var comment_id = "(.*)" \|\| "(.*)" \* 1;', html).group(1)  # 当前文章评论接口请求id(固定)
+            app_msg_id = re.search(r"var appmsgid = '' \|\| '(.*)'\|\|", html).group(1)  # 评论票据(非固定)
+            appmsg_token = re.search(r'window.appmsg_token = "(.*)";', html).group(1)  # 评论票据(非固定)
 
-            # 两个条件缺一不可
-            if app_msg_id and token:
-                print('__parse_article_detail: ' + api)
-                self.__spider_comments(app_msg_id, comment_id, token)  # 爬取评论
+            # 两者缺一不可
+            if appmsg_token and app_msg_id:
+                print('Crawl article comments: ' + api)
+                self._crawl_comments(app_msg_id, comment_id, appmsg_token)
 
-    def __spider_comments(self, app_msg_id, comment_id, msg_token):
-        """抓取文章的评论
-        
-        :param app_msg_id: 标志
-        :param comment_id: 标志
-        :param msg_token: 评论票据(非固定)
-        :return: 
-        """
+    def _crawl_comments(self, app_msg_id, comment_id, appmsg_token):
+        """抓取文章的评论"""
 
         api = 'https://mp.weixin.qq.com/mp/appmsg_comment?action=getcomment&scene=0&__biz={0}' \
-              '&appmsgid={4}&idx=1&comment_id={1}&offset=0&limit=100&uin=777&key=777' \
-              '&pass_ticket={2}&wxtoken=777&devicetype=android-26&clientversion=26060739' \
-              '&appmsg_token={3}&x5=1&f=json'.format(self.biz, comment_id, self.pass_ticket,
-                                                     msg_token, app_msg_id)
+              '&appmsgid={1}&idx=1&comment_id={2}&offset=0&limit=100&uin=777&key=777' \
+              '&pass_ticket={3}&wxtoken=777&devicetype=android-26&clientversion=26060739' \
+              '&appmsg_token={4}&x5=1&f=json'.format(self.biz, app_msg_id, comment_id,
+                                                     self.pass_ticket, appmsg_token)
         resp = requests.get(api, headers=self.headers).json()
-        status = resp['base_resp']['errmsg']
-        if status == 'ok':
+        ret, status = resp['base_resp']['ret'], resp['base_resp']['errmsg']
+        if ret == 0 or status == 'ok':
             elected_comment = resp['elected_comment']
             for comment in elected_comment:
-                nick_name = comment['nick_name']  # 昵称
-                logo_url = comment['logo_url']  # 评论人头像
-                create_time = datetime.fromtimestamp(comment['create_time'])  # 评论时间
-                content = comment['content']  # 评论内容
-                content_id = comment['content_id']  # id
-                like_num = comment['like_num']  # 点赞数
-                reply_list = comment['reply']['reply_list']  # 原数据
+                nick_name = comment.get('nick_name')  # 昵称
+                logo_url = comment.get('logo_url')  # 头像
+                create_time = datetime.fromtimestamp(comment.get('create_time'))  # 评论时间
+                content = comment.get('content')  # 评论内容
+                content_id = comment.get('content_id')  # id
+                like_num = comment.get('like_num')  # 点赞数
+                reply_list = comment.get('reply')['reply_list']  # 回复数据
+                reply_data = json.dumps(reply_list)  # 原数据
 
                 reply_like_num = 0
                 reply_content = None
                 reply_create_time = None
-                reply_data = json.dumps(reply_list)  # 原数据
                 if reply_list:
-                    reply = reply_list[0]  # 第1条回复评论
+                    reply = reply_list[0]  # 首条评论回复
                     reply_content = reply['content']  # 回复评论内容
                     reply_create_time = datetime.fromtimestamp(reply['create_time'])  # 回复评论手时间
                     reply_like_num = reply.get('reply_like_num')  # 回复评论点赞数
 
-                self.__handle_data(wx_mps_sql.add_article_comment(), (comment_id, nick_name, logo_url,
-                                                                      content_id, content, like_num, create_time,
-                                                                      reply_content, reply_create_time, reply_like_num,
-                                                                      reply_data, datetime.now()))
-
-    def __handle_data(self, sql, params):
-        """保存数据
-
-        :param sql: SQL
-        :param params: Params
-        :return:
-        """
-
-        self.postgres.handler(sql, params)
-
-    def get_content_url(self, title=''):
-        """从数据库获取帅选文章的微信地址
-
-        :param title: 过滤条件
-        :return:
-        """
-
-        rows = self.postgres.fetch_all(wx_mps_sql.find_article(), ('%' + title + '%',))
-        for row in rows:
-            content_url = row[0]
-            self.__parse_article_detail(content_url)
+                self.postgres.handler(wx_mps_sql.add_article_comment(), (comment_id, nick_name, logo_url,
+                                                                         content_id, content, like_num, create_time,
+                                                                         reply_content, reply_create_time,
+                                                                         reply_like_num, reply_data, datetime.now()))
 
 
 if __name__ == '__main__':
-    wxMps = WxMps()
-    # 爬取文章
-    # msg_token = '968_xDms46Qr4aDyyGztsd2KrCTBkhFG7CYkhQ4Nuw~~'  # 文章列表票据(非固定)
-    # wxMps.spider_articles(msg_token)
-    # 爬取评论
-    wxMps.get_content_url()
+    biz = 'MzI2NDk5NzA0Mw=='  # "36氪"
+    pass_ticket = 'NDndxxaZ7p6Z9PYulWpLqMbI0i3ULFeCPIHBFu1sf5pX2IhkGfyxZ6b9JieSYRUy'
+    app_msg_token = '971_Z0lVNQBcGsWColSubRO9H13ZjrPhjuljyxLtiQ~~'
+    cookie = 'wap_sid2=CO3YwOQHEogBQnN4VTNhNmxQWmc3UHI2U3kteWhUeVExZHFVMnN0QXlsbzV' \
+             'JRUJKc1pkdVFUU2Y5UzhSVEtOZmt1VVlYTkR4SEllQ2huejlTTThJWndMQzZfYUw2Sld' \
+             'LVGVMQUthUjc3QWdVMUdoaGN0Nml2SU05cXR1dTN2RkhRUVd1V2Y3SFJ5d01BQUF+fjCB1pLcBTgNQJVO'
+    # 以上信息不同公众号每次抓取都需要借助抓包工具做修改
+    wxMps = WxMps(biz, pass_ticket, app_msg_token, cookie)
+    wxMps.start()  # 开始爬取文章及评论

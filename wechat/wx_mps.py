@@ -29,7 +29,7 @@ class WxMps(object):
         offset = self.offset
         while True:
             api = 'https://mp.weixin.qq.com/mp/profile_ext?action=getmsg&__biz={0}&f=json&offset={1}' \
-                  '&count=11&is_ok=1&scene=124&uin=777&key=777&pass_ticket={2}&wxtoken=&appmsg_token' \
+                  '&count=10&is_ok=1&scene=124&uin=777&key=777&pass_ticket={2}&wxtoken=&appmsg_token' \
                   '={3}&x5=1&f=json'.format(self.biz, offset, self.pass_ticket, self.msg_token)
 
             resp = requests.get(api, headers=self.headers).json()
@@ -101,7 +101,7 @@ class WxMps(object):
 
                 # 缺一不可
                 if appmsg_token and app_msg_id and comment_id:
-                    print('Crawl article comments: ' + api)
+                    print('Crawl article comments: ' + content_url)
                     self._crawl_comments(app_msg_id, comment_id, appmsg_token, article_id)
 
     def _crawl_comments(self, app_msg_id, comment_id, appmsg_token, article_id):
@@ -132,7 +132,7 @@ class WxMps(object):
     @staticmethod
     def _save_article():
         sql = 'insert into tb_article(msg_id,title,author,cover,digest,source_url,content_url,post_time,create_time) ' \
-              'values(%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+              'values(%s,%s,%s,%s,%s,%s,%s,%s,%s) returning id'
         return sql
 
     @staticmethod

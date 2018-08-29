@@ -1,15 +1,15 @@
-import time
-import random
 import logging
-import requests
-import planet_sql
-from utils import pgs
-from utils import cron
-from utils import robot
-from planet import Planet
-from threading import Thread
+import random
+import time
 from datetime import datetime
+from threading import Thread
+
+import requests
+
+import planet_sql
+from planet import Planet
 from planet_spider import PlanetSpider
+from utils import pgs, cron, robot, mpwx
 
 
 class PlanetRobot:
@@ -181,6 +181,8 @@ class PlanetRobot:
             logging.error('>>> Single Unauthenticated')
             key = 'planet:my:token'
             Planet.headers['Authorization'] = self.spider.redis.get(key)
+            mpwx.sendTemplateMsg()
+            time.sleep(300)
         else:
             return resp
 

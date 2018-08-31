@@ -138,7 +138,7 @@ class WxChat(object):
 
         for province in list(self.num_of_province.keys()):
             number = self.num_of_province[province]
-            if number / member_count < .02:
+            if number / member_count < .02 and province != self.unknown_province:
                 other_province_num = self.num_of_province.get(self.unknown_province)
                 self.num_of_province.__setitem__(self.unknown_province, other_province_num + number)
                 del self.num_of_province[province]
@@ -148,6 +148,8 @@ class WxChat(object):
         :param title: 名称
         """
 
+        # font size include: ‘xx-small’,x-small’,'small’,'medium’,‘large’,‘x-large’,‘xx-large’ or number
+        # plt.xticks(size='small',rotation=30)
         plt.bar('男', self.male_num, color='yellow')
         plt.bar('女', self.female_num, color='pink')
         plt.bar('未知', self.unknown_gender, color='gray')

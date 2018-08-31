@@ -4,6 +4,8 @@ from elasticsearch import Elasticsearch
 log = logging.getLogger()
 
 
+# @See https://github.com/elastic/elasticsearch/issues/21134
+# _id is not configurable @See https://discuss.elastic.co/t/elsticsearch5-6-id-is-not-configurable/115496
 class Es(object):
     """ Example
     doc_mapping = '''{

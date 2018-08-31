@@ -35,7 +35,7 @@ class PlanetSpider(Planet):
         """
 
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/dog-all-random'
-        data = {"hash": Planet.my_hash, "pagesize": 50, "seed": 655572327}  # "location": "P3569589400"
+        data = {"hash": Planet.my_hash, "pagesize": 50, "seed": 655572327, "gender": 1}  # "location": "P3569589400"
         logging.info("Start find random member")
         for offset in range(PlanetSpider.max_size):
             data["offset"] = offset

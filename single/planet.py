@@ -20,18 +20,14 @@ class Planet(object):
     redis = rds.Rds(host=host, port=rds_port, password=rds_pwd).redis_cli
     my_hash = None
     my_user_id = None
-    token = 'djM6rPlen9dt-_D12hw0eNgZiTqqUwdeCDF1UvZyquJDxfhCnTLLmQ8E2V4C921U-dJRX9A4PJ' \
-            'CQdGBSp1cujbMjfHEMHBjXmqGBg2Ch1I-OpGpJBz-BmGcVSuuvPsgNjZqIU8icH2_8vROmkpVwwTP' \
-            'ZMOol_E9taU-erWZfY3n-SqiS'
-    headers = {
-        'Authorization': 'token {0}'.format(token)
-    }
+    headers = {}
 
     def __init__(self):
         self.redis = Planet.redis
         self.postgres = Planet.postgres
-        Planet.my_hash = self.__get_my_hash()
-        Planet.my_user_id = self.__get_my_user_id()
+        self.__get_my_hash()
+        self.__get_my_token()
+        self.__get_my_user_id()
         logging.info('Init my hash : %s and my user id : %s', Planet.my_hash, Planet.my_user_id)
 
     def handler(self, sql, params):
@@ -45,10 +41,7 @@ class Planet(object):
         return self.postgres.handler(sql, params)
 
     def __get_my_user_id(self):
-        """return my_user_id directly or request to return it (直接返回my_user_id或请求获得并返回)
-
-        :return: my_user_id
-        """
+        """获取userId值"""
 
         if not Planet.my_user_id:
             key = 'planet:my:uid'
@@ -58,13 +51,9 @@ class Planet(object):
                 resp = requests.post(api, json={}, headers=Planet.headers).json()
                 Planet.my_user_id = resp['notification_settings'][0]['user_id']
                 self.redis.set(key, Planet.my_user_id)
-        return Planet.my_user_id
 
     def __get_my_hash(self):
-        """return my_hash directly or request to return it (直接返回my_hash或请求获得并返回)
-
-        :return: my_hash
-        """
+        """获取hash值"""
 
         if not Planet.my_hash:
             key = 'planet:my:hash'
@@ -74,4 +63,9 @@ class Planet(object):
                 resp = requests.post(api, json={}, headers=Planet.headers).json()
                 Planet.my_hash = resp['uid_hash']
                 self.redis.set(key, Planet.my_hash)
-        return Planet.my_hash
+
+    def __get_my_token(self):
+        """获取token值"""
+
+        key = 'planet:my:token'
+        Planet.headers['Authorization'] = self.redis.get(key)

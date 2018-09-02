@@ -15,6 +15,8 @@ class CourseSpider(scrapy.Spider):
     https = "https:"
 
     def parse(self, response):
+        """抓取课程列表页面"""
+
         url = response.url
         self.log("Response url is %s" % url)
 
@@ -55,11 +57,8 @@ class CourseSpider(scrapy.Spider):
             yield Request(course_item['detail'], callback=self.parse_detail, meta={'course_item': course_item})
 
     def parse_detail(self, response):
-        """ Spider course detail page
-        
-        :param response: 
-        :return: 
-        """
+        """ 抓取课程详情页面 """
+
         url = response.url
         self.log("Response url is %s" % url)
 
@@ -92,23 +91,3 @@ class CourseSpider(scrapy.Spider):
         course_item['can_learn'] = response.xpath(
             '//div[@class="course-info-tip"]/dl[not(@class)]/dd/text()').extract_first()
         yield course_item
-
-        # 以下用于提取课程详情信息(暂不处理)
-        # course_detail_item = CourseDetailItem()
-        # # 课程id
-        # course_detail_item['course_id'] = course_item['course_id']
-        #
-        # course_wrap_list = response.xpath('//div[@class="chapter course-wrap "]')
-        # for course_wrap in course_wrap_list:
-        #     # 课程章节
-        #     course_detail_item['chapter'] = course_wrap.xpath('.//h3/text()').extract_first()
-        #     # 章节描述(去空格和\r\n)
-        #     course_detail_item['chapter_desc'] = course_wrap.xpath(
-        #         './/div[@class="chapter-description"]/text()').extract_first()
-        #     # 章节小节(去无效行, 空格和\r\n)
-        #     course_detail_item['chapter_section'] = course_wrap.xpath(
-        #         './/a[@class="J-media-item"]/text()').extract()
-        #     # 小节地址
-        #     section_detail = course_wrap.xpath('.//a[@class="J-media-item"]/@href').extract()
-        #     course_detail_item['chapter_section_detail'] = section_detail
-        #     yield course_detail_item

@@ -35,15 +35,6 @@ class CourseItem(Item):
     can_learn = Field()  # 能学什么
 
 
-# 免费课程详情
-class CourseDetailItem(Item):
-    course_id = Field(output_processor=TakeFirst())  # 课程id
-    chapter = Field()  # 课程章节
-    chapter_desc = Field()  # 章节描述
-    chapter_section = Field()  # 章节小节
-    chapter_section_detail = Field()  # 小节地址
-
-
 # 实战课程
 class CodingItem(Item):
     name = Field()  # 课程名称

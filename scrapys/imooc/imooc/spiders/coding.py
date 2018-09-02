@@ -15,6 +15,8 @@ class CodingSpider(scrapy.Spider):
     https = "https:"
 
     def parse(self, response):
+        """抓取课程列表页面"""
+
         url = response.url
         self.log("Response url is %s" % url)
 
@@ -59,11 +61,8 @@ class CodingSpider(scrapy.Spider):
             yield Request(coding_item['detail'], callback=self.parse_detail, meta={'coding_item': coding_item})
 
     def parse_detail(self, response):
-        """ Spider Coding detail page
-        
-        :param response: 
-        :return: 
-        """
+        """ 抓取课程详情页面 """
+
         url = response.url
         self.log("Response url is %s" % url)
 
@@ -80,9 +79,4 @@ class CodingSpider(scrapy.Spider):
         coding_item['detail_desc'] = response.xpath('//div[@class="info-desc"]/text()').extract_first()
         # 教师职位
         coding_item['teacher_job'] = response.xpath('//div[@class="teacher"]/p/text()').extract_first()
-        # 适合人群(网页结构不规律，暂不处理)
-        # coding_item['suit_crowd'] = response.xpath('//dl[@class="first"]/dd/text()').extract_first()
-        # 技术要求(网页结构不规律，暂不处理)
-        # coding_item['skill_require'] = response.xpath(
-        #     '//div[@class="course-info-tip"]/dl[not(@class)]/dd/text()').extract_first()
         yield coding_item

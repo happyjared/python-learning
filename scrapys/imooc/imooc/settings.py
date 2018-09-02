@@ -17,7 +17,7 @@ NEWSPIDER_MODULE = 'imooc.spiders'
 # LOG_ENCODING 默认: ‘utf-8’，logging使用的编码
 # 默认: None，在当前目录里创建logging输出文件的文件名
 LOG_FILE = 'info.log'
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'debug'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'imooc (+http://www.yourdomain.com)'

@@ -18,7 +18,7 @@ class CodingSpider(scrapy.Spider):
         """抓取课程列表页面"""
 
         url = response.url
-        self.log("Response url is %s" % url)
+        self.logger.info("Response url is %s" % url)
 
         next_btn = response.xpath('//a[contains(.//text(),"下一页")]/@href').extract_first()
         if next_btn:
@@ -64,7 +64,7 @@ class CodingSpider(scrapy.Spider):
         """ 抓取课程详情页面 """
 
         url = response.url
-        self.log("Response url is %s" % url)
+        self.logger.info("Response url is %s" % url)
 
         coding_item = response.meta['coding_item']
         # 课程时长

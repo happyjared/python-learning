@@ -18,7 +18,7 @@ class CourseSpider(scrapy.Spider):
         """抓取课程列表页面"""
 
         url = response.url
-        self.log("Response url is %s" % url)
+        self.logger.info("Response url is %s" % url)
 
         # 根据Scrapy默认的后入先出(LIFO)深度爬取策略，这里应先提交下一页请求
         next_btn = response.xpath('//a[contains(.//text(),"下一页")]/@href').extract_first()
@@ -60,7 +60,7 @@ class CourseSpider(scrapy.Spider):
         """ 抓取课程详情页面 """
 
         url = response.url
-        self.log("Response url is %s" % url)
+        self.logger.info("Response url is %s" % url)
 
         course_item = response.meta['course_item']
         meta_value = response.xpath('//span[@class="meta-value"]/text()').extract()

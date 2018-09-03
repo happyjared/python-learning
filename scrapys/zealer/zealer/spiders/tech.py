@@ -16,7 +16,7 @@ class TechSpider(scrapy.Spider):
     name = 'tech'
     allowed_domains = ['zealer.com']
 
-    # start_urls = ['https://zealer.com/']
+    # start_urls = ['http://zealer.com/']
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

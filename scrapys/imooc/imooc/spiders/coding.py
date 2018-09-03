@@ -56,7 +56,7 @@ class CodingSpider(scrapy.Spider):
             avatar = coding.xpath('.//div[@class="lecturer-info"]/img/@src').extract_first()
             coding_item['teacher_avatar'] = "{0}{1}".format(CodingSpider.https, avatar)
 
-            self.log("Item: %s" % coding_item)
+            self.logger.info("Item: %s" % coding_item)
             # 爬取详情页
             yield Request(coding_item['detail'], callback=self.parse_detail, meta={'coding_item': coding_item})
 

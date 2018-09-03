@@ -52,7 +52,7 @@ class CourseSpider(scrapy.Spider):
             # 课程id
             course_id = re.split('/', course_detail)[-1]
             course_item['course_id'] = int(course_id)
-            self.log("Item: %s" % course_item)
+            self.logger.info("Item: %s" % course_item)
             # 爬取详情页
             yield Request(course_item['detail'], callback=self.parse_detail, meta={'course_item': course_item})
 

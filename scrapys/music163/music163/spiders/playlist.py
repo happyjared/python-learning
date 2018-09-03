@@ -16,7 +16,7 @@ class PlaylistSpider(scrapy.Spider):
 
     def parse(self, response):
         url = response.url
-        self.log("Response url is %s" % url)
+        self.logger.info("Response url is %s" % url)
 
         next_btn = response.xpath('//a[@class="zbtn znxt" and not(@class="js-disabled")]/@href').extract_first()
         if next_btn:
@@ -32,7 +32,7 @@ class PlaylistSpider(scrapy.Spider):
 
     def parse_detail(self, response):
         url = response.url
-        self.log("Response url is %s" % url)
+        self.logger.info("Response url is %s" % url)
         item = items.Music163Item()
 
         song_list = response.xpath('//div[@id="song-list-pre-cache"]/ul[@class="f-hide"]/li')

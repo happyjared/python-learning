@@ -22,7 +22,7 @@ class TechSpider(scrapy.Spider):
         super().__init__(**kwargs)
         self.postgres = app.postgres()
         self.series_list = self.postgres.fetch_all(sql.get_series())
-        self.series_stop = {}  # 用于判断Media抓取终止
+        self.series_stop = set()  # 用于判断Media抓取终止
         self.max_page = sys.maxsize
         self.post = 'http://www.zealer.com/post/{}'
         self.sift = 'http://www.zealer.com/x/sift?cid={}&page={}&order=created_at'
@@ -32,14 +32,16 @@ class TechSpider(scrapy.Spider):
         for series in self.series_list:
             series_id, cp = series[0], series[1]
             for page in range(1, self.max_page):
-                if self.series_stop.get(series_id):
+                if series_id in self.series_stop:
                     self.logger.warning('Stop Media: {}'.format(series_id))
+                    self.series_stop.discard(series_id)
                     break
                 else:
                     sift = self.sift.format(cp, page)
                     yield Request(sift, callback=self.parse, meta={'series_id': series_id})
 
     def parse(self, response):
+        """解析请求资讯接口返回的JSON数据"""
 
         data = json.loads(response.body_as_unicode())
         status, messages = data.get('status'), data.get('message')
@@ -66,10 +68,10 @@ class TechSpider(scrapy.Spider):
         else:
             # 终止条件
             self.logger.warning('Judge Stop Media: {}'.format(series_id))
-            self.series_stop[series_id] = True
+            self.series_stop.add(series_id)
 
     def parse_detail(self, response):
-        """解析获取详情页的数据"""
+        """获取资讯详情页的数据"""
 
         loader = response.meta['loader']
         desc = response.xpath('//p[@class="des_content"]/text()').extract_first()
@@ -94,8 +96,8 @@ class TechSpider(scrapy.Spider):
 
     def parse_comment(self, response):
         """解析获取评论数据"""
-        data = json.loads(response.body_as_unicode())
 
+        data = json.loads(response.body_as_unicode())
         status, count = data.get('status'), int(data.get('count'))
         self.logger.info('Comment URL: {} , status: {} , count: {}'.format(response.url, status, count))
 
@@ -119,7 +121,7 @@ class TechSpider(scrapy.Spider):
 
     @staticmethod
     def handleCommentTime(comment_time):
-        """处理日期问题"""
+        """处理日期问题, 当年的评论返回格式为: x月x日 hh:mm"""
 
         if comment_time.find('年') == -1:
             comment_time = '{}年{}'.format(mytime.now_year(), comment_time)

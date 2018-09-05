@@ -14,7 +14,7 @@ def judgeProxy(ip, port, proxy_type):
     schema = '{}://{}:{}'.format(proxy_type, ip, port)
     proxy = {proxy_type: schema}
     result = checkProxy(proxy)
-    if ip == result or (proxy_type == 'https' and result is not None):
+    if ip == result:
         logging.info("Crawl Proxy %s success", schema)
         redis.sadd(proxy_type, schema)
 

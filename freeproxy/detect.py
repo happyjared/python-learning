@@ -30,5 +30,5 @@ def cron_handle_proxy():
 if __name__ == '__main__':
     # 定时检测
     days, hours = '0-6', '0-23'
-    # cron.cron_blocking(job=cron_handle_proxy, day_of_week=days, hour=hours, minute='53')
-    cron_handle_proxy()
+    cron.cron_blocking(job=cron_handle_proxy, day_of_week=days, hour=hours, minute='53')
+    # cron_handle_proxy()

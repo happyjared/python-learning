@@ -7,15 +7,14 @@ from httpbin import checkProxy
 redis = app.redis()
 
 
-def handleProxy(keys):
+def handleProxy(key):
     """检测代理是否有效"""
 
-    for key in keys:
-        for member in redis.smembers(key):
-            proxy = {key: member}
-            if member != checkProxy(proxy, timeout=5):
-                logging.warning("Handle Proxy %s is invalid", member)
-                redis.srem(key, member)
+    for member in redis.smembers(key):
+        proxy = {key: member}
+        if member != checkProxy(proxy, timeout=5):
+            logging.warning("Handle Proxy %s is invalid", member)
+            redis.srem(key, member)
 
 
 def cron_handle_proxy():
@@ -31,4 +30,5 @@ def cron_handle_proxy():
 if __name__ == '__main__':
     # 定时检测
     days, hours = '0-6', '0-23'
-    cron.cron_blocking(job=cron_handle_proxy, day_of_week=days, hour=hours, minute='30')
+    # cron.cron_blocking(job=cron_handle_proxy, day_of_week=days, hour=hours, minute='53')
+    cron_handle_proxy()

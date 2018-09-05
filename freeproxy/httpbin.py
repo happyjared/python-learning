@@ -19,7 +19,7 @@ def judgeProxy(ip, port, proxy_type):
         redis.sadd(proxy_type, schema)
 
 
-def checkProxy(proxy, timeout=3):
+def checkProxy(proxy, timeout=2):
     """检测代理的有效与否"""
 
     try:

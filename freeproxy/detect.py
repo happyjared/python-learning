@@ -12,7 +12,7 @@ def handleProxy(key):
 
     for member in redis.smembers(key):
         proxy = {key: member}
-        if member != checkProxy(proxy, timeout=5):
+        if member != checkProxy(proxy, timeout=3):
             logging.warning("Handle Proxy %s is invalid", member)
             redis.srem(key, member)
 

@@ -11,7 +11,7 @@ http_bin = 'http://httpbin.org/ip'
 def judgeProxy(ip, port, proxy_type):
     """判断代理是否有效"""
 
-    schema = '{}://{}:{}'.format(proxy_type, ip, port)
+    schema = 'http://{}:{}'.format(ip, port)
     proxy = {proxy_type: schema}
     result = checkProxy(proxy)
     if ip == result:

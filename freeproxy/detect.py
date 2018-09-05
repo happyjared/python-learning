@@ -22,9 +22,13 @@ def cron_handle_proxy():
 
     logging.info("Cron handle proxy")
     keys = redis.keys('http*')
-    multi_pool = multiprocessing.Pool(len(keys))
-    multi_pool.map(handleProxy, keys)
-    multi_pool.close()
+    key_length = len(keys)
+    if key_length == 1:
+        handleProxy(keys[0])
+    else:
+        multi_pool = multiprocessing.Pool(key_length)
+        multi_pool.map(handleProxy, keys)
+        multi_pool.close()
 
 
 if __name__ == '__main__':

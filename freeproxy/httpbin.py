@@ -13,7 +13,8 @@ def judgeProxy(ip, port, proxy_type):
 
     schema = '{}://{}:{}'.format(proxy_type, ip, port)
     proxy = {proxy_type: schema}
-    if ip == checkProxy(proxy):
+    result = checkProxy(proxy)
+    if ip == result or (proxy_type == 'https' and result is not None):
         logging.info("Crawl Proxy %s success", schema)
         redis.sadd(proxy_type, schema)
 
@@ -32,4 +33,6 @@ def checkProxy(proxy, timeout=3):
     except:
         logging.info('4.---> Error')
     else:
-        return resp.get('origin')
+        origin = resp.get('origin')
+        logging.info('proxy is {} & origin is {}'.format(proxy, origin))
+        return origin

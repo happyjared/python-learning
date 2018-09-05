@@ -1,9 +1,9 @@
 # coding=utf-8
-import app
 import logging
 import requests
 from utils import cron
 import multiprocessing
+from freeproxy import app
 from bs4 import BeautifulSoup
 from httpbin import judgeProxy
 
@@ -43,4 +43,4 @@ def cron_crawl_proxy():
 if __name__ == '__main__':
     # 定时爬取
     days, hours = '0-6', '0-23'
-    cron.cron_blocking(job=cron_crawl_proxy, day_of_week=days, hour=hours, minute='0')
+    cron.cron_blocking(job=cron_crawl_proxy, day_of_week=days, hour=hours, minute='45')

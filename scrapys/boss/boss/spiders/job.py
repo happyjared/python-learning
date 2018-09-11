@@ -77,6 +77,7 @@ class JobSpider(scrapy.Spider):
         item['post_job_time'] = mytime.str_to_date_with_format(post_time, '%Y-%m-%d %H:%M')
         address = response.xpath('//div[@class="location-address"]/text()').extract_first().replace(' ', '')
         item['company_location'] = address
+        item['company_logo'] = response.xpath('//div[@class="info-company"]/img/@src').extract_first()
 
         yield Request(mapapi.getApi(address), meta={'item': item}, callback=self.handle_location)
 

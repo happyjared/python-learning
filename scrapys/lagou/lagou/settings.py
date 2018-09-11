@@ -64,7 +64,7 @@ HTTPERROR_ALLOWED_CODES = [301, 302]  # 返回302时,按正常返回对待,可�
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    'lagou.middlewares.CustomIpProxyMiddleware': 300,
+    # 'lagou.middlewares.CustomIpProxyMiddleware': 300,
 }
 
 # Enable or disable extensions

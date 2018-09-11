@@ -36,6 +36,7 @@ class JobItem(Item):
     company_scale = Field()
     company_zone = Field()
     source_url = Field()
+    company_logo = Field()
 
 
 class ExpireItem(Item):

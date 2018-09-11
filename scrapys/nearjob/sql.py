@@ -23,8 +23,8 @@ def save(tb_name):
           'job_advantage,job_label,job_description,post_job_time,company_id,company_short_name,' \
           'company_full_name,company_location,company_latitude,company_longitude,company_index,' \
           'company_finance,company_industry,company_scale,company_zone,source_from,source_url,update_time,' \
-          'create_time,expired) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,' \
-          '%s,%s,%s,%s,%s,%s,%s,%s) returning id'
+          'create_time,expired,company_logo) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,' \
+          '%s,%s,%s,%s,%s,%s,%s,%s,%s) returning id'
 
     return sql.format(tb_name)
 

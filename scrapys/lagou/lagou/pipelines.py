@@ -46,14 +46,15 @@ class LaGouPipeline(object):
                 source_from = enums.SourceType.lagou.value
                 source_url = item.get('source_url')
                 now, expired = mytime.now_date(), False
+                company_logo = item.get('company_logo')
 
                 row_id = self.postgres.handler(sql.save(tb_name),
                                                (position_id, city_id, city, job_name, job_salary, job_experience,
                                                 job_education, job_advantage, job_label, job_description,
                                                 post_job_time, company_id, company_short_name, company_full_name,
-                                                company_location, company_latitude, company_longitude,
-                                                company_index, company_finance, company_industry, company_scale,
-                                                company_zone, source_from, source_url, now, now, expired), fetch=True)
+                                                company_location, company_latitude, company_longitude, company_index,
+                                                company_finance, company_industry, company_scale, company_zone,
+                                                source_from, source_url, now, now, expired, company_logo), fetch=True)
                 if job_id != 0 and row_id:
                     self.redis.sadd(key, position_id)
                     keyword = '{} {} {} {} {} {} {} {} {}'.format(job_name, job_advantage, company_short_name,

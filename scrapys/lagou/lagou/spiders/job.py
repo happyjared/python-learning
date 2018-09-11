@@ -20,9 +20,10 @@ class JobSpider(scrapy.Spider):
         self.postgres = app.postgres()
         self.city_list = self.postgres.fetch_all(sql.get_city())
         self.job_list = self.postgres.fetch_all(sql.get_job())
-        self.start = 'https://www.lagou.com/jobs/positionAjax.json?px=default&needAddtionalResult=false&city={0}'
-        self.referer = 'https://www.lagou.com/jobs/list_{0}'
-        self.source_url = 'https://www.lagou.com/jobs/{0}.html'
+        self.start = 'https://www.lagou.com/jobs/positionAjax.json?px=default&needAddtionalResult=false&city={}'
+        self.referer = 'https://www.lagou.com/jobs/list_{}'
+        self.source_url = 'https://www.lagou.com/jobs/{}.html'
+        self.company_logo = 'https://www.lgstatic.com/thumbnail_120x120/{}'
         self.headers = {
             'Connection': 'keep-alive',
             'Accept-Encoding:': 'gzip, deflate, br',
@@ -100,6 +101,7 @@ class JobSpider(scrapy.Spider):
                     item['company_zone'] = json.dumps(business_zones, ensure_ascii=False)
                 source_url = self.source_url.format(position_id)
                 item['source_url'] = source_url
+                item['company_logo'] = self.company_logo.format(result.get('companyLogo'))
 
                 self.headers['Referer'] = ''
                 yield Request(source_url, meta={'item': item},

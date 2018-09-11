@@ -31,11 +31,11 @@ class WifiConnect(object):
             profile.cipher = const.CIPHER_TYPE_CCMP  # 加密单元
             profile.key = 'gz.dianping'
 
-            # 删除所有配置并添加上述定义配置
+            # 删除配置并添加自定义配置
             self.interface.remove_all_network_profiles()
             profile_connect = self.interface.add_network_profile(profile)
 
-            # 尝试连接(每次休眠5秒)
+            # 尝试进行连接(每次休眠5秒)
             self.interface.connect(profile_connect), time.sleep(5)
             if self.interface.status() == const.IFACE_CONNECTED:
                 print("{}连接成功".format(ssid))

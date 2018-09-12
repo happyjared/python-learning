@@ -10,18 +10,18 @@ from scrapy import signals
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 from scrapy.contrib.downloadermiddleware.httpproxy import HttpProxyMiddleware
 
-from scrapys.nearjob import app
+# from scrapys.nearjob import app
+#
+# redis = app.redis_ip()
 
-redis = app.redis_ip()
 
-
-class CustomIpProxyMiddleware(HttpProxyMiddleware):
-    """设置随机IP"""
-
-    def process_request(self, request, spider):
-        proxy = redis.srandmember("http", 1)[0]
-        print('----->>>: Proxy: ' + proxy)
-        request.meta["proxy"] = proxy
+# class CustomIpProxyMiddleware(HttpProxyMiddleware):
+#     """设置随机IP"""
+#
+#     def process_request(self, request, spider):
+#         proxy = redis.srandmember("http", 1)[0]
+#         print('----->>>: Proxy: ' + proxy)
+#         request.meta["proxy"] = proxy
 
 
 class CustomUserAgentMiddleware(UserAgentMiddleware):

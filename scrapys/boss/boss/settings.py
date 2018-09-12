@@ -27,7 +27,7 @@ CONCURRENT_REQUESTS = 2
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 2
+DOWNLOAD_DELAY = 4
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 CONCURRENT_REQUESTS_PER_IP = 2
@@ -95,7 +95,7 @@ USER_AGENT_LIST = [
 DOWNLOADER_MIDDLEWARES = {
     # 'boss.middlewares.BossDownloaderMiddleware': 543,
     'boss.middlewares.CustomUserAgentMiddleware': 400,
-    'boss.middlewares.CustomIpProxyMiddleware': 300,
+    # 'boss.middlewares.CustomIpProxyMiddleware': 300,
 }
 
 # Enable or disable extensions

@@ -18,10 +18,7 @@ class CustomIpProxyMiddleware(HttpProxyMiddleware):
 
     def process_request(self, request, spider):
         if request.url.__contains__('positionAjax'):
-            proxy = redis.srandmember("http", 1)
-            if not proxy:
-                proxy = redis.srandmember("https", 1)
-            proxy = proxy[0]
+            proxy = redis.srandmember("http", 1)[0]
             print('----->>>: Proxy: ' + proxy)
             request.meta["proxy"] = proxy
 

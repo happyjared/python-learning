@@ -7,18 +7,21 @@
 
 import random
 from scrapy import signals
-from boss.settings import IP_PROXY_LIST
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 from scrapy.contrib.downloadermiddleware.httpproxy import HttpProxyMiddleware
+
+from scrapys.nearjob import app
+
+redis = app.redis_ip()
 
 
 class CustomIpProxyMiddleware(HttpProxyMiddleware):
     """设置随机IP"""
 
     def process_request(self, request, spider):
-        proxy_ip = random.choice(IP_PROXY_LIST)
-        print('--->>>: Proxy ip is: ' + proxy_ip)
-        request.meta["proxy"] = "http://{0}".format(proxy_ip)
+        proxy = redis.srandmember("http", 1)[0]
+        print('----->>>: Proxy: ' + proxy)
+        request.meta["proxy"] = proxy
 
 
 class CustomUserAgentMiddleware(UserAgentMiddleware):

@@ -6,7 +6,7 @@ import scrapy
 from scrapy.http import Request, FormRequest
 
 from utils import uniid, mytime, mapapi
-from scrapys.nearjob import app, items, sql
+from scrapys.nearjob import app, items, sql, enums
 
 
 class JobSpider(scrapy.Spider):
@@ -73,6 +73,7 @@ class JobSpider(scrapy.Spider):
                 # 解析数据并抓取详情
                 item = items.JobItem()
 
+                item['source_from'] = enums.SourceType.lagou.value
                 item['city'], item['city_id'] = city, city_id
                 item['job_id'], item['tb_name'] = job_id, tb_name
                 position_id = result.get('positionId')

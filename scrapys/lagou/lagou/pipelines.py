@@ -4,7 +4,7 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 # -*- coding: utf-8 -*-
 from utils import mytime
-from scrapys.nearjob import items, enums, sql, app
+from scrapys.nearjob import items, sql, app
 
 
 class LaGouPipeline(object):
@@ -43,7 +43,7 @@ class LaGouPipeline(object):
                 company_industry = item.get('company_industry')
                 company_scale = item.get('company_scale')
                 company_zone = item.get('company_zone')
-                source_from = enums.SourceType.lagou.value
+                source_from = item.get('source_from')
                 source_url = item.get('source_url')
                 now, expired = mytime.now_date(), False
                 company_logo = item.get('company_logo')

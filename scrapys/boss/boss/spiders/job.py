@@ -5,8 +5,8 @@ from urllib import parse
 import scrapy
 from scrapy.http import Request
 
-from scrapys.nearjob import sql, items, app
 from utils import mapapi, mytime
+from scrapys.nearjob import sql, items, app, enums
 
 
 class JobSpider(scrapy.Spider):
@@ -39,6 +39,7 @@ class JobSpider(scrapy.Spider):
         for job in job_list:
             item = items.JobItem()
 
+            item['source_from'] = enums.SourceType.boss.value
             item['city'], item['city_id'] = city, city_id
             item['job_id'], item['tb_name'] = job_id, tb_name
 

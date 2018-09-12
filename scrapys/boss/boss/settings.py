@@ -22,7 +22,7 @@ LOG_LEVEL = 'DEBUG'
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 8
+CONCURRENT_REQUESTS = 2
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -30,7 +30,7 @@ CONCURRENT_REQUESTS = 8
 DOWNLOAD_DELAY = 2
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
-CONCURRENT_REQUESTS_PER_IP = 8
+CONCURRENT_REQUESTS_PER_IP = 2
 
 # Disable cookies (enabled by default)
 COOKIES_ENABLED = False
@@ -84,9 +84,7 @@ USER_AGENT_LIST = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36',
 ]
 
-IP_PROXY_LIST = [
-    "217.30.64.26:53281", "106.112.161.242:808", "101.4.136.34:80",
-]
+IP_PROXY_LIST = []
 
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html

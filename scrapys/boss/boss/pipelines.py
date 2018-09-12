@@ -9,3 +9,9 @@ from lagou.pipelines import LaGouPipeline
 class BossPipeline(LaGouPipeline):
     def __init__(self):
         super().__init__()
+
+    def process_item(self, item, spider):
+        super().process_item(self, item, spider)
+
+    def close_spider(self, spider):
+        super().close_spider(self, spider)

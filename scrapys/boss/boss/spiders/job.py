@@ -57,7 +57,9 @@ class JobSpider(scrapy.Spider):
                 .extract_first().split('/')[2].replace('.html', '')
             item['company_short_name'] = info_company.xpath('.//div[@class="company-text"]/h3/a/text()').extract_first()
             c_list = info_company.xpath('.//div[@class="company-text"]/p/text()').extract()
-            item['company_finance'], item['company_industry'], item['company_scale'] = c_list[0], c_list[1], c_list[2]
+            item['company_finance'] = c_list[0]
+            item['company_industry'] = c_list[1] if c_list[1:] else None
+            item['company_scale'] = c_list[2] if c_list[2:] else None
             source_url = parse.urljoin(url, position)
             item['source_url'] = source_url
 
@@ -78,7 +80,7 @@ class JobSpider(scrapy.Spider):
         item['post_job_time'] = mytime.str_to_date_with_format(post_time, '%Y-%m-%d %H:%M')
         address = response.xpath('//div[@class="location-address"]/text()').extract_first().replace(' ', '')
         item['company_location'] = address
-        item['company_logo'] = response.xpath('//div[@class="info-company"]/img/@src').extract_first()
+        item['company_logo'] = response.xpath('//div[@class="info-company"]/div/a/img/@src').extract_first()
 
         yield Request(mapapi.getApi(address), meta={'item': item}, callback=self.handle_location)
 

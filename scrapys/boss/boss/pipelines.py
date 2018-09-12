@@ -11,7 +11,7 @@ class BossPipeline(LaGouPipeline):
         super().__init__()
 
     def process_item(self, item, spider):
-        super().process_item(self, item, spider)
+        super().process_item(item, spider)
 
     def close_spider(self, spider):
-        super().close_spider(self, spider)
+        super().close_spider(spider)

@@ -23,8 +23,9 @@ def crawlProxy(xc_type):
     for i in range(1, 100):
         url = xc_index.format(xc_type, str(i))
         resp = requests.get(url, headers=headers)
+        logging.info('xici resp code: {}'.format(resp.status_code))
         if 200 == resp.status_code:
-            logging.info('Start Crawl xici: %s', url)
+            logging.info('Start Crawl xici {}'.format(url))
             bs = BeautifulSoup(resp.text, 'html.parser')
             for tr in bs.find_all('tr'):
                 if tr.find('td', class_='country'):
@@ -47,5 +48,5 @@ def cron_crawl_proxy():
 if __name__ == '__main__':
     # 定时爬取
     days, hours = '0-6', '0-23'
-    cron.cron_blocking(job=cron_crawl_proxy, day_of_week=days, hour=hours, minute='30')
+    cron.cron_blocking(job=cron_crawl_proxy, day_of_week=days, hour=hours, minute='33')
     # cron_crawl_proxy()

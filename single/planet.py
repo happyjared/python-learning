@@ -44,7 +44,7 @@ class Planet(object):
         """获取userId值"""
 
         if not Planet.my_user_id:
-            key = 'planet:my:uid'
+            key = 'planet:my:uid2'
             Planet.my_user_id = self.redis.get(key)
             if not Planet.my_user_id:
                 api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/my-status'
@@ -56,7 +56,7 @@ class Planet(object):
         """获取hash值"""
 
         if not Planet.my_hash:
-            key = 'planet:my:hash'
+            key = 'planet:my:hash2'
             Planet.my_hash = self.redis.get(key)
             if not Planet.my_hash:
                 api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/my-dog-hash'

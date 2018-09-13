@@ -21,7 +21,7 @@ class PlanetRobot:
         
         """
 
-        sleep_time = random.randint(180, 300)
+        sleep_time = 0
         data = {"list": 'explore', "offset": 0, "pagesize": 20}
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/tlmsg/list'
 
@@ -60,7 +60,7 @@ class PlanetRobot:
 
                 logging.info('Dynamic to sleep , sleep time is %d', sleep_time)
                 time.sleep(sleep_time)
-                sleep_time = random.randint(180, 300)
+                sleep_time = random.randint(300, 600)
                 logging.info('Dynamic end sleep , next sleep time is %d', sleep_time)
 
     def reply_robot(self):
@@ -68,8 +68,8 @@ class PlanetRobot:
 
         """
 
+        sleep_time = 0
         data = {"offset": 0}
-        sleep_time = random.randint(60, 90)
         api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/tlmsg/comments/my-received'
         logging.info('Start to get reply robot')
         while True:
@@ -98,7 +98,7 @@ class PlanetRobot:
 
                 logging.info('Reply robot to sleep , sleep time is %d', sleep_time)
                 time.sleep(sleep_time)
-                sleep_time = random.randint(60, 90)
+                sleep_time = random.randint(90, 180)
                 logging.info('Reply robot end sleep , next sleep time is %d', sleep_time)
 
     def __robot_comment(self, msg_id, comment_msg, tl_hash, to_user_id):
@@ -192,7 +192,7 @@ if __name__ == '__main__':
     ps = PlanetSpider()
     pr = PlanetRobot(ps)
 
-    cron.cron_background(PlanetRobot.robot_dynamic, day_of_week='0-6', hour='0,6,12,18')
+    # cron.cron_background(PlanetRobot.robot_dynamic, day_of_week='0-6', hour='0,6,12,18')
     t1 = Thread(target=pr.user_dynamic, name='Thread-1')
     t2 = Thread(target=pr.reply_robot, name='Thread-2')
 

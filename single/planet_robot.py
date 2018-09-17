@@ -174,9 +174,10 @@ class PlanetRobot:
     def handle_request(self, api, data):
         """统一处理请求"""
 
-        resp = requests.post(api, json=data, headers=Planet.headers).json()
+        resp = requests.post(api, json=data, headers=Planet.headers)
 
-        errcode = resp.get('errcode')
+        result = resp.json()
+        errcode = result.get('errcode')
         if errcode:
             logging.error('>>> Single Unauthenticated')
             key = 'planet:my:token'

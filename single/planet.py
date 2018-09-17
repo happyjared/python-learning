@@ -20,7 +20,9 @@ class Planet(object):
     redis = rds.Rds(host=host, port=rds_port, password=rds_pwd).redis_cli
     my_hash = None
     my_user_id = None
-    headers = {}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36",
+    }
 
     def __init__(self):
         self.redis = Planet.redis

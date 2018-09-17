@@ -185,7 +185,7 @@ class PlanetRobot:
             mpwx.sendTemplateMsg()
             time.sleep(300)
         else:
-            return resp
+            return result
 
 
 # 程序入口

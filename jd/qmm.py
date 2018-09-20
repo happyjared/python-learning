@@ -122,7 +122,7 @@ class QMM(object):
             self._finance_sign(driver)
 
     def _print_jing_dou(self):
-        print('O(∩_∩)O哈哈~, 共褥到了{}个京豆，相当于RMB{}元', self.jing_dou, self.jing_dou / 100)
+        print('O(∩_∩)O哈哈~, 共褥到了{}个京豆，相当于RMB{}元'.format(self.jing_dou, self.jing_dou / 100))
 
     def _un_subscribe(self, driver):
         """批量取消店铺关注"""
@@ -172,5 +172,5 @@ class QMM(object):
 
 
 if __name__ == '__main__':
-    qmm = QMM(sleep=3, months='9', days='15-30')
+    qmm = QMM(sleep=3, months='9', days='20-30')
     qmm.start()

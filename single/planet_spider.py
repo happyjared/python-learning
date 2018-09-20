@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 import json
 import logging
@@ -191,5 +192,6 @@ class PlanetSpider(Planet):
 # 程序入口
 if __name__ == '__main__':
     ps = PlanetSpider()
+    # ps.find_random_member()
     # 定时随机爬取
     cron.cron_blocking(job=ps.find_random_member, day_of_week='0-6', hour='2')

@@ -3,6 +3,7 @@ import json
 import logging
 import requests
 import planet_sql
+from utils import cron
 from planet import Planet
 from datetime import datetime
 
@@ -34,22 +35,24 @@ class PlanetSpider(Planet):
 
         """
 
-        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/dog-all-random'
-        # "location": "P3569589400"
-        data = {"hash": Planet.my_hash, "pagesize": 50, "seed": 655572327, "gender": 2}
         logging.info("Start find random member")
-        for offset in range(PlanetSpider.max_size):
-            data["offset"] = offset
-            resp = requests.post(api, json=data, headers=Planet.headers).json()
-            members = resp['members']
-            for index, member in enumerate(members):
-                self.user_hash = resp['uid_hashes'][index]
-                self.parse(member)
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/v2/dog-all-random'
+        for gender in range(1, 3):
+            data = {"hash": Planet.my_hash, "pagesize": 50, "seed": 655572327, "gender": gender}
+            logging.info("Start random member {}".format(gender))
+            for offset in range(PlanetSpider.max_size):
+                data["offset"] = offset
+                resp = requests.post(api, json=data, headers=Planet.headers).json()
+                members = resp['members']
+                for index, member in enumerate(members):
+                    self.user_hash = resp['uid_hashes'][index]
+                    self.parse(member)
 
-            if len(members) == 0:
-                logging.info("End Find random member : %d", offset)
-                break
-            logging.info("Find random member : %d", offset)
+                if len(members) == 0:
+                    break
+                logging.info("Random member : %d", offset)
+            logging.info("End random member {}".format(gender))
+        logging.info("End find random member")
 
     def find_nearby_member(self):
         """发现页 -> 附近 -> 爬取距离用户信息
@@ -188,7 +191,5 @@ class PlanetSpider(Planet):
 # 程序入口
 if __name__ == '__main__':
     ps = PlanetSpider()
-    # 随机爬取用户
-    ps.find_random_member()
-    # 爬取附近用户
-    # ps.find_nearby_member()
+    # 定时随机爬取
+    cron.cron_blocking(job=ps.find_random_member, day_of_week='0-6', hour='2')

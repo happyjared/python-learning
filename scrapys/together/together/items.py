@@ -75,4 +75,5 @@ class UserModel(Model):
 
 
 db.connect()
-db.create_tables(UserModel, safe=True)
+if not UserModel.table_exists():
+    db.create_tables(UserModel)

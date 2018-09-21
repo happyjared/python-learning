@@ -23,3 +23,9 @@ def str_to_date(str_time):
 
 def str_to_date_with_format(str_time, str_format):
     return datetime.strptime(str_time, str_format)
+
+
+def timestamp_to_datetime(timestamp):
+    if len(str(timestamp)) == 13:
+        timestamp = timestamp / 1000  # 毫秒时间戳转秒
+    return datetime.fromtimestamp(timestamp)

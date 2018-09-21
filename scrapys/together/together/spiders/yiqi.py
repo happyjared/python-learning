@@ -18,7 +18,7 @@ class YiQiSpider(scrapy.Spider):
                                   'PPTt3AtyDAp6tB5tAxewNaw'}
 
     def start_requests(self):
-        for user_id in range(20, 350000):
+        for user_id in range(20, 35):
             self.formData['id'] = str(user_id)
             yield FormRequest(self.getUserById, formdata=self.formData,
                               callback=self.parse, meta={'uid': user_id})

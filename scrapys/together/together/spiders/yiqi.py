@@ -54,7 +54,8 @@ class YiQiSpider(scrapy.Spider):
                 if text:
                     item['region_information'] = ''.join(text)
             item['last_app_version'] = data.get('lastAppVersion')
-            item['source'] = 'ios' if 'ios' in head_pic else 'android'
+            if head_pic:
+                item['source'] = 'ios' if 'ios' in head_pic else 'android'
             item['create_time'] = data.get('createTime')
             item['netease_accid'] = data.get('neteaseAccid')
             item['netease_token'] = data.get('neteaseToken')

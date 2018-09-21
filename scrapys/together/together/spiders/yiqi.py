@@ -61,8 +61,10 @@ class YiQiSpider(scrapy.Spider):
             item['netease_status'] = data.get('neteaseStatus')
             item['user_status'] = data.get('userStatus')
 
-            if 20 <= age <= 23 and "广州" in item.get('region_information'):
-                form_data = {'token': self.token, 'voice': user_last_fm_voice, 'ou': uid}
-                FormRequest(self.likeUser, formdata=form_data)
+            region_information = item.get('region_information')
+            if region_information:
+                if 20 <= age <= 23 and '广州' in region_information:
+                    form_data = {'token': self.token, 'voice': user_last_fm_voice, 'ou': uid}
+                    FormRequest(self.likeUser, formdata=form_data)
 
             yield item

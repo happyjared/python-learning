@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import scrapy
+import requests
 from scrapy.http import FormRequest
 from together.items import UserItem
 
@@ -20,7 +21,7 @@ class YiQiSpider(scrapy.Spider):
         self.formData = {'token': self.token}
 
     def start_requests(self):
-        for user_id in range(20, 350000):
+        for user_id in range(62000, 350000):
             self.formData['id'] = str(user_id)
             yield FormRequest(self.getUserById, formdata=self.formData,
                               callback=self.parse, meta={'uid': user_id})
@@ -66,6 +67,6 @@ class YiQiSpider(scrapy.Spider):
             if region_information:
                 if 20 <= age <= 23 and '广州' in region_information:
                     form_data = {'token': self.token, 'voice': user_last_fm_voice, 'ou': uid}
-                    FormRequest(self.likeUser, formdata=form_data)
+                    requests.post(self.likeUser, data=form_data)
 
             yield item

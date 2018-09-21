@@ -12,13 +12,15 @@ class YiQiSpider(scrapy.Spider):
     def __init__(self, name=None, **kwargs):
         super().__init__(name, **kwargs)
         self.getUserById = 'http://api.wondertech.com.cn/user/v2/users/getById'
-        self.formData = {'token': 'eyJhbGciOiJIUzUxMiJ9.eyJwaG9uZSI6IjEzNzA5NjQxNzEzIiw'
-                                  'iZXhwIjoxNTQwMDM1ODAxLCJ1c2VySWQiOjU4NjQzfQ.EADG6r551'
-                                  'b_SKSfuOunJfuYD4LovgoPCNFnoIZ_VZxqiVEw8GTBcz1ix0zFhaDB'
-                                  'PPTt3AtyDAp6tB5tAxewNaw'}
+        self.likeUser = 'http://api.wondertech.com.cn/fmvoice/v1/voice/vlike'
+        self.token = 'eyJhbGciOiJIUzUxMiJ9.eyJwaG9uZSI6IjEzNzA5NjQxNzEzIiw' \
+                     'iZXhwIjoxNTQwMDM1ODAxLCJ1c2VySWQiOjU4NjQzfQ.EADG6r551' \
+                     'b_SKSfuOunJfuYD4LovgoPCNFnoIZ_VZxqiVEw8GTBcz1ix0zFhaDB' \
+                     'PPTt3AtyDAp6tB5tAxewNaw'
+        self.formData = {'token': self.token}
 
     def start_requests(self):
-        for user_id in range(20, 35):
+        for user_id in range(20, 350000):
             self.formData['id'] = str(user_id)
             yield FormRequest(self.getUserById, formdata=self.formData,
                               callback=self.parse, meta={'uid': user_id})
@@ -34,7 +36,8 @@ class YiQiSpider(scrapy.Spider):
             item = UserItem()
             item['uid'] = uid
             item['sex'] = data.get('sex')
-            item['age'] = data.get('age')
+            age = data.get('age')
+            item['age'] = age
             item['phone'] = data.get('phone')
             item['nickname'] = data.get('nickName')
             item['birthday'] = data.get('birthday')
@@ -42,7 +45,8 @@ class YiQiSpider(scrapy.Spider):
             item['head_pic'] = head_pic
             item['voice'] = data.get('voice')
             item['available_voice'] = data.get('availableVoice')
-            item['user_last_fm_voice'] = data.get('userLastFmVoice')
+            user_last_fm_voice = data.get('userLastFmVoice')
+            item['user_last_fm_voice'] = user_last_fm_voice
             item['region_code'] = data.get('regionCode')
             info = data.get('regionInformation')
             if info:
@@ -56,5 +60,9 @@ class YiQiSpider(scrapy.Spider):
             item['netease_token'] = data.get('neteaseToken')
             item['netease_status'] = data.get('neteaseStatus')
             item['user_status'] = data.get('userStatus')
+
+            if 20 <= age <= 23 and "广州" in item.get('region_information'):
+                form_data = {'token': self.token, 'voice': user_last_fm_voice, 'ou': uid}
+                FormRequest(self.likeUser, formdata=form_data)
 
             yield item

@@ -37,8 +37,9 @@ class UserItem(Item):
     user_status = Field()
 
 
-db = PostgresqlDatabase(database="postgres", host="localhost",
-                        port=5432, user="postgres", password="postgres",
+scrapy = 'scrapy'
+db = PostgresqlDatabase(database=scrapy, host="localhost",
+                        port=12432, user=scrapy, password=scrapy,
                         autocommit=True, autorollback=True)
 
 

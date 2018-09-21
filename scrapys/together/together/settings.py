@@ -14,7 +14,7 @@ BOT_NAME = 'together'
 SPIDER_MODULES = ['together.spiders']
 NEWSPIDER_MODULE = 'together.spiders'
 
-LOG_FILE = 'debug.log'
+LOG_FILE = 'debug2.log'
 LOG_LEVEL = 'DEBUG'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

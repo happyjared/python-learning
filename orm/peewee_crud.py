@@ -4,7 +4,7 @@ from datetime import datetime
 
 # Create an instance of a Database
 db = PostgresqlDatabase(database="postgres", host="localhost",
-                        port=5432, user="postgres", password="password", )
+                        port=5432, user="postgres", password="password")
 
 
 # Define a model class

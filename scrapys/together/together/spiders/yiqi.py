@@ -36,7 +36,8 @@ class YiQiSpider(scrapy.Spider):
 
             item = UserItem()
             item['uid'] = uid
-            item['sex'] = data.get('sex')
+            sex = data.get('sex')
+            item['sex'] = sex
             age = data.get('age')
             item['age'] = age
             item['phone'] = data.get('phone')
@@ -65,7 +66,7 @@ class YiQiSpider(scrapy.Spider):
 
             region_information = item.get('region_information')
             if region_information:
-                if 20 <= age <= 23 and '广州' in region_information:
+                if sex == 2 and 20 <= age <= 23 and '广州' in region_information:
                     form_data = {'token': self.token, 'voice': user_last_fm_voice, 'ou': uid}
                     requests.post(self.likeUser, data=form_data)
 

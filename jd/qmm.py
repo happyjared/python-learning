@@ -172,5 +172,5 @@ class QMM(object):
 
 
 if __name__ == '__main__':
-    qmm = QMM(sleep=3, months='9', days='20-30')
+    qmm = QMM(sleep=3, months='9', days='22-30')
     qmm.start()

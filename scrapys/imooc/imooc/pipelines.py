@@ -15,10 +15,8 @@ class ImoocPipeline(object):
         # PostgreSQL
         host = 'localhost'
         port = 12432
-        db_name = 'scrapy'
-        username = db_name
-        password = db_name
-        self.postgres = pgs.Pgs(host=host, port=port, db_name=db_name, user=username, password=password)
+        scrapy = 'scrapy'
+        self.postgres = pgs.Pgs(host=host, port=port, db_name=scrapy, user=scrapy, password=scrapy)
         # Redis
         self.redis = rds.Rds(host=host, port=12379, db=1, password='redis6379').redis_cli
 

@@ -18,7 +18,7 @@ class ExpireSpider(scrapy.Spider):
             tb_name = job[3]
             data_list = self.postgres.fetch_all(sql.get_data(tb_name), (enums.SourceType.boss.value,))
             for data in data_list:
-                tb_id, source_url = data[0], data[1]
+                tb_id, source_url = data
 
                 meta = {'tb_name': tb_name, 'tb_id': tb_id}
                 yield Request(source_url, meta=meta, callback=self.parse)

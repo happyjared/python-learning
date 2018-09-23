@@ -20,14 +20,14 @@ class JobSpider(scrapy.Spider):
         self.postgres = app.postgres()
         self.city_list = self.postgres.fetch_all(sql.get_city())
         self.job_list = self.postgres.fetch_all(sql.get_job())
-        self.start = 'https://www.zhipin.com/c{0}-p{1}'
+        self.start = 'https://www.zhipin.com/c{}-p{}'
 
     def start_requests(self):
         for job in self.job_list:
-            job_id, job_code, tb_name = job[0], job[2], job[3]
+            job_id, job_name, job_code, tb_name = job
             for city in self.city_list:
-                city_id, city_code = city[0], city[2]
-                meta = {'city_id': city_id, 'city': city[1], 'job_id': job_id, 'tb_name': tb_name}
+                city_id, city, city_code = city
+                meta = {'city_id': city_id, 'city': city, 'job_id': job_id, 'tb_name': tb_name}
                 yield Request(self.start.format(city_code, job_code), meta=meta, callback=self.parse)
 
     def parse(self, response):
@@ -50,16 +50,16 @@ class JobSpider(scrapy.Spider):
             item['job_salary'] = job_primary.xpath('.//h3/a/span[@class="red"]/text()').extract_first()
             p_list = job_primary.xpath('.//p/text()').extract()
             item['company_zone'] = json.dumps(p_list[0].split(' '), ensure_ascii=False)
-            item['job_experience'], item['job_education'] = p_list[1], p_list[2]
+            item['job_experience'], item['job_education'] = p_list[1:]
 
             info_company = job.xpath('.//div[@class="job-primary"]/div[@class="info-company"]')
             item['company_id'] = info_company.xpath('.//div[@class="company-text"]/h3/a/@href') \
                 .extract_first().split('/')[2].replace('.html', '')
             item['company_short_name'] = info_company.xpath('.//div[@class="company-text"]/h3/a/text()').extract_first()
             c_list = info_company.xpath('.//div[@class="company-text"]/p/text()').extract()
-            item['company_finance'] = c_list[0]
-            item['company_industry'] = c_list[1] if c_list[1:] else None
-            item['company_scale'] = c_list[2] if c_list[2:] else None
+            item['company_finance'] = next(iter(c_list[0:]), None)
+            item['company_industry'] = next(iter(c_list[1:]), None)
+            item['company_scale'] = next(iter(c_list[2:]), None)
             source_url = parse.urljoin(url, position)
             item['source_url'] = source_url
 

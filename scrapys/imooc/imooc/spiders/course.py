@@ -66,14 +66,9 @@ class CourseSpider(scrapy.Spider):
         meta_value = response.xpath('//span[@class="meta-value"]/text()').extract()
         # 课程时长
         course_item['duration'] = meta_value[1].strip()
-        # 综合得分
-        course_item['overall_score'] = meta_value[2]
-        # 内容实用
-        course_item['content_score'] = meta_value[3]
-        # 简洁易懂
-        course_item['concise_score'] = meta_value[4]
-        # 逻辑清晰
-        course_item['logic_score'] = meta_value[5]
+        # 综合得分、内容实用、简洁易懂、逻辑清晰
+        course_item['overall_score'], course_item['content_score'], course_item[
+            'concise_score'], course_item['logic_score'] = meta_value[2:]
         # 课程简介
         course_item['summary'] = response.xpath('//div[@class="course-description course-wrap"]/text()') \
             .extract_first().strip()

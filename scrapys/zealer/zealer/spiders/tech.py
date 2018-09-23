@@ -30,7 +30,7 @@ class TechSpider(scrapy.Spider):
 
     def start_requests(self):
         for series in self.series_list:
-            series_id, cp = series[0], series[1]
+            series_id, cp = series
             for page in range(1, self.max_page):
                 if series_id in self.series_stop:
                     self.logger.warning('Stop Media: {}'.format(series_id))

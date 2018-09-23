@@ -71,7 +71,7 @@ class LaGouPipeline(object):
 
             record = self.postgres.handler(sql.expire_data(tb_name), (tb_id, expire_time), fetch=True)
             if record:
-                company_id, position_id = record[0], record[1]
+                company_id, position_id = record
                 key = 'nearjob:company:{}'.format(company_id)
                 self.redis.srem(key, position_id)
                 self.elastic.remove_id(_id=position_id)

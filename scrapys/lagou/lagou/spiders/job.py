@@ -33,14 +33,14 @@ class JobSpider(scrapy.Spider):
 
     def start_requests(self):
         for kd in self.job_list:
-            job_id, job_name, tb_name = kd[0], kd[1], kd[3]
+            job_id, job_name, boss_code, tb_name = kd
             for city in self.city_list:
-                form_city = city[1]
+                city_id, form_city = city
                 form_data = {'first': 'True', 'pn': '1', 'kd': job_name}
                 self.headers['Referer'] = self.referer.format(job_name)
                 self.headers['Cookie'] = self.random_cookie()
-                meta = {'city_id': city[0], 'city': form_city, 'job_name': job_name, 'job_id': job_id,
-                        'tb_name': tb_name}
+                meta = {'city_id': city_id, 'city': form_city, 'job_name': job_name,
+                        'job_id': job_id, 'tb_name': tb_name}
                 yield FormRequest(self.start.format(form_city), formdata=form_data, callback=self.parse,
                                   headers=self.headers, meta=meta)
 

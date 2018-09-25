@@ -41,17 +41,16 @@ class CustomRedirectMiddleware(RedirectMiddleware):
         if captcha_src and random_key:
             logging.info("--->>>: Captcha src is {0} and random key is {1}".format(captcha_src, random_key))
 
-            # url = response.url
-            # post_url = url.replace('popUpCaptcha', 'verifyCaptcha')
-            # captcha_url = self.index.format(captcha_src)
-            # captcha_base64 = captcha.urlToBase64(captcha_url)
-            # logging.info('--->>>: Post URL {} and captcha url {}'.format(post_url, captcha_url))
-            #
-            # # code = captcha.getVerCode(captcha_base64)
-            #
-            # data = {'randomKey': random_key, 'captcha': '1234'}
-            # resp = requests.post(post_url, data=data)
-            # print('Resp: ' + resp.text)
+            post_url = response.url.replace('popUpCaptcha', 'verifyCaptcha')
+            captcha_url = self.index.format(captcha_src)
+            captcha_base64 = captcha.urlToBase64(captcha_url)
+            logging.info('--->>>: Post URL {} and captcha url {}'.format(post_url, captcha_url))
+
+            # code = captcha.getVerCode(captcha_base64)
+
+            data = {'randomKey': random_key, 'captcha': '1234'}
+            resp = requests.post(post_url, data=data)
+            print('Resp: ' + resp.text)
 
         return super().process_response(request, response, spider)
 

@@ -8,7 +8,9 @@
 import random
 from scrapy import signals
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
+from scrapy.downloadermiddlewares.redirect import RedirectMiddleware
 from scrapy.contrib.downloadermiddleware.httpproxy import HttpProxyMiddleware
+
 
 # from scrapys.nearjob import app
 #
@@ -22,6 +24,17 @@ from scrapy.contrib.downloadermiddleware.httpproxy import HttpProxyMiddleware
 #         proxy = redis.srandmember("http", 1)[0]
 #         print('----->>>: Proxy: ' + proxy)
 #         request.meta["proxy"] = proxy
+
+class CustomRedirectMiddleware(RedirectMiddleware):
+
+    def __init__(self, settings):
+        super().__init__(settings)
+        self.index = 'https://www.zhipin.com{0}'
+
+    def process_response(self, request, response, spider):
+        captcha = self.index.format(response.xpath('//img[@class="code"]/@src').extract_first())
+        print("--->>>: Captcha is: " + captcha)
+        return super().process_response(request, response, spider)
 
 
 class CustomUserAgentMiddleware(UserAgentMiddleware):

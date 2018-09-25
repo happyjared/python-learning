@@ -68,7 +68,7 @@ class CustomUserAgentMiddleware(UserAgentMiddleware):
 
     def process_request(self, request, spider):
         user_agent = random.choice(self.user_agent)
-        logging.warning("--->>>: User agent is: " + user_agent)
+        logging.info("--->>>: User agent is: " + user_agent)
         request.headers['User-Agent'] = user_agent
 
 

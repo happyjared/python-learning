@@ -6,6 +6,8 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 import random
+import requests
+from utils import captcha
 from scrapy import signals
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 from scrapy.downloadermiddlewares.redirect import RedirectMiddleware
@@ -29,11 +31,22 @@ class CustomRedirectMiddleware(RedirectMiddleware):
 
     def __init__(self, settings):
         super().__init__(settings)
-        self.index = 'https://www.zhipin.com{0}'
+        self.index = 'https://www.zhipin.com{}'
 
     def process_response(self, request, response, spider):
-        captcha = self.index.format(response.xpath('//img[@class="code"]/@src').extract_first())
-        print("--->>>: Captcha is: " + captcha)
+        captcha_src = response.xpath('//img[@class="code"]/@src').extract_first()
+        random_key = response.xpath('//input[@name="randomKey"]/@value').extract_first()
+        print("--->>>: Captcha src is {} and random key is {}".format(captcha_src, random_key))
+
+        post_url = response.url.replace('popUpCaptcha', 'verifyCaptcha')
+
+        captcha_url = self.index.format(captcha_src)
+        captcha_base64 = captcha.urlToBase64(captcha_url)
+        code = captcha.getVerCode(captcha_base64)
+
+        data = {'randomKey': random_key, 'captcha': code}
+        resp = requests.post(post_url, data=data)
+        print('Resp: ' + resp.text)
         return super().process_response(request, response, spider)
 
 

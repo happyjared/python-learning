@@ -5,6 +5,7 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import logging
 import random
 import requests
 from utils import captcha
@@ -36,15 +37,16 @@ class CustomRedirectMiddleware(RedirectMiddleware):
     def process_response(self, request, response, spider):
         captcha_src = response.xpath('//img[@class="code"]/@src').extract_first()
         random_key = response.xpath('//input[@name="randomKey"]/@value').extract_first()
-        print("--->>>: Captcha src is {} and random key is {}".format(captcha_src, random_key))
+        logging.info("--->>>: Captcha src is {} and random key is {}".format(captcha_src, random_key))
 
         post_url = response.url.replace('popUpCaptcha', 'verifyCaptcha')
-
         captcha_url = self.index.format(captcha_src)
         captcha_base64 = captcha.urlToBase64(captcha_url)
-        code = captcha.getVerCode(captcha_base64)
+        logging.info('--->>>: Post URL {} and captcha url {}'.format(post_url, captcha_url))
 
-        data = {'randomKey': random_key, 'captcha': code}
+        # code = captcha.getVerCode(captcha_base64)
+
+        data = {'randomKey': random_key, 'captcha': '1234'}
         resp = requests.post(post_url, data=data)
         print('Resp: ' + resp.text)
         return super().process_response(request, response, spider)

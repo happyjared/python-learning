@@ -50,7 +50,7 @@ class CustomRedirectMiddleware(RedirectMiddleware):
 
             data = {'randomKey': random_key, 'captcha': '1234'}
             resp = requests.post(post_url, data=data)
-            print('Resp: ' + resp.text)
+            # print('Resp: ' + resp.text)
 
         return super().process_response(request, response, spider)
 

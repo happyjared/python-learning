@@ -12,7 +12,7 @@ from utils import captcha
 from scrapy import signals
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 from scrapy.downloadermiddlewares.redirect import RedirectMiddleware
-from scrapy.contrib.downloadermiddleware.httpproxy import HttpProxyMiddleware
+from scrapy.downloadermiddlewares.httpproxy import HttpProxyMiddleware
 
 
 # from scrapys.nearjob import app

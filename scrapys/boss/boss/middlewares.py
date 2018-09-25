@@ -46,9 +46,9 @@ class CustomRedirectMiddleware(RedirectMiddleware):
             captcha_base64 = captcha.urlToBase64(captcha_url)
             logging.warning('--->>>: Post URL {} and captcha url {}'.format(post_url, captcha_url))
 
-            # code = captcha.getVerCode(captcha_base64)
+            code = captcha.getVerCode(captcha_base64)
 
-            data = {'randomKey': random_key, 'captcha': '1234'}
+            data = {'randomKey': random_key, 'captcha': code}
             resp = requests.post(post_url, data=data)
             logging.warning('Resp: ' + resp.text)
 

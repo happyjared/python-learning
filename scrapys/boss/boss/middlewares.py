@@ -25,7 +25,7 @@ from scrapy.contrib.downloadermiddleware.httpproxy import HttpProxyMiddleware
 #
 #     def process_request(self, request, spider):
 #         proxy = redis.srandmember("http", 1)[0]
-#         print('----->>>: Proxy: ' + proxy)
+#         logging.warning('----->>>: Proxy: ' + proxy)
 #         request.meta["proxy"] = proxy
 
 class CustomRedirectMiddleware(RedirectMiddleware):
@@ -68,7 +68,7 @@ class CustomUserAgentMiddleware(UserAgentMiddleware):
 
     def process_request(self, request, spider):
         user_agent = random.choice(self.user_agent)
-        print("--->>>: User agent is: " + user_agent)
+        logging.warning("--->>>: User agent is: " + user_agent)
         request.headers['User-Agent'] = user_agent
 
 

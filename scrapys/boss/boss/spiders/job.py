@@ -20,7 +20,8 @@ class JobSpider(scrapy.Spider):
         self.postgres = app.postgres()
         self.city_list = self.postgres.fetch_all(sql.get_city())
         self.job_list = self.postgres.fetch_all(sql.get_job())
-        self.start = 'https://www.zhipin.com/c{}-p{}'
+        self.index = "https://www.zhipin.com"
+        self.start = 'https://www.zhipin.com/c{}-p{}/?page=1'
 
     def start_requests(self):
         for job in self.job_list:
@@ -32,8 +33,9 @@ class JobSpider(scrapy.Spider):
 
     def parse(self, response):
         url = response.url
-        city, city_id = response.meta['city'], response.meta['city_id']
-        job_id, tb_name = response.meta['job_id'], response.meta['tb_name']
+        meta = response.meta
+        city, city_id = meta['city'], meta['city_id']
+        job_id, tb_name = meta['job_id'], meta['tb_name']
 
         job_list = response.xpath('//div[@class="job-list"]/ul/li')
         for job in job_list:
@@ -64,6 +66,11 @@ class JobSpider(scrapy.Spider):
             item['source_url'] = source_url
 
             yield Request(source_url, meta={'item': item}, callback=self.parse_detail)
+
+        # 下一页
+        next_page = response.xpath('//a[@class="next" and not(@class="disabled")]/@href').extract_first()
+        if next_page:
+            yield Request(self.index.format(next_page), meta=meta, callback=self.parse)
 
     def parse_detail(self, response):
         item = response.meta['item']

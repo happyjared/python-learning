@@ -95,7 +95,7 @@ USER_AGENT_LIST = [
 DOWNLOADER_MIDDLEWARES = {
     # 'boss.middlewares.BossDownloaderMiddleware': 543,
     'boss.middlewares.CustomUserAgentMiddleware': 400,
-    'boss.middlewares.CustomRedirectMiddleware': 600,
+    'boss.middlewares.CustomRedirectMiddleware': 401,
     # 'boss.middlewares.CustomIpProxyMiddleware': 300,
 }
 

@@ -6,8 +6,8 @@ cron = 'cron'
 def cron_background(job, day_of_week, hour=0, minute=0):
     """ 后台运行的定时任务
     
-    :param job: 
-    :param day_of_week: 0-6
+    :param job: 任务
+    :param day_of_week: 0-6 (从周一开始)
     :param hour: 0-23
     :param minute: 0-59
     :return: 
@@ -21,7 +21,7 @@ def cron_background(job, day_of_week, hour=0, minute=0):
 def cron_blocking(job, day_of_week, hour=0, minute=0):
     """ 阻塞的定时任务
     
-    :param job: 
+    :param job: 任务
     :param day_of_week: 0-6
     :param hour: 0-23
     :param minute: 0-59

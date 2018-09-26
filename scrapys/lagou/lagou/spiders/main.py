@@ -1,3 +1,4 @@
+import sys
 from utils import cron
 from scrapy.cmdline import execute
 
@@ -14,4 +15,7 @@ def run():
 
 
 if __name__ == '__main__':
-    cron.cron_blocking(job=run, day_of_week='6')
+    if len(sys.argv) == 1:
+        cron.cron_blocking(job=run, day_of_week='6')
+    else:
+        run()

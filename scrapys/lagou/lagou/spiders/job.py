@@ -46,9 +46,9 @@ class JobSpider(scrapy.Spider):
 
     def parse(self, response):
         resp = json.loads(response.body_as_unicode())
-        code = resp.get('code')
-        self.logger.info('1. resp code %s', code)
-        if 0 == code:
+        success = resp.get('success')
+        self.logger.info('1. resp code %s success %s' % (resp.get('code'), success))
+        if success:
             job_name, job_id = response.meta['job_name'], response.meta['job_id']
             tb_name, city, city_id = response.meta['tb_name'], response.meta['city'], response.meta['city_id']
 

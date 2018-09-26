@@ -70,7 +70,10 @@ class Pgs:
             else:
                 conn = psycopg2.connect(self.conn_info)
                 cur = conn.cursor()
-            cur.execute(sql, params)
+            if params:
+                cur.execute(sql, params)
+            else:
+                cur.execute(sql)
             rows = cur.fetchall()
         except psycopg2.OperationalError:
             log.exception('psycopg2 OperationalError')

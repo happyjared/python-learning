@@ -70,6 +70,7 @@ class JobSpider(scrapy.Spider):
         # 下一页
         next_page = response.xpath('//a[@class="next" and not(@class="disabled")]/@href').extract_first()
         if next_page:
+            self.logger.info("Crawl Next page {}".format(next_page))
             yield Request(self.index.format(next_page), meta=meta, callback=self.parse)
 
     def parse_detail(self, response):

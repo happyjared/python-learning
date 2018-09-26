@@ -39,7 +39,7 @@ COOKIES_DEBUG = True  # 在log中能看到每次请求发出了和接收到什�
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
 
-REDIRECT_ENABLED = True  # 关掉重定向,不会重定向到新的地址
+REDIRECT_ENABLED = False  # 关掉重定向,不会重定向到新的地址
 HTTPERROR_ALLOWED_CODES = [301, 302]  # 返回302时,按正常返回对待,可以正常写入cookie
 
 

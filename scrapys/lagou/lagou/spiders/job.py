@@ -21,7 +21,7 @@ class JobSpider(scrapy.Spider):
         self.city_list = self.postgres.fetch_all(sql.get_city())
         self.job_list = self.postgres.fetch_all(sql.get_job())
         self.start = 'https://www.lagou.com/jobs/positionAjax.json?px=default&needAddtionalResult=false&city={}'
-        self.referer = 'https://www.lagou.com/jobs/list_{}?{}'
+        self.referer = 'https://www.lagou.com/jobs/list_{}'
         self.source_url = 'https://www.lagou.com/jobs/{}.html'
         self.company_logo = 'https://www.lgstatic.com/thumbnail_120x120/{}'
         self.headers = {
@@ -37,8 +37,7 @@ class JobSpider(scrapy.Spider):
                 city_id, form_city, city_code = city
                 form_data = {'first': 'true', 'pn': '1', 'kd': job_name}
                 self.headers['Cookie'] = self.random_cookie()
-                referer = 'first=true&pn=1&kb={}'.format(job_name)
-                self.headers['Referer'] = self.referer.format(job_name, referer)
+                self.headers['Referer'] = self.referer.format(job_name)
                 meta = {'city_id': city_id, 'city': form_city, 'job_name': job_name,
                         'job_id': job_id, 'tb_name': tb_name}
                 yield FormRequest(self.start.format(form_city), formdata=form_data, callback=self.parse,
@@ -63,8 +62,7 @@ class JobSpider(scrapy.Spider):
                 next_page_no = str(page_no + 1)
                 form_data = {'first': 'false', 'pn': next_page_no, 'kd': job_name}
                 self.headers['Cookie'] = self.random_cookie()
-                referer = 'first=false&pn={}&kb={}'.format(next_page_no, job_name)
-                self.headers['Referer'] = self.referer.format(job_name, referer)
+                self.headers['Referer'] = self.referer.format(job_name)
                 meta = {'city_id': city_id, 'city': city, 'job_name': job_name, 'job_id': job_id, 'tb_name': tb_name}
                 yield FormRequest(self.start.format(city), formdata=form_data, callback=self.parse,
                                   headers=self.headers, meta=meta)

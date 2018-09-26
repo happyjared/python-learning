@@ -27,8 +27,7 @@ class JobSpider(scrapy.Spider):
         self.headers = {
             'Connection': 'keep-alive',
             'Accept-Encoding:': 'gzip, deflate, br',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko'
-                          ') Chrome/67.0.3396.79 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
         }
 
     def start_requests(self):

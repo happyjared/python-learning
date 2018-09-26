@@ -35,7 +35,7 @@ class JobSpider(scrapy.Spider):
         for kd in self.job_list:
             job_id, job_name, boss_code, tb_name = kd
             for city in self.city_list:
-                city_id, form_city = city
+                city_id, form_city, city_code = city
                 form_data = {'first': 'True', 'pn': '1', 'kd': job_name}
                 self.headers['Referer'] = self.referer.format(job_name)
                 self.headers['Cookie'] = self.random_cookie()

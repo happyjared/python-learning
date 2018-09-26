@@ -101,8 +101,7 @@ class JobSpider(scrapy.Spider):
         if 0 == status:
             result = resp['result']
             location = result['location']
-            item['company_latitude'] = location['lat']  # 纬度
-            item['company_longitude'] = location['lng']  # 经度
+            item['company_latitude'], item['company_longitude'] = location['lat'], location['lng']
         else:
             item['job_id'] = 0
 

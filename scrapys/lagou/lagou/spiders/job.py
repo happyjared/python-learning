@@ -123,7 +123,7 @@ class JobSpider(scrapy.Spider):
 
     @staticmethod
     def handle_location(response):
-        """ Compare lng and lat with Baidu API
+        """ Compare lng and lat with baidu API
 
         :param response:
         :return:
@@ -136,15 +136,10 @@ class JobSpider(scrapy.Spider):
         if 0 == status:
             result = resp['result']
             location = result['location']
-            lat = location['lat']  # 纬度
-            lng = location['lng']  # 经度
-            diff_lat = math.fabs(item['company_latitude'] - lat)
-            diff_lng = math.fabs(item['company_longitude'] - lng)
-            if .1 < diff_lat < .5 and .1 < diff_lng < .5:
-                item['job_id'] = 0  # 将数据归类为table_tmp数据
-            else:
-                item['company_latitude'] = lat
-                item['company_longitude'] = lng
+            item['company_latitude'], item['company_longitude'] = location['lat'], location['lng']
+        else:
+            if item.get('company_latitude') or item.get('company_longitude'):
+                item['job_id'] = 0
 
         yield item
 

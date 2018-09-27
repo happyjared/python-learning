@@ -25,9 +25,9 @@ class JobSpider(scrapy.Spider):
         self.source_url = 'https://www.lagou.com/jobs/{}.html'
         self.company_logo = 'https://www.lgstatic.com/thumbnail_120x120/{}'
         self.headers = {
-            'Connection': 'keep-alive',
-            'Accept-Encoding:': 'gzip, deflate, br',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+            'Host': 'www.lagou.com',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/69.0.3497.100 Safari/537.36',
         }
 
     def start_requests(self):
@@ -147,8 +147,15 @@ class JobSpider(scrapy.Spider):
     def random_cookie():
         """Return random cookie"""
 
-        cookie = 'JSESSIONID={0};user_trace_token={1}; LGUID={2}; index_location_city=%E6%88%90%E9%83%BD;' \
-                 'SEARCH_ID={3};_gid=GA1.2.717841549.1514043316; _ga=GA1.2.952298646.1514043316; LGSID={4};' \
-                 'LGRID={5};'.format(uniid.get_uuid4(), uniid.get_uuid4(), uniid.get_uuid4(), uniid.get_uuid4(),
-                                     uniid.get_uuid4(), uniid.get_uuid4())
+        cookie = '_ga=GA1.2.283417006.1528771266; user_trace_token={}; LGUID={}; _gid=GA1.2.1726150264.1537924083; ' \
+                 'index_location_city=%E5%85%A8%E5%9B%BD; _qddaz=QD.iur0qw.llikm4.jmiq6c57; sajssdk_2015_cross_new_user=1;' \
+                 ' sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221661885e6b81da-016893c9127d5e-8383268-' \
+                 '1049088-1661885e6b971%22%2C%22%24device_id%22%3A%221661885e6b81da-016893c9127d5e-8383268-' \
+                 '1049088-1661885e6b971%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9' \
+                 'B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_referrer%22%3A%22%22%2C%22%24latest_referrer_' \
+                 'host%22%3A%22%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%' \
+                 'B4%E6%8E%A5%E6%89%93%E5%BC%80%22%7D%7D; JSESSIONID={}; _gat=1; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=' \
+                 '1537924086,1537939245,1538009720,1538040806; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1538040806; LGSID={}; ' \
+                 'PRE_UTM=; PRE_HOST=; PRE_SITE=; PRE_LAND=https%3A%2F%2Fwww.lagou.com; LGRID={}'.format(
+            uniid.get_uuid4(), uniid.get_uuid4(), uniid.get_uuid4(), uniid.get_uuid4(), uniid.get_uuid4())
         return cookie

@@ -8,7 +8,7 @@
 import logging
 import random
 import requests
-from utils import captcha
+from utils import mycaptcha
 from scrapy import signals
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 from scrapy.downloadermiddlewares.redirect import RedirectMiddleware
@@ -43,14 +43,13 @@ class CustomRedirectMiddleware(RedirectMiddleware):
 
             post_url = response.url.replace('popUpCaptcha', 'verifyCaptcha')
             captcha_url = self.index.format(captcha_src)
-            captcha_base64 = captcha.urlToBase64(captcha_url)
+            captcha_base64 = mycaptcha.urlToBase64(captcha_url)
             logging.warning('--->>>: Post URL {} and captcha url {}'.format(post_url, captcha_url))
 
-            code = captcha.getVerCode(captcha_base64)
+            code = mycaptcha.getCaptchaCode(captcha_base64)
 
             data = {'randomKey': random_key, 'captcha': code}
-            resp = requests.post(post_url, data=data)
-            logging.warning('Resp: ' + resp.text)
+            requests.post(post_url, data=data)
 
         return super().process_response(request, response, spider)
 

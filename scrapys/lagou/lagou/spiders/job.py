@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
-import math
+import uuid
 
 import scrapy
 from scrapy.http import Request, FormRequest
 
-from utils import uniid, mytime, mapapi
 from scrapys.nearjob import app, items, sql, enums
+from utils import mytime, mapapi
 
 
 class JobSpider(scrapy.Spider):
@@ -147,6 +147,7 @@ class JobSpider(scrapy.Spider):
     def random_cookie():
         """Return random cookie"""
 
+        args = (uuid.uuid4(),) * 5
         cookie = '_ga=GA1.2.283417006.1528771266; user_trace_token={}; LGUID={}; _gid=GA1.2.1726150264.1537924083; ' \
                  'index_location_city=%E5%85%A8%E5%9B%BD; _qddaz=QD.iur0qw.llikm4.jmiq6c57; sajssdk_2015_cross_new_user=1;' \
                  ' sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221661885e6b81da-016893c9127d5e-8383268-' \
@@ -156,6 +157,5 @@ class JobSpider(scrapy.Spider):
                  'host%22%3A%22%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%' \
                  'B4%E6%8E%A5%E6%89%93%E5%BC%80%22%7D%7D; JSESSIONID={}; _gat=1; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=' \
                  '1537924086,1537939245,1538009720,1538040806; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1538040806; LGSID={}; ' \
-                 'PRE_UTM=; PRE_HOST=; PRE_SITE=; PRE_LAND=https%3A%2F%2Fwww.lagou.com; LGRID={}'.format(
-            uniid.get_uuid4(), uniid.get_uuid4(), uniid.get_uuid4(), uniid.get_uuid4(), uniid.get_uuid4())
+                 'PRE_UTM=; PRE_HOST=; PRE_SITE=; PRE_LAND=https%3A%2F%2Fwww.lagou.com; LGRID={}'.format(*args)
         return cookie

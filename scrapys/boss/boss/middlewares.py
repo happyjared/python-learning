@@ -5,6 +5,7 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import time
 import logging
 import random
 import requests
@@ -39,17 +40,19 @@ class CustomRedirectMiddleware(RedirectMiddleware):
         random_key = response.xpath('//input[@name="randomKey"]/@value').extract_first()
 
         if captcha_src and random_key:
-            logging.warning("--->>>: Captcha src is {0} and random key is {1}".format(captcha_src, random_key))
+            logging.warning("--->>>: Captcha {0} , random key {1}".format(captcha_src, random_key))
+            time.sleep(1800)
+            logging.warning("<<<---: Sleep finish")
 
-            post_url = response.url.replace('popUpCaptcha', 'verifyCaptcha')
-            captcha_url = self.index.format(captcha_src)
-            captcha_base64 = mycaptcha.urlToBase64(captcha_url)
-            logging.warning('--->>>: Post URL {} and captcha url {}'.format(post_url, captcha_url))
-
-            code = mycaptcha.getCaptchaCode(captcha_base64)
-
-            data = {'randomKey': random_key, 'captcha': code}
-            requests.post(post_url, data=data)
+            # post_url = response.url.replace('popUpCaptcha', 'verifyCaptcha')
+            # captcha_url = self.index.format(captcha_src)
+            # captcha_base64 = mycaptcha.urlToBase64(captcha_url)
+            # logging.warning('--->>>: Post URL {} and captcha url {}'.format(post_url, captcha_url))
+            #
+            # code = mycaptcha.getCaptchaCode(captcha_base64)
+            #
+            # data = {'randomKey': random_key, 'captcha': code}
+            # requests.post(post_url, data=data)
 
         return super().process_response(request, response, spider)
 

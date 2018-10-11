@@ -41,7 +41,7 @@ class CustomRedirectMiddleware(RedirectMiddleware):
 
         if captcha_src and random_key:
             logging.warning("--->>>: Captcha {0} , random key {1}".format(captcha_src, random_key))
-            time.sleep(1800)
+            time.sleep(random.randint(1500, 1800))
             logging.warning("<<<---: Sleep finish")
 
             # post_url = response.url.replace('popUpCaptcha', 'verifyCaptcha')

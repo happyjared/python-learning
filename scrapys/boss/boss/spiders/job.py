@@ -20,7 +20,7 @@ class JobSpider(scrapy.Spider):
         self.postgres = app.postgres()
         self.city_list = self.postgres.fetch_all(sql.get_city())
         self.job_list = self.postgres.fetch_all(sql.get_job())
-        self.index = "https://www.zhipin.com"
+        self.index = "https://www.zhipin.com{}"
         self.start = 'https://www.zhipin.com/c{}-p{}/?page=1'
 
     def start_requests(self):

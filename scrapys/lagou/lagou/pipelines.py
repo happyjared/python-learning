@@ -3,7 +3,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 # -*- coding: utf-8 -*-
-from utils import mytime
+from utils import mytime, mapapi
 from scrapys.nearjob import items, sql, app
 
 
@@ -36,8 +36,14 @@ class LaGouPipeline(object):
                 company_short_name = item.get('company_short_name')
                 company_full_name = item.get('company_full_name')
                 company_location = item.get('company_location')
-                company_latitude = item.get('company_latitude')
-                company_longitude = item.get('company_longitude')
+
+                company_longitude, company_latitude = mapapi.reqApi(company_location)
+                if not company_longitude:
+                    company_longitude = item.get('company_longitude')
+                    company_latitude = item.get('company_latitude')
+                    if not company_latitude:
+                        job_id = 0
+
                 company_index = item.get('company_index')
                 company_finance = item.get('company_finance')
                 company_industry = item.get('company_industry')
@@ -55,7 +61,7 @@ class LaGouPipeline(object):
                                                 company_location, company_latitude, company_longitude, company_index,
                                                 company_finance, company_industry, company_scale, company_zone,
                                                 source_from, source_url, now, now, expired, company_logo), fetch=True)
-                if job_id != 0 and row_id:
+                if job_id and row_id:
                     self.redis.sadd(key, position_id)
                     keyword = '{} {} {} {} {} {} {} {} {}'.format(job_name, job_advantage, company_short_name,
                                                                   job_label, company_full_name, company_finance,

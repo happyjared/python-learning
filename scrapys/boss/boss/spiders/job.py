@@ -5,7 +5,7 @@ from urllib import parse
 import scrapy
 from scrapy.http import Request
 
-from utils import mapapi, mytime
+from utils import mytime
 from scrapys.nearjob import sql, items, app, enums
 
 
@@ -87,20 +87,5 @@ class JobSpider(scrapy.Spider):
         address = response.xpath('//div[@class="location-address"]/text()').extract_first().replace(' ', '')
         item['company_location'] = address
         item['company_logo'] = response.xpath('//div[@class="info-company"]/div/a/img/@src').extract_first()
-
-        yield Request(mapapi.getApi(address), meta={'item': item}, callback=self.handle_location)
-
-    @staticmethod
-    def handle_location(response):
-        item = response.meta['item']
-        resp = json.loads(response.body_as_unicode())
-
-        status = resp['status']
-        if 0 == status:
-            result = resp['result']
-            location = result['location']
-            item['company_latitude'], item['company_longitude'] = location['lat'], location['lng']
-        else:
-            item['job_id'] = 0
 
         yield item

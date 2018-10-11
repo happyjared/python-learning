@@ -6,7 +6,7 @@ import scrapy
 from scrapy.http import Request, FormRequest
 
 from scrapys.nearjob import app, items, sql, enums
-from utils import mytime, mapapi
+from utils import mytime
 
 
 class JobSpider(scrapy.Spider):
@@ -118,28 +118,6 @@ class JobSpider(scrapy.Spider):
         address = '{0}{1}'.format(''.join(work_address), work_address_detail)
         item['company_location'] = address
         item['company_index'] = response.xpath('//ul[@class="c_feature"]/li/a/@href').extract_first()
-
-        yield Request(mapapi.getApi(address), meta={'item': item}, callback=self.handle_location)
-
-    @staticmethod
-    def handle_location(response):
-        """ Compare lng and lat with baidu API
-
-        :param response:
-        :return:
-        """
-
-        item = response.meta['item']
-        resp = json.loads(response.body_as_unicode())
-
-        status = resp['status']
-        if 0 == status:
-            result = resp['result']
-            location = result['location']
-            item['company_latitude'], item['company_longitude'] = location['lat'], location['lng']
-        else:
-            if item.get('company_latitude') or item.get('company_longitude'):
-                item['job_id'] = 0
 
         yield item
 

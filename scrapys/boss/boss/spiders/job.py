@@ -20,7 +20,6 @@ class JobSpider(scrapy.Spider):
         self.postgres = app.postgres()
         self.city_list = self.postgres.fetch_all(sql.get_city())
         self.job_list = self.postgres.fetch_all(sql.get_job())
-        self.index = "https://www.zhipin.com{}"
         self.start = 'https://www.zhipin.com/c{}-p{}/?page=1'
 
     def start_requests(self):
@@ -71,7 +70,7 @@ class JobSpider(scrapy.Spider):
         next_page = response.xpath('//a[@class="next" and not(@class="disabled")]/@href').extract_first()
         if next_page:
             self.logger.info("Crawl Next page {}".format(next_page))
-            yield Request(self.index.format(next_page), meta=meta, callback=self.parse)
+            yield Request(parse.urljoin(url, next_page), meta=meta, callback=self.parse)
 
     def parse_detail(self, response):
         item = response.meta['item']

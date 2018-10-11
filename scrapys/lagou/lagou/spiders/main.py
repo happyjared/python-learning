@@ -16,6 +16,6 @@ def run():
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
-        cron.cron_blocking(job=run, day_of_week='6')
+        cron.cron_blocking(job=run, day_of_week='4', hour='21')
     else:
         run()

@@ -31,8 +31,7 @@ class JobSpider(scrapy.Spider):
                 yield Request(self.start.format(city_code, job_code), meta=meta, callback=self.parse)
 
     def parse(self, response):
-        url = response.url
-        meta = response.meta
+        url, meta = response.url, response.meta
         city, city_id = meta['city'], meta['city_id']
         job_id, tb_name = meta['job_id'], meta['tb_name']
 

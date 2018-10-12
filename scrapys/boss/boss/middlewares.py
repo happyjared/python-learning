@@ -37,12 +37,13 @@ class CustomRedirectMiddleware(RedirectMiddleware):
 
     def process_response(self, request, response, spider):
         captcha_src = response.xpath('//img[@class="code"]/@src').extract_first()
-        random_key = response.xpath('//input[@name="randomKey"]/@value').extract_first()
+        # random_key = response.xpath('//input[@name="randomKey"]/@value').extract_first()
 
-        if captcha_src and random_key:
-            logging.warning("--->>>: Captcha {0} , random key {1}".format(captcha_src, random_key))
-            time.sleep(random.randint(1500, 1800))
-            logging.warning("<<<---: Sleep finish")
+        if captcha_src:
+            logging.warning("--->>>: Captcha {}".format(captcha_src))
+            ts = random.randint(1500, 2100)
+            time.sleep(ts)
+            logging.warning("<<<---: Sleep finish {}".format(ts))
 
             # post_url = response.url.replace('popUpCaptcha', 'verifyCaptcha')
             # captcha_url = self.index.format(captcha_src)

@@ -1,27 +1,41 @@
 import numpy as np
 
-print(np.__version__)
+print("NumPy版本:", np.__version__)
+print()
 
 np_array = np.array([0, 1, 2])
-print(np_array)
-print(isinstance(np_array, np.ndarray))
+print("秩1轴3一维数组: ", np_array, isinstance(np_array, np.ndarray))
+print()
 
 np_array = np.array([(1, 2, 3), (4, 5, 6)])
+print("二维数组: ")
 print(np_array)
+print()
 
 np_array = np.zeros((3, 2))
+print("全为0的二维数组")
 print(np_array)
+print()
 
 np_array = np.ones((2, 3, 4))
+print("全为1的三维数组")
 print(np_array)
+print()
 
 np_array = np.arange(8)
+print("0-7的一位数组")
 print(np_array)
+print()
+
 np_array = np.arange(start=10, stop=20.5, step=1.5)
+print("步长1.5的一维数组")
 print(np_array)
+print()
 
 np_array = np.arange(9).reshape(3, 3)
+print("将一维数组重塑为二维数组")
 print(np_array)
+print()
 
 np_array = np.eye(3)
 print(np_array)

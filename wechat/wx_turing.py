@@ -1,10 +1,13 @@
 import random
 import itchat
+import logging
 from utils import match_util
 from utils import rds
 from blogs import read
 from utils import robot
 
+logging.basicConfig(level='INFO', filename='info.log',
+                    format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
 redis = rds.Rds(port=12379, db=15, password='redis6379').redis_cli
 
 js = "js:"  # 简书统计获取标志
@@ -28,15 +31,15 @@ def reply(msg):
     to_user_id = msg['ToUserName']  # 接收人
     from_user_id = msg['FromUserName']  # 发送人
 
-    if receive_text.__contains__(js):
+    logging.info("R: {} From: {} To: {}".format(receive_text, from_user_id, to_user_id))
+
+    if js in receive_text:
         # 返回简书数据统计信息
         uid = receive_text.split(js)[1]
         rc = read.ReadCount(uid)
         rc.count()
         info = rc.get_info()
         itchat.send_msg(info, to_user_id)
-
-    print('Call: ' + receive_text, end='')
 
     if receive_text == cmd:
         # 用户控制机器人开关
@@ -58,20 +61,24 @@ def reply(msg):
         itchat.send_msg(bye, to_user_id) if switch else itchat.send_msg(hello, to_user_id)
 
     flag = redis.get(from_user_id)
+    logging.warning('FromUser {} Flag is {}'.format(from_user_id, flag))
 
     # 判断是否开启机器对话
     if flag:
         if redis.ttl(from_user_id) <= int(redis.get(key.format('min:ex'))):
             # 倒计时10分钟内还在聊天，延长Key过期时间
+            logging.info("->Delay Robot {}".format(from_user_id))
             redis.set(from_user_id, True, ex=ex)
+
         if match_util.is_emoji(receive_text):
-            reply_text = random.randint(1, 3) * receive_text
-            print(' Back: ' + reply_text)
-            return reply_text
+            emoji = random.randint(1, 3) * receive_text
+            logging.info('-->Back {} emoji {} '.format(from_user_id, emoji))
+            return emoji
         else:
             # 默认回复
             default_reply = 'I received: ' + receive_text
             text = robot.call_text_v2(receive_text, from_user_id)
+            logging.info('--->Back {} text {} '.format(from_user_id, text))
             # a or b 如果a有内容(非空或者非None)，那么返回a，否则返回b
             return text or default_reply
 

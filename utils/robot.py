@@ -83,5 +83,5 @@ def call_text_v2(msg, user_id):
 def get_first_number(user_id):
     for s in user_id:
         if s.isdigit():
-            return s
+            return int(s)
     return 0

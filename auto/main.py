@@ -52,8 +52,8 @@ class Main(object):
 
 if __name__ == '__main__':
     # sys.argv[0] = 当前文件名，这里是main.py
-    md_file = sys.argv[1]
-    # md_file = 'auto.md'
+    # md_file = sys.argv[1]
+    md_file = 'auto.md'
     print("Markdown File is ", md_file)
 
     timeout = 10
@@ -68,5 +68,5 @@ if __name__ == '__main__':
     jian_shu.post(main, timeout)
 
     # CSDN
-    csdn = csdn.CSDN()
-    csdn.post(main, timeout)
+    # csdn = csdn.CSDN()
+    # csdn.post(main, timeout)

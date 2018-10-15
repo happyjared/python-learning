@@ -54,7 +54,7 @@ def call_text_v2(msg, user_id):
         },
         "userInfo": {
             "apiKey": key_list[0] if get_first_number(user_id) % 2 == 0 else key_list[2],
-            "userId": user_id[1:33]
+            "userId": str(user_id)[1:33]
         }
     }
     resp = requests.post(api, json=data).json()

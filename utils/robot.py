@@ -20,7 +20,7 @@ def call_text_v1(msg, user_id):
 
     api = 'http://www.tuling123.com/openapi/api'
     data = {
-        'key': key_list[0] if int(str(user_id)[-1]) % 2 == 0 else key_list[2],
+        'key': key_list[0] if get_first_number(user_id) % 2 == 0 else key_list[2],
         'info': msg,
         'userid': user_id,
     }
@@ -53,8 +53,8 @@ def call_text_v2(msg, user_id):
             }
         },
         "userInfo": {
-            "apiKey": key_list[0] if int(str(user_id)[-1]) % 2 == 0 else key_list[2],
-            "userId": str(user_id)[1:33]
+            "apiKey": key_list[0] if get_first_number(user_id) % 2 == 0 else key_list[2],
+            "userId": user_id[1:33]
         }
     }
     resp = requests.post(api, json=data).json()
@@ -78,3 +78,10 @@ def call_text_v2(msg, user_id):
 
     log.info('Call : %s . V2 Turing Response : %s', msg, reply_text)
     return reply_text if reply_text else default_reply
+
+
+def get_first_number(user_id):
+    for s in user_id:
+        if s.isdigit():
+            return s
+    return 0

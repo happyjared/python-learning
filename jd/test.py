@@ -1,4 +1,5 @@
 import json
+import redis
 import requests
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
@@ -8,6 +9,10 @@ from sqlalchemy import Column, String, Integer, TIMESTAMP, FLOAT, create_engine
 ak = 'TCLfUCrFQDLWQrzz3NKYBwb8ZY57tgAt'
 api2 = 'https://api.map.baidu.com/geocoder/v2/?location={},{}&ak={}&output=json'
 
+host = 'localhost'
+pool = redis.ConnectionPool(host=host, port=12379, db=6, password='redis6379', decode_responses=True)
+redis_cli = redis.Redis(connection_pool=pool)
+
 # 对象基类:
 Base = declarative_base()
 
@@ -16,7 +21,7 @@ class Post(Base):
     __tablename__ = 'tb_post'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    post_id = Column(Integer, index=True)
+    post_id = Column(Integer)
     post_type = Column(String(10))
     weather = Column(String(10))
     content = Column(String(1000))
@@ -27,13 +32,14 @@ class Post(Base):
     latitude = Column(FLOAT)
     longitude = Column(FLOAT)
     address = Column(String(100))
+    avatar_name = Column(String(30))
 
 
 class Attachment(Base):
     __tablename__ = 'tb_attachment'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    attachment_id = Column(Integer, index=True)
+    attachment_id = Column(Integer)
     attachment_type = Column(String(10))
     file_url = Column(String(255))
     file_format = Column(String(10))
@@ -43,8 +49,8 @@ class Attachment(Base):
     post_id = Column(Integer)
 
 
-args = ('soulspuare',) * 3
-conn = "postgresql+psycopg2://{}:{}@localhost:12432/{}".format(*args)
+args = ('soulsquare',) * 3
+conn = "postgresql+psycopg2://{}:{}@" + host + ":12432/{}".format(*args)
 engine = create_engine(conn, encoding='UTF-8')
 
 # 创建session对象
@@ -78,6 +84,9 @@ def response(flow):
             post_list = data.get('postList')
             for post in post_list:
                 post_id = post.get('id')
+                key = "soul:id:{}".format(str(post_id)[-3:])
+                if redis_cli.sismember(key, post_id):
+                    continue
                 post_type = post.get('type')
                 weather = post.get('weather')
                 author_id = post.get('authorIdEcpt')
@@ -87,12 +96,13 @@ def response(flow):
                 create_time = timestamp_to_datetime(post.get('createTime'))
                 latitude = post.get('latitude')
                 longitude = post.get('longitude')
+                avatar_name = post.get('avatarName')
                 address = ''
                 if latitude:
                     address = reqAddress(latitude, longitude)
                 p = Post(post_id=post_id, post_type=post_type, weather=weather, author_id=author_id,
                          signature=signature, come_from=come_from, content=content, create_time=create_time,
-                         latitude=latitude, longitude=longitude, address=address)
+                         latitude=latitude, longitude=longitude, address=address, avatar_name=avatar_name)
                 session.add(p)
                 session.commit()
 
@@ -108,6 +118,8 @@ def response(flow):
                         file_duration = attachment.get('fileDuration')
                         a = Attachment(attachment_id=attachment_id, attachment_type=attachment_type,
                                        file_url=file_url, file_format=file_format, file_width=file_width,
-                                       file_height=file_height, file_duration=file_duration)
+                                       file_height=file_height, file_duration=file_duration, post_id=post_id)
                         session.add(a)
                         session.commit()
+
+                redis_cli.sadd(key, post_id)

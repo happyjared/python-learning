@@ -1,3 +1,4 @@
+import time
 from appium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -63,5 +64,6 @@ square = wait.until(EC.presence_of_element_located((By.ID, "cn.soulapp.android:i
 square.click()
 auth()
 driver.tap([(672, 149)])
+time.sleep(2)
 while 1:
-    driver.swipe(1000, 1400, 1000, 400, 500)
+    driver.swipe(1000, 1400, 1000, 400, 300)

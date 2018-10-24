@@ -118,7 +118,8 @@ def handle(post):
 
 
 def response(flow):
-    if flow.request.pretty_url.startswith("https://api.soulapp.cn/v3/post/recommended"):
+    url = flow.request.pretty_url
+    if url.startswith("https://api.soulapp.cn/v3/post/recommended"):
         resp = flow.response.content
         result = json.loads(resp)
         if result.get('success'):
@@ -126,7 +127,7 @@ def response(flow):
             post_list = data.get('postList')
             for post in post_list:
                 handle(post)
-    elif flow.request.pretty_url.startswith("https://api.soulapp.cn/v3/post/recent"):
+    elif url.startswith("https://api.soulapp.cn/v3/post/recent"):
         resp = flow.response.content
         result = json.loads(resp)
         if result.get('success'):

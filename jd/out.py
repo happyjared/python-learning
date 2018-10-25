@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, TIMESTAMP, FLOAT, create_engine
 
+#  mitmdump -p 8889 -s out.py
 ak = 'TCLfUCrFQDLWQrzz3NKYBwb8ZY57tgAt'
 api2 = 'https://api.map.baidu.com/geocoder/v2/?location={},{}&ak={}&output=json'
 
@@ -49,8 +50,8 @@ class Attachment(Base):
     post_id = Column(Integer)
 
 
-args = ('soulsquare',) * 3
-conn = "postgresql+psycopg2://{}:{}@" + host + ":12432/{}".format(*args)
+args = 'soulsquare'
+conn = "postgresql+psycopg2://{}:{}@{}:12432/{}".format(args, args, host, args)
 engine = create_engine(conn, encoding='UTF-8')
 
 # 创建session对象

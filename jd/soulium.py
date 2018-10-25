@@ -35,14 +35,14 @@ into.click()
 # 3.账号页
 phone = wait.until(EC.presence_of_element_located((By.ID, 'cn.soulapp.android:id/etPhone')))
 phone.click()
-phone.send_keys('13709641713')
+phone.send_keys('xxx')
 confirm = wait.until(EC.presence_of_element_located((By.ID, 'cn.soulapp.android:id/rlConfirm')))
 confirm.click()
 
 # 4.密码页
 password = wait.until(EC.presence_of_element_located((By.ID, 'cn.soulapp.android:id/etPwd')))
 password.click()
-password.send_keys('jdq.soul')
+password.send_keys('xxx')
 driver.back()
 login = wait.until(EC.presence_of_element_located((By.ID, 'cn.soulapp.android:id/tvConfirm')))
 login.click()

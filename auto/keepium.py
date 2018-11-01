@@ -3,16 +3,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-server = 'http://localhost:4723/wd/hub'
+server = 'http://localhost:4723/wd/hub'  # Appium Server, 端口默认为4723
 desired_capabilities = {
     'platformName': 'Android',
-    'deviceName': 'WAS_AL00',
+    'deviceName': 'WAS_AL00',  # 需替换成你的deviceName
     'appPackage': 'com.gotokeep.keep',
     'appActivity': 'com.gotokeep.keep.splash.SplashActivity'
 }
 
 driver = webdriver.Remote(server, desired_capabilities)
-wait = WebDriverWait(driver, 10)
+wait = WebDriverWait(driver, 10)  # 最大查找等待超时时间：10s
 
 
 def get_permission():
@@ -36,16 +36,16 @@ get_permission()
 welcome = wait.until(EC.presence_of_element_located((By.ID, 'com.gotokeep.keep:id/btn_bottom_in_video_welcome')))
 welcome.click()
 
-# 切换“密码登录”
+# 切换“密码登录”(同样可以使用第三方进行授权登录)
 driver.tap([(900, 110)])
 
 # 输入“手机号”
 phone = driver.find_element_by_accessibility_id('Phone Number In Login')
-phone.send_keys('13988888888')
+phone.send_keys('13988888888')  # 替换成实际的账号
 
 # 输入“密码”
 password = driver.find_element_by_accessibility_id('Password In Login')
-password.send_keys('123456')
+password.send_keys('123456')  # 替换成实际的密码
 
 # 点击“登录”
 login = driver.find_element_by_id('com.gotokeep.keep:id/btn_action')

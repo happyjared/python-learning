@@ -51,7 +51,7 @@ class ReadCount(object):
         url = 'https://www.jianshu.com/u/{}'.format(self.uid)
         resp = requests.get(url, headers=self.headers)
         if resp.status_code == 200:
-            bs = BeautifulSoup(resp.content, 'html.parser', from_encoding='UTF-8')
+            bs = BeautifulSoup(resp.text, 'html.parser')
 
             avatar = bs.find(class_='avatar')  # 头像
             self.avatar = 'https:' + avatar.img['src']

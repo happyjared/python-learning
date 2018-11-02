@@ -1,4 +1,4 @@
-$def with (read_count)
+$def with (rc)
 
 <html lang="zh-CN">
 <head>
@@ -12,15 +12,15 @@ $def with (read_count)
     <!-- Custom styles for this template -->
     <link href="https://blackrockdigital.github.io/startbootstrap-freelancer/css/freelancer.min.css" rel="stylesheet">
     <style>
-        .self-text {
+        .text {
             color: rgba(255, 254, 21, 0.96);
         }
-        .self-text2 {
+        .text2 {
             color: rgba(255, 58, 2, 0.96);
         }
-        .self-a {
-            color: rgba(255, 58, 2, 0.96);
-            font-size: 2.5rem;
+        a {
+            color: rgba(255, 254, 21, 0.96);
+            font-size: 2.1rem;
             text-underline: none;
         }
     </style>
@@ -33,30 +33,30 @@ $def with (read_count)
 </head>
 <body class="bg-primary">
 <header class="text-white text-center" style="padding-top: 5rem;">
-$if read_count.exit:
+$if rc.exit:
     <div class="container">
-        <img class="img-fluid mb-5 d-block mx-auto img-circle" src="rc.avatar" alt="avatar">
-        <h2 class="mb-0">rc.nickname</h2>
+        <img class="img-fluid mb-5 d-block mx-auto img-circle" src="$rc.avatar" alt="avatar">
+        <h2 class="mb-0">$rc.nickname</h2>
         <hr class="star-light">
         <h4 class="font-weight-light mb-0">
-            关注 : <span class="self-text">rc.watch</span> 人 -
-            粉丝 : <span class="self-text">rc.fans</span> 人 -
-            文章 : <span class="self-text">rc.articles</span> 篇 <p></p>
-            写作 : <span class="self-text">rc.words</span> 字 -
-            收获喜欢 : <span class="self-text">rc.likes</span> 次 -
-            总阅读量 : <span class="self-text2">rc.total_reading</span> 次 -
-            查询总耗时 ：<span class="self-text2">rc.time</span> 秒
+            关注 : <span class="text">$rc.watch</span> 人 -
+            粉丝 : <span class="text">$rc.fans</span> 人 -
+            文章 : <span class="text">$rc.articles</span> 篇
+            <p></p>
+            写作 : <span class="text2">$rc.words</span> 字 -
+            收获喜欢 : <span class="text2">$rc.likes</span> 次 -
+            总阅读量 : <span class="text2">$rc.total_reading</span> 次 -
+            查询总耗时 ：<span class="text2">$rc.time</span> 秒
         </h4>
     </div>
 $else:
-    <h1 class="self-text2">404</h1>
-    <hr class="star-light">
-    <h4>用户不存在 , 您可以尝试下搜下面这些人</h4><br>
+    <h1 class="mb-0">404</h1>
+    <h4>您可以尝试下搜下面这些人</h4><br>
     <h4 class="font-weight-light mb-0">
-        <a class="self-a" href="/000a530f461c">a. happyJared</a> -
-        <a class="self-a" href="/y3Dbcz">b. 简叔</a> -
-        <a class="self-a" href="/d9edcb44e2f2">c. 简黛玉</a> -
-        <a class="self-a" href="/1441f4ae075d">d. 彭小六</a>
+        <p><a href="/y3Dbcz">简叔</a></p>
+        <p><a href="/d9edcb44e2f2">简黛玉</a></p>
+        <p><a href="/1441f4ae075d">彭小六</a></p>
+        <p><a href="/000a530f461c">happyJared</a></p>
     </h4>
 </header>
 </body>

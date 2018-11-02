@@ -13,7 +13,7 @@ class Logger(object):
         if not os.path.exists(path):
             os.mkdir(path)
 
-        path = '../config/logging.yml'
+        path = 'logging.yml'
         if os.path.exists(path):
             with open(path, 'r', encoding='utf-8') as f:
                 config = yaml.load(f)

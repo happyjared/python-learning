@@ -2,7 +2,6 @@ import math
 import time
 import numpy
 import requests
-import multiprocessing
 from bs4 import BeautifulSoup
 
 

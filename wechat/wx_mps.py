@@ -11,8 +11,9 @@ from utils import pgs
 class WxMps(object):
     """微信公众号文章、评论抓取爬虫"""
 
-    def __init__(self, _biz, _pass_ticket, _app_msg_token, _cookie, _offset=0):
+    def __init__(self, _mps_id, _biz, _pass_ticket, _app_msg_token, _cookie, _offset=0):
         self.offset = _offset
+        self.mps_id = _mps_id
         self.biz = _biz  # 公众号标志
         self.msg_token = _app_msg_token  # 票据(非固定)
         self.pass_ticket = _pass_ticket  # 票据(非固定)
@@ -32,7 +33,7 @@ class WxMps(object):
                   '&count=10&is_ok=1&scene=124&uin=777&key=777&pass_ticket={2}&wxtoken=&appmsg_token' \
                   '={3}&x5=1&f=json'.format(self.biz, offset, self.pass_ticket, self.msg_token)
 
-            resp = requests.get(api, headers=self.headers).json()
+            resp = requests.get(api, headers=self.headers, verify=False).json()
             ret, status = resp.get('ret'), resp.get('errmsg')  # 状态信息
             if ret == 0 or status == 'ok':
                 print('Crawl article: ' + api)
@@ -77,7 +78,7 @@ class WxMps(object):
         content_url = content_url.replace('amp;', '').replace('#wechat_redirect', '').replace('http', 'https')
         article_id = self.postgres.handler(self._save_article(), (msg_id, title, author, cover, digest,
                                                                   source_url, content_url, post_time,
-                                                                  datetime.now()), fetch=True)
+                                                                  datetime.now(), self.mps_id), fetch=True)
         if article_id:
             self._parse_article_detail(content_url, article_id)
 
@@ -85,11 +86,13 @@ class WxMps(object):
         """从文章页提取相关参数用于获取评论,article_id是已保存的文章id"""
 
         try:
-            html = requests.get(content_url, headers=self.headers).text
-        except:
+            resp = requests.get(content_url, headers=self.headers, verify=False)
+        except Exception as e:
             print('获取评论失败' + content_url)
+            print(e)
         else:
             # group(0) is current line
+            html = resp.text
             str_comment = re.search(r'var comment_id = "(.*)" \|\| "(.*)" \* 1;', html)
             str_msg = re.search(r"var appmsgid = '' \|\| '(.*)'\|\|", html)
             str_token = re.search(r'window.appmsg_token = "(.*)";', html)
@@ -112,7 +115,7 @@ class WxMps(object):
               '&pass_ticket={3}&wxtoken=777&devicetype=android-26&clientversion=26060739' \
               '&appmsg_token={4}&x5=1&f=json'.format(self.biz, app_msg_id, comment_id,
                                                      self.pass_ticket, appmsg_token)
-        resp = requests.get(api, headers=self.headers).json()
+        resp = requests.get(api, headers=self.headers, verify=False).json()
         ret, status = resp['base_resp']['ret'], resp['base_resp']['errmsg']
         if ret == 0 or status == 'ok':
             elected_comment = resp['elected_comment']
@@ -123,30 +126,38 @@ class WxMps(object):
                 content = comment.get('content')  # 评论内容
                 content_id = comment.get('content_id')  # id
                 like_num = comment.get('like_num')  # 点赞数
-                # reply_list = comment.get('reply')['reply_list']  # 回复数据
+                reply_list = comment.get('reply')['reply_list']  # 回复数据
+                first_reply = reply_list[0]
+
+                reply_content = first_reply.get('content')
+                reply_like_num = first_reply.get('reply_like_num')
+                reply_create_time = datetime.fromtimestamp(first_reply.get('create_time'))
 
                 self.postgres.handler(self._save_article_comment(), (article_id, comment_id, nick_name, logo_url,
                                                                      content_id, content, like_num, comment_time,
-                                                                     datetime.now()))
+                                                                     datetime.now(), reply_content, reply_like_num,
+                                                                     reply_create_time))
 
     @staticmethod
     def _save_article():
-        sql = 'insert into tb_article(msg_id,title,author,cover,digest,source_url,content_url,post_time,create_time) ' \
-              'values(%s,%s,%s,%s,%s,%s,%s,%s,%s) returning id'
+        sql = 'insert into tb_article(msg_id,title,author,cover,digest,source_url,content_url,post_time,create_time,' \
+              'mps_id) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) returning id'
         return sql
 
     @staticmethod
     def _save_article_comment():
         sql = 'insert into tb_article_comment(article_id,comment_id,nick_name,logo_url,content_id,content,like_num,' \
-              'comment_time,create_time) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+              'comment_time,create_time,reply_content,reply_like_num,reply_create_time) ' \
+              'values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
         return sql
 
 
 if __name__ == '__main__':
-    biz = 'MzI2NDk5NzA0Mw=='  # "36氪"
-    pass_ticket = 'NDndxxaZ7p6Z9PYulWpLqMbI0i3ULFeCPIHBFu1sf5pX2IhkGfyxZ6b9JieSYRUy'
-    app_msg_token = '971_ywDL%252FCnBNQJEyvFe1H1O5hAhJydL3CpqZwirxw~~'
-    cookie = 'wap_sid2=CO3YwOQHEogBdENPSVdaS3pHOWc1V2QzY1NvZG9PYk1DMndPS3NfbGlHM0Vfal8zLU9kcUdkWTQxdUYwckFBT3RZM1VYUXFaWkFad3NVaWFXZ28zbEFIQ2pTa1lqZktfb01vcGdPLTQ0aGdJQ2xOSXoxTVFvNUg3SVpBMV9GRU1lbnotci1MWWl5d01BQUF+fjCj45PcBTgNQAE='
+    _id = 3
+    biz = 'MzA5MDg0NjY0Mw=='
+    pass_ticket = 'vvEyGVtFd3AmHq/FojRaNIpnRGppQWsKc90kUbOaYWfjkqZolATSNQZ3iSjhhgpc'
+    app_msg_token = '981_sR1FkAPoKqMH68QxzxEf_yR8Eq9zmHGHTdDCFQ~~'
+    cookie = 'rewardsn=; wxtokenkey=777; wxuin=1604513290; devicetype=Windows10; version=62060426; lang=zh_TW; pass_ticket=vvEyGVtFd3AmHq/FojRaNIpnRGppQWsKc90kUbOaYWfjkqZolATSNQZ3iSjhhgpc; wap_sid2=CIrci/0FElxQYkwtQTlNLUJ1b3dsM3lxQ1JEdTBxWndRX0RhNGdJWFdVaFUzcndjUmhzV2hCUnIwb2NOc21RSHN0c1BxWGFQYWtwZW1HN3F6eDhGZzNEX1RXcHAyTlVEQUFBfjDi+oPfBTgNQJVO'
     # 以上信息不同公众号每次抓取都需要借助抓包工具做修改
-    wxMps = WxMps(biz, pass_ticket, app_msg_token, cookie)
+    wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     wxMps.start()  # 开始爬取文章及评论

@@ -129,9 +129,11 @@ class WxMps(object):
                 reply_list = comment.get('reply')['reply_list']  # 回复数据
                 first_reply = reply_list[0]
 
-                reply_content = first_reply.get('content')
-                reply_like_num = first_reply.get('reply_like_num')
-                reply_create_time = datetime.fromtimestamp(first_reply.get('create_time'))
+                reply_content, reply_like_num, reply_create_time = None, None, None
+                if first_reply:
+                    reply_content = first_reply.get('content')
+                    reply_like_num = first_reply.get('reply_like_num')
+                    reply_create_time = datetime.fromtimestamp(first_reply.get('create_time'))
 
                 self.postgres.handler(self._save_article_comment(), (article_id, comment_id, nick_name, logo_url,
                                                                      content_id, content, like_num, comment_time,

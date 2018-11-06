@@ -126,11 +126,11 @@ class WxMps(object):
                 content = comment.get('content')  # 评论内容
                 content_id = comment.get('content_id')  # id
                 like_num = comment.get('like_num')  # 点赞数
-                reply_list = comment.get('reply')['reply_list']  # 回复数据
-                first_reply = reply_list[0]
 
+                reply_list = comment.get('reply')['reply_list']  # 回复数据
                 reply_content, reply_like_num, reply_create_time = None, None, None
-                if first_reply:
+                if reply_list:
+                    first_reply = reply_list[0]
                     reply_content = first_reply.get('content')
                     reply_like_num = first_reply.get('reply_like_num')
                     reply_create_time = datetime.fromtimestamp(first_reply.get('create_time'))

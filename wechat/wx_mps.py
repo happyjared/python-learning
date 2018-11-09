@@ -139,6 +139,7 @@ class WxMps(object):
                                                                      content_id, content, like_num, comment_time,
                                                                      datetime.now(), reply_content, reply_like_num,
                                                                      reply_create_time))
+            time.sleep(3)
 
     @staticmethod
     def _save_article():
@@ -155,11 +156,11 @@ class WxMps(object):
 
 
 if __name__ == '__main__':
-    _id = 3
-    biz = 'MzA5MDg0NjY0Mw=='
+    _id = 4
+    biz = 'MzU0MDExOTM3Mg=='
     pass_ticket = 'vvEyGVtFd3AmHq/FojRaNIpnRGppQWsKc90kUbOaYWfjkqZolATSNQZ3iSjhhgpc'
-    app_msg_token = '981_sR1FkAPoKqMH68QxzxEf_yR8Eq9zmHGHTdDCFQ~~'
-    cookie = 'rewardsn=; wxtokenkey=777; wxuin=1604513290; devicetype=Windows10; version=62060426; lang=zh_TW; pass_ticket=vvEyGVtFd3AmHq/FojRaNIpnRGppQWsKc90kUbOaYWfjkqZolATSNQZ3iSjhhgpc; wap_sid2=CIrci/0FElxQYkwtQTlNLUJ1b3dsM3lxQ1JEdTBxWndRX0RhNGdJWFdVaFUzcndjUmhzV2hCUnIwb2NOc21RSHN0c1BxWGFQYWtwZW1HN3F6eDhGZzNEX1RXcHAyTlVEQUFBfjDi+oPfBTgNQJVO'
+    app_msg_token = '981_YfDTVXEmxlQ50ppDO4B7KL3xHSnldDKS0-OaXg~~'
+    cookie = 'rewardsn=; wxtokenkey=777; wxuin=1604513290; devicetype=Windows10; version=62060426; lang=zh_TW; pass_ticket=vvEyGVtFd3AmHq/FojRaNIpnRGppQWsKc90kUbOaYWfjkqZolATSNQZ3iSjhhgpc; wap_sid2=CIrci/0FElxqNDZBTGJUSTZ3YldLVUFmWFdETVF0VF9FckZPQ2pnOF8teXVzTjYtYjRxYnhpQjlGTnRRbXZEU043MkdjZ09iOEpVVUNGcF96dFpoMTh6ZnBuNExhdFVEQUFBfjDTkITfBTgNQJVO'
     # 以上信息不同公众号每次抓取都需要借助抓包工具做修改
     wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     wxMps.start()  # 开始爬取文章及评论

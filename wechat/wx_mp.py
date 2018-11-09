@@ -18,14 +18,18 @@ def crawl_article_content(content_url):
     html = requests.get(content_url, verify=False).text
     bs = BeautifulSoup(html, 'html.parser')
     js_content = bs.find(id='js_content')
-    p_list = js_content.find_all('p')
-    content_list = list(map(lambda p: p.text, filter(lambda p: p.text != '', p_list)))
-    content = ''.join(content_list)
-    return content
+    if js_content:
+        p_list = js_content.find_all('p')
+        content_list = list(map(lambda p: p.text, filter(lambda p: p.text != '', p_list)))
+        content = ''.join(content_list)
+        return content
+    else:
+        print(content_url)
 
 
 def get_content_url():
-    sql = 'select id,msg_id,title,author,cover,digest,source_url,post_time,mps_id,content_url from tb_article'
+    sql = 'select id,msg_id,title,author,cover,digest,source_url,post_time,mps_id,content_url from ' \
+          'tb_article where "content" is null'
     rows = postgres.fetch_all(sql=sql)
     for row in rows:
         article_id = row[0]
@@ -47,6 +51,7 @@ def get_content_url():
         elastic.put_data(data_body=json_data, _id=msg_id)
 
         save_content(article_id, content)
+        print('Y')
         time.sleep(random.randint(3, 5))
 
 

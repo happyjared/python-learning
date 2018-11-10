@@ -84,8 +84,9 @@ class WxMps(object):
     def _save_text_and_image(self, msg_id, post_time, msg_type, cover=None, digest=None):
         """保存只是文字或图片消息"""
 
-        article_id = self.postgres.handler(self._save_only_article(), (msg_id, cover, digest, post_time,
-                                                                       datetime.now(), self.mps_id), fetch=True)
+        article_id = self.postgres.handler(self._save_only_article(), (
+            msg_id, cover, digest, post_time, datetime.now(), self.mps_id, msg_type), fetch=True)
+
         if article_id:
             json_data = {"articleId": article_id, "cover": cover, "digest": digest,
                          "mpsId": self.mps_id, "msgId": msg_id, "postTime": post_time}

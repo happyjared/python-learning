@@ -1,11 +1,13 @@
 import json
+import random
 import re
 import time
+from bs4 import BeautifulSoup
 from datetime import datetime
 
 import requests
 
-from utils import pgs
+from utils import pgs, es
 
 
 class WxMps(object):
@@ -23,6 +25,7 @@ class WxMps(object):
         }
         wx_mps = 'wxmps'  # 这里数据库、用户、密码一致(需替换成实际的)
         self.postgres = pgs.Pgs(host='localhost', port='12432', db_name=wx_mps, user=wx_mps, password=wx_mps)
+        self.elastic = es.Es(host='localhost', port=12900, index='mp', doc='article')
 
     def start(self):
         """请求获取公众号的文章接口"""
@@ -44,27 +47,68 @@ class WxMps(object):
                     comm_msg_info = msg['comm_msg_info']  # 该数据是本次推送多篇文章公共的
                     msg_id = comm_msg_info['id']  # 文章id
                     post_time = datetime.fromtimestamp(comm_msg_info['datetime'])  # 发布时间
-                    # msg_type = comm_msg_info['type']  # 文章类型
+                    msg_type = comm_msg_info['type']  # 文章类型
                     # msg_data = json.dumps(comm_msg_info, ensure_ascii=False)  # msg原数据
 
-                    app_msg_ext_info = msg.get('app_msg_ext_info')  # article原数据
-                    if app_msg_ext_info:
-                        # 本次推送的首条文章
-                        self._parse_articles(app_msg_ext_info, msg_id, post_time)
-                        # 本次推送的其余文章
-                        multi_app_msg_item_list = app_msg_ext_info.get('multi_app_msg_item_list')
-                        if multi_app_msg_item_list:
-                            for item in multi_app_msg_item_list:
-                                msg_id = item['fileid']  # 文章id
-                                if msg_id == 0:
-                                    msg_id = int(time.time() * 1000)  # 设置唯一id,解决部分文章id=0出现唯一索引冲突的情况
-                                self._parse_articles(item, msg_id, post_time)
+                    if 49 == msg_type:
+                        # 图文消息
+                        app_msg_ext_info = msg.get('app_msg_ext_info')  # article原数据
+                        if app_msg_ext_info:
+                            # 本次推送的首条文章
+                            self._parse_articles(app_msg_ext_info, msg_id, post_time)
+                            # 本次推送的其余文章
+                            multi_app_msg_item_list = app_msg_ext_info.get('multi_app_msg_item_list')
+                            if multi_app_msg_item_list:
+                                for item in multi_app_msg_item_list:
+                                    msg_id = item['fileid']  # 文章id
+                                    if msg_id == 0:
+                                        msg_id = int(time.time() * 1000)  # 设置唯一id,解决部分文章id=0出现唯一索引冲突的情况
+                                    self._parse_articles(item, msg_id, post_time, msg_type)
+                    elif 1 == msg_type:
+                        # 文字消息
+                        content = comm_msg_info.get('content')
+                        self._save_text_and_image(msg_id, post_time, msg_type, digest=content)
+                    elif 3 == msg_type:
+                        # 图片消息
+                        image_msg_ext_info = msg.get('image_msg_ext_info')
+                        cdn_url = image_msg_ext_info.get('cdn_url')
+                        self._save_text_and_image(msg_id, post_time, msg_type, cover=cdn_url)
                 print('next offset is %d' % offset)
             else:
                 print('Before break , Current offset is %d' % offset)
                 break
 
-    def _parse_articles(self, info, msg_id, post_time):
+    def _save_es(self, json_data, msg_id):
+        self.elastic.put_data(data_body=json_data, _id=msg_id)
+
+    def _save_text_and_image(self, msg_id, post_time, msg_type, cover=None, digest=None):
+        """保存只是文字或图片消息"""
+
+        article_id = self.postgres.handler(self._save_only_article(), (msg_id, cover, digest, post_time,
+                                                                       datetime.now(), self.mps_id), fetch=True)
+        if article_id:
+            json_data = {"articleId": article_id, "cover": cover, "digest": digest,
+                         "mpsId": self.mps_id, "msgId": msg_id, "postTime": post_time}
+            self._save_es(json_data, msg_id)
+
+    @staticmethod
+    def crawl_article_content(content_url):
+        """抓取文章内容
+        :param content_url: 文章地址
+        """
+
+        html = requests.get(content_url, verify=False).text
+        bs = BeautifulSoup(html, 'html.parser')
+        js_content = bs.find(id='js_content')
+        if js_content:
+            p_list = js_content.find_all('p')
+            content_list = list(map(lambda p: p.text, filter(lambda p: p.text != '', p_list)))
+            content = ''.join(content_list)
+            return content
+        else:
+            print(content_url)
+
+    def _parse_articles(self, info, msg_id, post_time, msg_type):
         """解析嵌套文章数据并保存入库"""
 
         title = info.get('title')  # 标题
@@ -76,10 +120,17 @@ class WxMps(object):
         # ext_data = json.dumps(info, ensure_ascii=False)  # 原始数据
 
         content_url = content_url.replace('amp;', '').replace('#wechat_redirect', '').replace('http', 'https')
-        article_id = self.postgres.handler(self._save_article(), (msg_id, title, author, cover, digest,
-                                                                  source_url, content_url, post_time,
-                                                                  datetime.now(), self.mps_id), fetch=True)
+        content = self.crawl_article_content(content_url)
+        article_id = self.postgres.handler(self._save_article(), (msg_id, title, author, cover, digest, source_url,
+                                                                  content_url, post_time, datetime.now(),
+                                                                  self.mps_id, content, msg_type), fetch=True)
         if article_id:
+            json_data = {"articleId": article_id, "author": author, "content": content,
+                         "contentURL": content_url, "cover": cover, "digest": digest,
+                         "mpsId": self.mps_id, "msgId": msg_id, "postTime": post_time,
+                         "sourceURL": source_url, "title": title}
+            self._save_es(json_data, msg_id)
+            time.sleep(random.randint(3, 5))
             self._parse_article_detail(content_url, article_id)
 
     def _parse_article_detail(self, content_url, article_id):
@@ -139,12 +190,17 @@ class WxMps(object):
                                                                      content_id, content, like_num, comment_time,
                                                                      datetime.now(), reply_content, reply_like_num,
                                                                      reply_create_time))
-            time.sleep(3)
+
+    @staticmethod
+    def _save_only_article():
+        sql = 'insert into tb_article(msg_id,cover,digest,post_time,create_time,mps_id,msg_type) ' \
+              'values(%s,%s,%s,%s,%s,%s,%s) returning id'
+        return sql
 
     @staticmethod
     def _save_article():
         sql = 'insert into tb_article(msg_id,title,author,cover,digest,source_url,content_url,post_time,create_time,' \
-              'mps_id) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) returning id'
+              'mps_id,content,msg_type) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) returning id'
         return sql
 
     @staticmethod
@@ -158,9 +214,9 @@ class WxMps(object):
 if __name__ == '__main__':
     _id = 4
     biz = 'MzU0MDExOTM3Mg=='
-    pass_ticket = 'vvEyGVtFd3AmHq/FojRaNIpnRGppQWsKc90kUbOaYWfjkqZolATSNQZ3iSjhhgpc'
-    app_msg_token = '981_YfDTVXEmxlQ50ppDO4B7KL3xHSnldDKS0-OaXg~~'
-    cookie = 'rewardsn=; wxtokenkey=777; wxuin=1604513290; devicetype=Windows10; version=62060426; lang=zh_TW; pass_ticket=vvEyGVtFd3AmHq/FojRaNIpnRGppQWsKc90kUbOaYWfjkqZolATSNQZ3iSjhhgpc; wap_sid2=CIrci/0FElxqNDZBTGJUSTZ3YldLVUFmWFdETVF0VF9FckZPQ2pnOF8teXVzTjYtYjRxYnhpQjlGTnRRbXZEU043MkdjZ09iOEpVVUNGcF96dFpoMTh6ZnBuNExhdFVEQUFBfjDTkITfBTgNQJVO'
+    pass_ticket = '0TSVUSoXjFx6F6CzfT0+YGG5rFqG3J0CITr7NvCwb+N7AsQFlQ23ovR/7EyKJIJw'
+    app_msg_token = '982_0%2BmXDZPHT6MOwewCwzXr9KU2rVUsYIduXlA18w~~'
+    cookie = 'rewardsn=; wxtokenkey=777; wxuin=1604513290; devicetype=Windows8; version=62060426; lang=zh_CN; pass_ticket=0TSVUSoXjFx6F6CzfT0+YGG5rFqG3J0CITr7NvCwb+N7AsQFlQ23ovR/7EyKJIJw; wap_sid2=CIrci/0FEnBDdXJ0OEY5UlZHdDEyR1NCYTZIb2cxZ0JlZU5nWmRrWFpiS0lkRW0zRndPUjZGYTRzVGV2cVN1Y3RNY2dmbFZDSXBPX0gxUGpyRGRkQVQxRm1SMDB3ekozN2swVWVuQVhXYnlnYjFob25JeldBd0FBMJ7bm98FOA1AlU4='
     # 以上信息不同公众号每次抓取都需要借助抓包工具做修改
     wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     wxMps.start()  # 开始爬取文章及评论

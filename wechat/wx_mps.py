@@ -55,7 +55,7 @@ class WxMps(object):
                         app_msg_ext_info = msg.get('app_msg_ext_info')  # article原数据
                         if app_msg_ext_info:
                             # 本次推送的首条文章
-                            self._parse_articles(app_msg_ext_info, msg_id, post_time)
+                            self._parse_articles(app_msg_ext_info, msg_id, post_time, msg_type)
                             # 本次推送的其余文章
                             multi_app_msg_item_list = app_msg_ext_info.get('multi_app_msg_item_list')
                             if multi_app_msg_item_list:

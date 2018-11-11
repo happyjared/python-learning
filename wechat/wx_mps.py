@@ -132,6 +132,7 @@ class WxMps(object):
                                                                   content_url, post_time, datetime.now(),
                                                                   self.mps_id, content, msg_type), fetch=True)
         if article_id:
+            print(msg_id)
             json_data = {"articleId": article_id, "author": author, "content": content,
                          "contentURL": content_url, "cover": cover, "digest": digest,
                          "mpsId": self.mps_id, "msgId": msg_id, "postTime": post_time,

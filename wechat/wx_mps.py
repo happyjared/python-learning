@@ -104,16 +104,19 @@ class WxMps(object):
         :param content_url: 文章地址
         """
 
-        html = requests.get(content_url, verify=False).text
-        bs = BeautifulSoup(html, 'html.parser')
-        js_content = bs.find(id='js_content')
-        if js_content:
-            p_list = js_content.find_all('p')
-            content_list = list(map(lambda p: p.text, filter(lambda p: p.text != '', p_list)))
-            content = ''.join(content_list)
-            return content
-        else:
+        try:
+            html = requests.get(content_url, verify=False).text
+        except:
             print(content_url)
+            pass
+        else:
+            bs = BeautifulSoup(html, 'html.parser')
+            js_content = bs.find(id='js_content')
+            if js_content:
+                p_list = js_content.find_all('p')
+                content_list = list(map(lambda p: p.text, filter(lambda p: p.text != '', p_list)))
+                content = ''.join(content_list)
+                return content
 
     def _parse_articles(self, info, msg_id, post_time, msg_type):
         """解析嵌套文章数据并保存入库"""

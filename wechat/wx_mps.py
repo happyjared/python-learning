@@ -78,8 +78,8 @@ class WxMps(object):
                 print('Before break , Current offset is %d' % offset)
                 break
 
-    def _save_es(self, json_data, msg_id):
-        self.elastic.put_data(data_body=json_data, _id=msg_id)
+    def _save_es(self, json_data, article_id):
+        self.elastic.put_data(data_body=json_data, _id=article_id)
 
     def _save_text_and_image(self, msg_id, post_time, msg_type, cover=None, digest=None):
         """保存只是文字或图片消息"""
@@ -88,9 +88,9 @@ class WxMps(object):
             msg_id, cover, digest, post_time, datetime.now(), self.mps_id, msg_type), fetch=True)
 
         if article_id:
-            json_data = {"articleId": article_id, "cover": cover, "digest": digest,
-                         "mpsId": self.mps_id, "msgId": msg_id, "postTime": post_time}
-            self._save_es(json_data, msg_id)
+            json_data = {"articleId": article_id, "cover": cover, "digest": digest, "mpsId": self.mps_id,
+                         "msgId": msg_id, "postTime": post_time, "msgType": msg_type}
+            self._save_es(json_data, article_id)
 
     @staticmethod
     def crawl_article_content(content_url):
@@ -129,8 +129,8 @@ class WxMps(object):
             json_data = {"articleId": article_id, "author": author, "content": content,
                          "contentURL": content_url, "cover": cover, "digest": digest,
                          "mpsId": self.mps_id, "msgId": msg_id, "postTime": post_time,
-                         "sourceURL": source_url, "title": title}
-            self._save_es(json_data, msg_id)
+                         "sourceURL": source_url, "title": title, "msgType": msg_type}
+            self._save_es(json_data, article_id)
             time.sleep(random.randint(3, 5))
             self._parse_article_detail(content_url, article_id)
 
@@ -190,7 +190,7 @@ class WxMps(object):
                 self.postgres.handler(self._save_article_comment(), (article_id, comment_id, nick_name, logo_url,
                                                                      content_id, content, like_num, comment_time,
                                                                      datetime.now(), reply_content, reply_like_num,
-                                                                     reply_create_time))
+                                                                     reply_create_time, self.mps_id))
 
     @staticmethod
     def _save_only_article():
@@ -207,17 +207,17 @@ class WxMps(object):
     @staticmethod
     def _save_article_comment():
         sql = 'insert into tb_article_comment(article_id,comment_id,nick_name,logo_url,content_id,content,like_num,' \
-              'comment_time,create_time,reply_content,reply_like_num,reply_create_time) ' \
-              'values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+              'comment_time,create_time,reply_content,reply_like_num,reply_create_time,mps_id) ' \
+              'values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
         return sql
 
 
 if __name__ == '__main__':
-    _id = 4
-    biz = 'MzU0MDExOTM3Mg=='
-    pass_ticket = '0TSVUSoXjFx6F6CzfT0+YGG5rFqG3J0CITr7NvCwb+N7AsQFlQ23ovR/7EyKJIJw'
-    app_msg_token = '982_0%2BmXDZPHT6MOwewCwzXr9KU2rVUsYIduXlA18w~~'
-    cookie = 'rewardsn=; wxtokenkey=777; wxuin=1604513290; devicetype=Windows8; version=62060426; lang=zh_CN; pass_ticket=0TSVUSoXjFx6F6CzfT0+YGG5rFqG3J0CITr7NvCwb+N7AsQFlQ23ovR/7EyKJIJw; wap_sid2=CIrci/0FEnBDdXJ0OEY5UlZHdDEyR1NCYTZIb2cxZ0JlZU5nWmRrWFpiS0lkRW0zRndPUjZGYTRzVGV2cVN1Y3RNY2dmbFZDSXBPX0gxUGpyRGRkQVQxRm1SMDB3ekozN2swVWVuQVhXYnlnYjFob25JeldBd0FBMJ7bm98FOA1AlU4='
+    _id = 3
+    biz = 'MzA5MDg0NjY0Mw=='
+    pass_ticket = 'eGQUHVHO2FixN3uybbzK6dMFuWc3BGfX/ehEVzof8UA/H+r3zMSJwWdLuW52e2Hq'
+    app_msg_token = '982_Jufax5HmI61llMzREvI5lgJ2XHatX-Lth-WN2A~~'
+    cookie = 'wxuin=1604513290; devicetype=Windows8; version=62060426; lang=zh_CN; pass_ticket=eGQUHVHO2FixN3uybbzK6dMFuWc3BGfX/ehEVzof8UA/H+r3zMSJwWdLuW52e2Hq; wap_sid2=CIrci/0FElwxSEhFaFBvOWdwV3RxOE1XbW1hZHV5NDU5NU52eVlVdUF6VUd5cWxocjcxbkw4LVprZjh4YnotZTJZNGQ5cUZzdGZBSHA0MkRIbWQ5TGhRcDBVYmFIZFlEQUFBfjD0g57fBTgNQJVO'
     # 以上信息不同公众号每次抓取都需要借助抓包工具做修改
     wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     wxMps.start()  # 开始爬取文章及评论

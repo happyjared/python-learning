@@ -61,7 +61,7 @@ class WxMps(object):
                             if multi_app_msg_item_list:
                                 for item in multi_app_msg_item_list:
                                     msg_id = item['fileid']  # 文章id
-                                    if msg_id or isinstance(msg_id, str):
+                                    if msg_id or not isinstance(msg_id, int):
                                         msg_id = int(time.time() * 1000)  # 设置唯一id,解决部分文章id=0出现唯一索引冲突的情况
                                     self._parse_articles(item, msg_id, post_time, msg_type)
                     elif 1 == msg_type:

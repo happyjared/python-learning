@@ -140,7 +140,7 @@ class WxMps(object):
                          "mpsId": self.mps_id, "msgId": msg_id, "postTime": post_time,
                          "sourceURL": source_url, "title": title, "msgType": msg_type}
             self._save_es(json_data, article_id)
-            time.sleep(random.randint(3, 5))
+            time.sleep(random.randint(2, 3))
             self._parse_article_detail(content_url, article_id)
 
     def _parse_article_detail(self, content_url, article_id):
@@ -149,7 +149,7 @@ class WxMps(object):
         try:
             resp = requests.get(content_url, headers=self.headers, verify=False)
         except Exception as e:
-            print('获取评论失败' + content_url)
+            print('获取评论失败 {}'.format(content_url))
             print(e)
         else:
             # group(0) is current line
@@ -222,11 +222,11 @@ class WxMps(object):
 
 
 if __name__ == '__main__':
-    _id = 1
-    biz = 'MzU4NjA4NjMwNw=='
+    _id = 6
+    biz = 'MzUxMzM4NzU2OA=='
     pass_ticket = 'eGQUHVHO2FixN3uybbzK6dMFuWc3BGfX/ehEVzof8UA/H+r3zMSJwWdLuW52e2Hq'
-    app_msg_token = '982_qvjD%2FvsgtuR3SNGHm3vjWkgjNsxGpmIOEx0Huw~~'
-    cookie = 'rewardsn=; wxtokenkey=777; wxuin=1604513290; devicetype=Windows8; version=62060426; lang=zh_CN; pass_ticket=eGQUHVHO2FixN3uybbzK6dMFuWc3BGfX/ehEVzof8UA/H+r3zMSJwWdLuW52e2Hq; wap_sid2=CIrci/0FElxPY2lwSFkzYld3RHZaU2daTllOcXRNbDlDX0lTcjBOOE5EdjNrU3FGbUctTWYxcjlKOXp3VlAwR0NfT3Naa3ZYWThfUExHVVpLbk1qZklmNzBFb29ZTllEQUFBfjCcsp7fBTgNQJVO'
+    app_msg_token = '982_pz0CJqUkAwcU8EAdLcEa5HRMlnRmocDh-T7tDQ~~'
+    cookie = 'rewardsn=; wxtokenkey=777; wxuin=1604513290; devicetype=Windows8; version=62060426; lang=zh_CN; pass_ticket=eGQUHVHO2FixN3uybbzK6dMFuWc3BGfX/ehEVzof8UA/H+r3zMSJwWdLuW52e2Hq; wap_sid2=CIrci/0FEnBPY2lwSFkzYld3RHZaU2daTllOcXROb3NBal9mQWNfVXViNWhBeFNZMWg2cHRIUDNjT1BQRFNOcm5sekwyXzFrdHlDaVNqSnJxamhXQ1pTQ01MRXdoc3hMNUN5M3ZQT0xRV0FYd2JqOTlveldBd0FBMO+bn98FOA1AlU4='
     # 以上信息不同公众号每次抓取都需要借助抓包工具做修改
     wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     wxMps.start()  # 开始爬取文章及评论

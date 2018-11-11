@@ -149,8 +149,7 @@ class WxMps(object):
         try:
             resp = requests.get(content_url, headers=self.headers, verify=False)
         except Exception as e:
-            print('获取评论失败 {}'.format(content_url))
-            print(e)
+            print('获取评论失败 {} {}'.format(article_id, content_url))
         else:
             # group(0) is current line
             html = resp.text
@@ -165,7 +164,7 @@ class WxMps(object):
 
                 # 缺一不可
                 if appmsg_token and app_msg_id and comment_id:
-                    print('Crawl article comments')
+                    print('Crawl article {} comments'.format(article_id))
                     self._crawl_comments(app_msg_id, comment_id, appmsg_token, article_id)
 
     def _crawl_comments(self, app_msg_id, comment_id, appmsg_token, article_id):
@@ -176,30 +175,34 @@ class WxMps(object):
               '&pass_ticket={3}&wxtoken=777&devicetype=android-26&clientversion=26060739' \
               '&appmsg_token={4}&x5=1&f=json'.format(self.biz, app_msg_id, comment_id,
                                                      self.pass_ticket, appmsg_token)
-        resp = requests.get(api, headers=self.headers, verify=False).json()
-        ret, status = resp['base_resp']['ret'], resp['base_resp']['errmsg']
-        if ret == 0 or status == 'ok':
-            elected_comment = resp['elected_comment']
-            for comment in elected_comment:
-                nick_name = comment.get('nick_name')  # 昵称
-                logo_url = comment.get('logo_url')  # 头像
-                comment_time = datetime.fromtimestamp(comment.get('create_time'))  # 评论时间
-                content = comment.get('content')  # 评论内容
-                content_id = comment.get('content_id')  # id
-                like_num = comment.get('like_num')  # 点赞数
+        try:
+            resp = requests.get(api, headers=self.headers, verify=False).json()
+        except:
+            print('Article {} no Comment'.format(article_id))
+        else:
+            ret, status = resp['base_resp']['ret'], resp['base_resp']['errmsg']
+            if ret == 0 or status == 'ok':
+                elected_comment = resp['elected_comment']
+                for comment in elected_comment:
+                    nick_name = comment.get('nick_name')  # 昵称
+                    logo_url = comment.get('logo_url')  # 头像
+                    comment_time = datetime.fromtimestamp(comment.get('create_time'))  # 评论时间
+                    content = comment.get('content')  # 评论内容
+                    content_id = comment.get('content_id')  # id
+                    like_num = comment.get('like_num')  # 点赞数
 
-                reply_list = comment.get('reply')['reply_list']  # 回复数据
-                reply_content, reply_like_num, reply_create_time = None, None, None
-                if reply_list:
-                    first_reply = reply_list[0]
-                    reply_content = first_reply.get('content')
-                    reply_like_num = first_reply.get('reply_like_num')
-                    reply_create_time = datetime.fromtimestamp(first_reply.get('create_time'))
+                    reply_list = comment.get('reply')['reply_list']  # 回复数据
+                    reply_content, reply_like_num, reply_create_time = None, None, None
+                    if reply_list:
+                        first_reply = reply_list[0]
+                        reply_content = first_reply.get('content')
+                        reply_like_num = first_reply.get('reply_like_num')
+                        reply_create_time = datetime.fromtimestamp(first_reply.get('create_time'))
 
-                self.postgres.handler(self._save_article_comment(), (article_id, comment_id, nick_name, logo_url,
-                                                                     content_id, content, like_num, comment_time,
-                                                                     datetime.now(), reply_content, reply_like_num,
-                                                                     reply_create_time, self.mps_id))
+                    self.postgres.handler(self._save_article_comment(), (article_id, comment_id, nick_name, logo_url,
+                                                                         content_id, content, like_num, comment_time,
+                                                                         datetime.now(), reply_content, reply_like_num,
+                                                                         reply_create_time, self.mps_id))
 
     @staticmethod
     def _save_only_article():

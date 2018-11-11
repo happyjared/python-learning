@@ -62,7 +62,7 @@ class WxMps(object):
                                 for item in multi_app_msg_item_list:
                                     msg_id = item['fileid']  # 文章id
                                     if msg_id or not isinstance(msg_id, int):
-                                        msg_id = int(time.time() * 1000)  # 设置唯一id,解决部分文章id=0出现唯一索引冲突的情况
+                                        msg_id = int(time.time())  # 设置唯一id,解决部分文章id=0出现唯一索引冲突的情况
                                     self._parse_articles(item, msg_id, post_time, msg_type)
                     elif 1 == msg_type:
                         # 文字消息
@@ -132,7 +132,6 @@ class WxMps(object):
                                                                   content_url, post_time, datetime.now(),
                                                                   self.mps_id, content, msg_type), fetch=True)
         if article_id:
-            print(msg_id)
             json_data = {"articleId": article_id, "author": author, "content": content,
                          "contentURL": content_url, "cover": cover, "digest": digest,
                          "mpsId": self.mps_id, "msgId": msg_id, "postTime": post_time,

@@ -38,9 +38,9 @@ class WxMps(object):
 
             resp = requests.get(api, headers=self.headers, verify=False).json()
             ret, status = resp.get('ret'), resp.get('errmsg')  # 状态信息
-            if ret == 0 or status == 'ok':
-                print('Crawl article: ' + api)
-                offset = resp['next_offset']  # 下一次请求偏移量
+            if 0 == ret or 'ok' == status:
+                # print('Crawl article: ' + api)
+
                 general_msg_list = resp['general_msg_list']
                 msg_list = json.loads(general_msg_list)['list']  # 获取文章列表
                 for msg in msg_list:
@@ -67,16 +67,22 @@ class WxMps(object):
                     elif 1 == msg_type:
                         # 文字消息
                         content = comm_msg_info.get('content')
-                        self._save_text_and_image(msg_id, post_time, msg_type, digest=content)
+                        if content:
+                            self._save_text_and_image(msg_id, post_time, msg_type, digest=content)
                     elif 3 == msg_type:
                         # 图片消息
                         image_msg_ext_info = msg.get('image_msg_ext_info')
                         cdn_url = image_msg_ext_info.get('cdn_url')
-                        self._save_text_and_image(msg_id, post_time, msg_type, cover=cdn_url)
-                print('next offset is %d' % offset)
-            else:
-                print('Before break , Current offset is %d' % offset)
+                        if cdn_url:
+                            self._save_text_and_image(msg_id, post_time, msg_type, cover=cdn_url)
+
+            # 0：结束；1：继续
+            can_msg_continue = resp.get('can_msg_continue')
+            if not can_msg_continue:
+                print('Break , Current offset : %d' % offset)
                 break
+            offset = resp.get('next_offset')  # 下一次请求偏移量
+            print('Next offset : %d' % offset)
 
     def _save_es(self, json_data, article_id):
         self.elastic.put_data(data_body=json_data, _id=article_id)
@@ -156,7 +162,7 @@ class WxMps(object):
 
                 # 缺一不可
                 if appmsg_token and app_msg_id and comment_id:
-                    print('Crawl article comments: ' + content_url)
+                    print('Crawl article comments')
                     self._crawl_comments(app_msg_id, comment_id, appmsg_token, article_id)
 
     def _crawl_comments(self, app_msg_id, comment_id, appmsg_token, article_id):

@@ -225,11 +225,11 @@ class WxMps(object):
 
 
 if __name__ == '__main__':
-    _id = 8
-    biz = 'MzU0NjY4OTIxMg=='
+    _id = 9
+    biz = 'MjM5OTIzNzQwMA=='
     pass_ticket = '0mmsodT51OkWpVrbawDiWcFekqMzBC465Jn9AEAocyTl6S96dcABXTNyU6Yef5KU'
-    app_msg_token = '983_pN3Lluy1HEECKq0OBE8fWvzGYbI3o_7Pc47NrQ~~'
-    cookie = 'wxuin=1604513290; devicetype=Windows8; version=62060426; lang=zh_CN; pass_ticket=0mmsodT51OkWpVrbawDiWcFekqMzBC465Jn9AEAocyTl6S96dcABXTNyU6Yef5KU; wap_sid2=CIrci/0FElxTUFRWaHRVOUJjOXFid2lwQ2ZNOTA3MEtqczlMQVVmWDhDNGVtQUZEV1l3UnlSRWpYTU5NS2VIcWRHZnUzcUhMODUwNzlCTFd1d0Z5b1RCbTIwcWxadGNEQUFBfjD8iMDfBTgNQJVO'
+    app_msg_token = '983_Sb9VVxL9NiWezqpek4tX3Of3t_C-dPrNycdtYQ~~'
+    cookie = 'wxuin=1604513290; devicetype=Windows8; version=62060426; lang=zh_CN; pass_ticket=0mmsodT51OkWpVrbawDiWcFekqMzBC465Jn9AEAocyTl6S96dcABXTNyU6Yef5KU; wap_sid2=CIrci/0FElxfWFYzOWViblp3NzFZVVpTN09FcjdGT0tLcVp2RXItVjdCdFJvRUdmSkl4RzhCUlFHZFQ5alpNUE1EcGlwTWFVYnBnQVpVd2NNY3UxMkRrREowYmFqOWNEQUFBfjCoi8DfBTgNQJVO'
     # 以上信息不同公众号每次抓取都需要借助抓包工具做修改
     wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     wxMps.start()  # 开始爬取文章及评论

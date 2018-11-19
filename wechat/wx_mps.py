@@ -13,7 +13,7 @@ from utils import pgs, es
 class WxMps(object):
     """微信公众号文章、评论抓取爬虫"""
 
-    def __init__(self, _mps_id, _biz, _pass_ticket, _app_msg_token, _cookie, _offset=0):
+    def __init__(self, _mps_id, _biz, _pass_ticket, _app_msg_token, _cookie, _offset=766):
         self.offset = _offset
         self.mps_id = _mps_id
         self.biz = _biz  # 公众号标志
@@ -225,11 +225,11 @@ class WxMps(object):
 
 
 if __name__ == '__main__':
-    _id = 2
-    biz = 'MzI2NDk5NzA0Mw=='
-    pass_ticket = 'eGQUHVHO2FixN3uybbzK6dMFuWc3BGfX/ehEVzof8UA/H+r3zMSJwWdLuW52e2Hq'
-    app_msg_token = '982_NGh6P5pVBmBgZsIFGpvB2E2gdVREbmkM7aChAw~~'
-    cookie = 'rewardsn=; wxtokenkey=777; wxuin=1604513290; devicetype=Windows8; version=62060426; lang=zh_CN; pass_ticket=eGQUHVHO2FixN3uybbzK6dMFuWc3BGfX/ehEVzof8UA/H+r3zMSJwWdLuW52e2Hq; wap_sid2=CIrci/0FElx2cl9pTE5QcDBweExXdnhoeUI0MWJ0NE1JRWV1Qk9HYldzY0FSRGtyWC1za09Uc3o4VGpDa1M5ZEI4ZHNmU2tHSDAwX0xROTFJeXZpVklpdkhtVW5UTllEQUFBfjCuhKHfBTgNQJVO'
+    _id = 9
+    biz = 'MjM5OTIzNzQwMA=='
+    pass_ticket = '0mmsodT51OkWpVrbawDiWcFekqMzBC465Jn9AEAocyTl6S96dcABXTNyU6Yef5KU'
+    app_msg_token = '983_bom0ZdavgyxtOUfnncohwOaHDbWv53Cwv29uHw~~'
+    cookie = 'wxuin=1604513290; devicetype=Windows8; version=62060426; lang=zh_CN; pass_ticket=0mmsodT51OkWpVrbawDiWcFekqMzBC465Jn9AEAocyTl6S96dcABXTNyU6Yef5KU; wap_sid2=CIrci/0FElwxdE5DSTdMSV9nRjBJdmpxaF9teHJmeFE2R3R3WXItaWFoQ1RBMXE4QTN6QXVMNzUtcGRMZDBVMXMtYkJMMEwtaGZFbTBSTDg4eW55UmprY00wVHl1TmNEQUFBfjDa/sDfBTgNQJVO'
     # 以上信息不同公众号每次抓取都需要借助抓包工具做修改
     wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     wxMps.start()  # 开始爬取文章及评论

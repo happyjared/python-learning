@@ -225,10 +225,10 @@ class WxMps(object):
 
 
 if __name__ == '__main__':
-    _id = 12
-    biz = 'MzU2NTQzMjQ2NA=='
+    _id = 13
+    biz = 'MzUzNjE3NzQ3Nw=='
+    app_msg_token = '983_ljhGiAay1HkonXf6GpioCLMJLDsgI1xfxX2sfQ~~'
     pass_ticket = 'bG2uOMszOaJEtnBxcWlKU4kwsL2ZbGzQBJ8oNYqdNTzcMJkBZea97/r1BVhjIdZY'
-    app_msg_token = '983_e59OFYux4VNxeNX2FyZu06fz8u6CIgc0MsF6Ag~~'
     cookie = 'wxuin=1604513290; devicetype=Windows10; version=62060426; lang=zh_TW; pass_ticket=bG2uOMszOaJEtnBxcWlKU4kwsL2ZbGzQBJ8oNYqdNTzcMJkBZea97/r1BVhjIdZY; wap_sid2=CIrci/0FElxSazlYZzY1VFNqZWJWbVh0MTlGNUs4aWF4MDhtc1ozQkxLNWlCMk5XMlQ5V2J0ampIV2xpS0pPSnY2QkkybGQyN01wdlZ6b2J1M3lUUzY5YVphS2VMTmNEQUFBfjDpu83fBTgNQJVO'
     wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     # 开始爬取文章及评论

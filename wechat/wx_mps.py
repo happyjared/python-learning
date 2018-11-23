@@ -225,10 +225,10 @@ class WxMps(object):
 
 
 if __name__ == '__main__':
-    _id = 14
-    biz = 'MzU0ODI1ODQ0MA=='
-    app_msg_token = '984_h1dWuSISAMQYAvZmF6w-FXeZCo1_WzXQQLlqpw~~'
-    # 上面3个定义与公众号相关【_id只是个人数据表的一个唯一标志】，下面3个跟当前微信会话有关
+    _id = 15
+    biz = 'MjM5ODExNTM1Mg=='
+    app_msg_token = '984_oY%2BPmoaQpCyFwJfzmw427kVTyS1wY82qC1iyPg~~'
+    # 上面3个定义与公众号相关【_id仅为个人数据库中的一个标志】，下面3个跟当前微信会话有关
     pass_ticket = 'cHlruU8MUannwhkSARCLH8dao07f4WrhkZP6klmtZZ2QdnLfEIL8g7XuBy46ENSA'
     wap_sid2 = 'CIrci/0FElxPbmxneDVseDRtYjBkQ1ZrNkFfOG0xXzFBQVVNQzNqR0VHZFY4SjRmenpTa2NCXzYxOEltQVV6ZTc1dFV5NGN4b2hjQ3RUQVhPaGF6VE0tUTBQSUgxOWdEQUFBfjDjqN3fBTgNQJVO'
     cookie = 'wxuin=1604513290; version=62060426; pass_ticket={}; wap_sid2={}'.format(pass_ticket, wap_sid2)

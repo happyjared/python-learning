@@ -225,12 +225,12 @@ class WxMps(object):
 
 
 if __name__ == '__main__':
-    _id = 16
-    biz = 'MjM5MTE5NTA0OA=='
-    app_msg_token = '984_QQXUqEid6Ve8DW0jsTdK7K7HVLgwRK6KCY7G9g~~'
+    _id = 17
+    biz = 'MzIxNzYxMTU0OQ=='
+    app_msg_token = '984_siDjNeFXFBuVZfwpspaW4ZLnDL403c9sa07asw~~'
     # 上面3个定义与公众号相关【_id仅为个人数据库中的一个标志】，下面3个跟当前微信会话有关
     pass_ticket = 'cHlruU8MUannwhkSARCLH8dao07f4WrhkZP6klmtZZ2QdnLfEIL8g7XuBy46ENSA'
-    wap_sid2 = 'CIrci/0FElxURWVMdWIzNnhMTFdmMDBNSDJ4X3lkNmRtYnJ1cU9Od09wN2lRbFpHc3dlZklHV29vVi1iQ0J2YlA0dkpNSVU1MXJ1ZWVtS1JrdXNhZTJaS2QwMktZTmdEQUFBfjDOrt3fBTgNQJVO'
+    wap_sid2 = 'CIrci/0FEnBURWVMdWIzNnhMTFdmMDBNSDJ4X3ljMFpCekF2VlJzdUUzR3NQLXJ4QTg4RGlvSk1HR0lEV2Z0SXlmdVZ5NFpvcWYxeThBbGwtNTZGTmdkUTlKR0RqS3JDNTRMcGVlQXhjTXdtYjl6NTlRRFlBd0FBMPSv3d8FOA1AlU4='
     cookie = 'wxuin=1604513290; version=62060426; pass_ticket={}; wap_sid2={}'.format(pass_ticket, wap_sid2)
     wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     # 开始爬取文章及评论

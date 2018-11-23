@@ -230,7 +230,7 @@ if __name__ == '__main__':
     app_msg_token = '984_h1dWuSISAMQYAvZmF6w-FXeZCo1_WzXQQLlqpw~~'
     # 上面3个定义与公众号相关【_id只是个人数据表的一个唯一标志】，下面3个跟当前微信会话有关
     pass_ticket = 'cHlruU8MUannwhkSARCLH8dao07f4WrhkZP6klmtZZ2QdnLfEIL8g7XuBy46ENSA'
-    wap_sid2 = 'CIrci/0FElx3ZTdGRXBqd08tMmZjdVpRb3VpYWdwUE5tcGhCbWRIS0RxMTBtd2NLWmFfLW1hUThUUXdkN3JJRXZPTlVBbjgybWYzWkdGdFVaazJya3VLTzlzaC1ldGdEQUFBfjDrpN3fBTgNQJVO'
+    wap_sid2 = 'CIrci/0FElxPbmxneDVseDRtYjBkQ1ZrNkFfOG0xXzFBQVVNQzNqR0VHZFY4SjRmenpTa2NCXzYxOEltQVV6ZTc1dFV5NGN4b2hjQ3RUQVhPaGF6VE0tUTBQSUgxOWdEQUFBfjDjqN3fBTgNQJVO'
     cookie = 'wxuin=1604513290; version=62060426; pass_ticket={}; wap_sid2={}'.format(pass_ticket, wap_sid2)
     wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     # 开始爬取文章及评论

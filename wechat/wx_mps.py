@@ -227,9 +227,10 @@ class WxMps(object):
 if __name__ == '__main__':
     _id = 13
     biz = 'MzUzNjE3NzQ3Nw=='
-    app_msg_token = '983_ljhGiAay1HkonXf6GpioCLMJLDsgI1xfxX2sfQ~~'
-    pass_ticket = 'bG2uOMszOaJEtnBxcWlKU4kwsL2ZbGzQBJ8oNYqdNTzcMJkBZea97/r1BVhjIdZY'
-    cookie = 'wxuin=1604513290; devicetype=Windows10; version=62060426; lang=zh_TW; pass_ticket=bG2uOMszOaJEtnBxcWlKU4kwsL2ZbGzQBJ8oNYqdNTzcMJkBZea97/r1BVhjIdZY; wap_sid2=CIrci/0FElxSazlYZzY1VFNqZWJWbVh0MTlGNUs4aWF4MDhtc1ozQkxLNWlCMk5XMlQ5V2J0ampIV2xpS0pPSnY2QkkybGQyN01wdlZ6b2J1M3lUUzY5YVphS2VMTmNEQUFBfjDpu83fBTgNQJVO'
+    app_msg_token = '984_ijolE8bKl20y4xaBYXhCewMPPePu6zHGBRmhsQ~~'
+    pass_ticket = 'cHlruU8MUannwhkSARCLH8dao07f4WrhkZP6klmtZZ2QdnLfEIL8g7XuBy46ENSA'
+    wap_sid2 = 'CIrci/0FElx3ZTdGRXBqd08tMmZjdVpRb3VpYWdwUE5tcGhCbWRIS0RxMTBtd2NLWmFfLW1hUThUUXdkN3JJRXZPTlVBbjgybWYzWkdGdFVaazJya3VLTzlzaC1ldGdEQUFBfjDrpN3fBTgNQJVO'
+    cookie = 'wxuin=1604513290; version=62060426; pass_ticket={}; wap_sid2={}'.format(pass_ticket, wap_sid2)
     wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
     # 开始爬取文章及评论
     wxMps.start()

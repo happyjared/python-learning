@@ -27,9 +27,7 @@ class Planet(object):
     def __init__(self):
         self.redis = Planet.redis
         self.postgres = Planet.postgres
-        self.__get_my_hash()
-        self.__get_my_token()
-        self.__get_my_user_id()
+        self.__get_my_info()
         logging.info('Init my hash : %s and my user id : %s', Planet.my_hash, Planet.my_user_id)
 
     def handler(self, sql, params):
@@ -42,32 +40,12 @@ class Planet(object):
 
         return self.postgres.handler(sql, params)
 
-    def __get_my_user_id(self):
-        """获取userId值"""
-
-        if not Planet.my_user_id:
-            key = 'planet:my:uid4'
-            Planet.my_user_id = self.redis.get(key)
-            if not Planet.my_user_id:
-                api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/my-status'
-                resp = requests.post(api, json={}, headers=Planet.headers).json()
-                Planet.my_user_id = resp['notification_settings'][0]['user_id']
-                self.redis.set(key, Planet.my_user_id)
-
-    def __get_my_hash(self):
-        """获取hash值"""
-
-        if not Planet.my_hash:
-            key = 'planet:my:hash4'
-            Planet.my_hash = self.redis.get(key)
-            if not Planet.my_hash:
-                api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/my-dog-hash'
-                resp = requests.post(api, json={}, headers=Planet.headers).json()
-                Planet.my_hash = resp['uid_hash']
-                self.redis.set(key, Planet.my_hash)
-
-    def __get_my_token(self):
-        """获取token值"""
+    def __get_my_info(self):
+        """获取个人info"""
 
         key = 'planet:my:token'
-        Planet.headers['Authorization'] = self.redis.get(key)
+        Planet.headers['Authorization'] = "token " + self.redis.get(key)
+        api = 'https://www.quanquanyuanyuan.cn/huodong/dog/api/my-dog-hash'
+        resp = requests.post(api, json={}, headers=Planet.headers).json()
+        Planet.my_hash = resp['uid_hash']
+        Planet.my_user_id = resp['user_id']

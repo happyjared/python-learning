@@ -39,7 +39,7 @@ class QMM(object):
         for link in bs.tbody.find_all('a'):
             text = link.text
             if self.months:
-                if not list(filter(lambda m: m in text, self.months)): continue
+                if not list(filter(lambda m: m in text[0:len(m)], self.months)): continue
             if self.days:
                 if not list(filter(lambda d: d in text, self.days)): continue
 

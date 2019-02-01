@@ -18,5 +18,5 @@ def receive_red_packet(msg):
         itchat.send(msg, toUserName=user_name)
 
 
-itchat.auto_login(hotReload=True, enableCmdQR=True)
+itchat.auto_login(hotReload=True)
 itchat.run()

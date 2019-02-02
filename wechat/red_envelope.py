@@ -1,6 +1,8 @@
+import os
 import itchat
 from itchat.content import NOTE
 
+os.system('nohup python3 red_envelope.py >> /dev/null 2>&1 &')
 
 @itchat.msg_register(NOTE, isGroupChat=True)
 def receive_red_packet(msg):

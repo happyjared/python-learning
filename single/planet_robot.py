@@ -145,7 +145,7 @@ class PlanetRobot:
         """
 
         scrapy = 'scrapy'
-        postgres = pgs.Pgs(host='localhost', port=12432, db_name=scrapy, user=scrapy, password=scrapy)
+        postgres = pgs.Pgs(host='localhost', port=2432, db_name=scrapy, user=scrapy, password=scrapy)
         rows = postgres.fetch_all(planet_sql.find_random_music(), ())
         row = rows[0]
         music_name = row[1]

@@ -2,7 +2,7 @@ import requests
 from utils import pgs
 
 nearjob = 'nearjob'
-postgres = pgs.Pgs(host='localhost', port=12432, db_name=nearjob, user=nearjob, password=nearjob)
+postgres = pgs.Pgs(host='localhost', port=2432, db_name=nearjob, user=nearjob, password=nearjob)
 
 
 def get_city():

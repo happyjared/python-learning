@@ -39,7 +39,7 @@ class UserItem(Item):
 
 scrapy = 'scrapy'
 db = PostgresqlDatabase(database=scrapy, host="localhost",
-                        port=12432, user=scrapy, password=scrapy,
+                        port=2432, user=scrapy, password=scrapy,
                         autocommit=True, autorollback=True)
 
 

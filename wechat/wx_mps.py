@@ -24,7 +24,7 @@ class WxMps(object):
             'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 '
         }
         wx_mps = 'wxmps'  # 这里数据库、用户、密码一致(需替换成实际的)
-        self.postgres = pgs.Pgs(host='localhost', port='12432', db_name=wx_mps, user=wx_mps, password=wx_mps)
+        self.postgres = pgs.Pgs(host='localhost', port='2432', db_name=wx_mps, user=wx_mps, password=wx_mps)
         self.elastic = es.Es(host='localhost', port=12900, index='mp', doc='article')
 
     def start(self):

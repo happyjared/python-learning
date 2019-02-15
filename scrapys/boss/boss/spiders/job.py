@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 import json
 from urllib import parse
 
@@ -82,8 +83,9 @@ class JobSpider(scrapy.Spider):
         item['job_label'] = json.dumps(job_label, ensure_ascii=False)
         job_desc = response.xpath('//div[@class="text"]/text()').extract()
         item['job_description'] = '\n'.join(map(str.strip, job_desc))
-        post_time = response.xpath('//span[@class="time"]/text()').extract_first().replace('发布于', '')
-        item['post_job_time'] = mytime.str_to_date_with_format(post_time, '%Y-%m-%d %H:%M')
+        post_time = re.search(r'"upDate": "(.*)"', response.text)
+        post_time = post_time.group(1).replace("T", " ")
+        item['post_job_time'] = mytime.str_to_date(post_time)
         address = response.xpath('//div[@class="location-address"]/text()').extract_first().replace(' ', '')
         item['company_location'] = address
         item['company_logo'] = response.xpath('//div[@class="info-company"]/div/a/img/@src').extract_first()

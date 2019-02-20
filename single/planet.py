@@ -9,7 +9,7 @@ class Planet(object):
     log.Logger()
     # Postgres配置
     host = 'localhost'
-    pgs_port = 2432
+    pgs_port = 12432
     pgs_db_name = 'planet'
     pgs_user = pgs_db_name
     pgs_pwd = pgs_db_name

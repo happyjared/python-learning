@@ -14,7 +14,7 @@ class ImoocPipeline(object):
     def __init__(self):
         # PostgreSQL
         host = 'localhost'
-        port = 2432
+        port = 12432
         scrapy = 'scrapy'
         self.postgres = pgs.Pgs(host=host, port=port, db_name=scrapy, user=scrapy, password=scrapy)
         # Redis

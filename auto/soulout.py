@@ -54,7 +54,7 @@ class Attachment(Base):
 
 
 args = 'soulsquare'
-conn = "postgresql+psycopg2://{}:{}@{}:2432/{}".format(args, args, host, args)
+conn = "postgresql+psycopg2://{}:{}@{}:12432/{}".format(args, args, host, args)
 engine = create_engine(conn, encoding='UTF-8')
 
 # 创建session对象

@@ -13,7 +13,7 @@ from datetime import datetime
 class Music163Pipeline(object):
     def __init__(self):
         # Postgres
-        host, port = 'localhost', 2432
+        host, port = 'localhost', 12432
         db_name = 'scrapy'
         self.postgres = pgs.Pgs(host=host, port=port, db_name=db_name, user=db_name, password=db_name)
         # Redis

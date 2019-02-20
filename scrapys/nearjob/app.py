@@ -5,7 +5,7 @@ redis_port, redis_pwd = 12379, 'redis6379'
 
 
 def postgres():
-    return pgs.Pgs(host=host, port=2432, db_name=near_job, user=near_job, password=near_job)
+    return pgs.Pgs(host=host, port=12432, db_name=near_job, user=near_job, password=near_job)
 
 
 def redis():

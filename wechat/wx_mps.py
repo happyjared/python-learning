@@ -9,13 +9,31 @@ import requests
 
 from utils import pgs, es
 
+wx_mps = 'wxmps'  # 这里数据库、用户、密码一致(需替换成实际的)
+postgres = pgs.Pgs(host='localhost', port='12432', db_name=wx_mps, user=wx_mps, password=wx_mps)
+elastic = es.Es(host='localhost', port=12900, index='mp', doc='article')
+
+
+def load():
+    for i in range(1, 19):
+        sql = "select id,mps_biz,last_msg_id,app_msg_token,pass_ticket,wap_sid2 from tb_mps where id = {}".format(i)
+        result = postgres.fetch_all(sql)
+        for r in result:
+            r_id, r_mps_biz, r_last_msg_id, r_app_msg_token, r_pass_ticket, r_wap_sid2 = r[0], r[1], r[2], \
+                                                                                         r[3], r[4], r[5]
+            r_cookie = 'wxuin=1604513290; version=62060426; pass_ticket={}; wap_sid2={}' \
+                .format(r_pass_ticket, r_wap_sid2)
+            mps = WxMps(r_id, r_mps_biz, r_pass_ticket, r_app_msg_token, r_cookie, r_last_msg_id)
+            mps.start()
+
 
 class WxMps(object):
     """微信公众号文章、评论抓取爬虫"""
 
-    def __init__(self, _mps_id, _biz, _pass_ticket, _app_msg_token, _cookie, _offset=0):
+    def __init__(self, _mps_id, _biz, _pass_ticket, _app_msg_token, _cookie, last_msg_id=0, _offset=0):
         self.offset = _offset
         self.mps_id = _mps_id
+        self.last_msg_id = last_msg_id  # 上次抓取的最后消息的id
         self.biz = _biz  # 公众号标志
         self.msg_token = _app_msg_token  # 票据(非固定)
         self.pass_ticket = _pass_ticket  # 票据(非固定)
@@ -23,15 +41,13 @@ class WxMps(object):
             'Cookie': _cookie,  # Cookie(非固定)
             'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 '
         }
-        wx_mps = 'wxmps'  # 这里数据库、用户、密码一致(需替换成实际的)
-        self.postgres = pgs.Pgs(host='localhost', port='12432', db_name=wx_mps, user=wx_mps, password=wx_mps)
-        self.elastic = es.Es(host='localhost', port=12900, index='mp', doc='article')
 
     def start(self):
         """请求获取公众号的文章接口"""
 
+        start = True
         offset = self.offset
-        while True:
+        while start:
             api = 'https://mp.weixin.qq.com/mp/profile_ext?action=getmsg&__biz={0}&f=json&offset={1}' \
                   '&count=10&is_ok=1&scene=124&uin=777&key=777&pass_ticket={2}&wxtoken=&appmsg_token' \
                   '={3}&x5=1&f=json'.format(self.biz, offset, self.pass_ticket, self.msg_token)
@@ -46,6 +62,9 @@ class WxMps(object):
                 for msg in msg_list:
                     comm_msg_info = msg['comm_msg_info']  # 该数据是本次推送多篇文章公共的
                     msg_id = comm_msg_info['id']  # 文章id
+                    if msg_id == self.last_msg_id:
+                        start = False
+                        break
                     post_time = datetime.fromtimestamp(comm_msg_info['datetime'])  # 发布时间
                     msg_type = comm_msg_info['type']  # 文章类型
                     # msg_data = json.dumps(comm_msg_info, ensure_ascii=False)  # msg原数据
@@ -85,12 +104,12 @@ class WxMps(object):
             print('Next offset : %d' % offset)
 
     def _save_es(self, json_data, article_id):
-        self.elastic.put_data(data_body=json_data, _id=article_id)
+        elastic.put_data(data_body=json_data, _id=article_id)
 
     def _save_text_and_image(self, msg_id, post_time, msg_type, cover=None, digest=None):
         """保存只是文字或图片消息"""
 
-        article_id = self.postgres.handler(self._save_only_article(), (
+        article_id = postgres.handler(self._save_only_article(), (
             msg_id, cover, digest, post_time, datetime.now(), self.mps_id, msg_type), fetch=True)
 
         if article_id:
@@ -131,9 +150,9 @@ class WxMps(object):
 
         content_url = content_url.replace('amp;', '').replace('#wechat_redirect', '').replace('http', 'https')
         content = self.crawl_article_content(content_url)
-        article_id = self.postgres.handler(self._save_article(), (msg_id, title, author, cover, digest, source_url,
-                                                                  content_url, post_time, datetime.now(),
-                                                                  self.mps_id, content, msg_type), fetch=True)
+        article_id = postgres.handler(self._save_article(), (msg_id, title, author, cover, digest, source_url,
+                                                             content_url, post_time, datetime.now(),
+                                                             self.mps_id, content, msg_type), fetch=True)
         if article_id:
             json_data = {"articleId": article_id, "author": author, "content": content,
                          "contentURL": content_url, "cover": cover, "digest": digest,
@@ -199,10 +218,10 @@ class WxMps(object):
                         reply_like_num = first_reply.get('reply_like_num')
                         reply_create_time = datetime.fromtimestamp(first_reply.get('create_time'))
 
-                    self.postgres.handler(self._save_article_comment(), (article_id, comment_id, nick_name, logo_url,
-                                                                         content_id, content, like_num, comment_time,
-                                                                         datetime.now(), reply_content, reply_like_num,
-                                                                         reply_create_time, self.mps_id))
+                    postgres.handler(self._save_article_comment(), (article_id, comment_id, nick_name, logo_url,
+                                                                    content_id, content, like_num, comment_time,
+                                                                    datetime.now(), reply_content, reply_like_num,
+                                                                    reply_create_time, self.mps_id))
 
     @staticmethod
     def _save_only_article():

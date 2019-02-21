@@ -244,13 +244,14 @@ class WxMps(object):
 
 
 if __name__ == '__main__':
-    _id = 18
-    biz = 'MjM5NjAxOTU4MA=='
-    app_msg_token = '987_cjLuYj%2BqEZfnkrXFuo06pvB9JHXZHHgSqtFVjg~~'
-    # 上面3个定义与公众号相关【_id仅为个人数据库中的一个标志】，下面3个跟当前微信会话有关
-    pass_ticket = '4UNJTJN77aahj26LxFmo3IgBRs2kAqTpJn++Y/0stu3Q+nXVF8zb00nOMkRiFq5h'
-    wap_sid2 = 'CIrci/0FElx1T2p1M2d6NFczNk1Dd05NUHRab0Fjb205ekxNSlBHV3VlNTVOYXl0Qk5ZUDc3Y2JsZ01jclczYWx3eXdMNUNoMDZhOUF4SkUxRHNIRHc3aG1SZExRZHNEQUFBfjDFjcfgBTgNQJVO'
-    cookie = 'wxuin=1604513290; version=62060426; pass_ticket={}; wap_sid2={}'.format(pass_ticket, wap_sid2)
-    wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
-    # 开始爬取文章及评论
-    wxMps.start()
+    # _id = 18
+    # biz = 'MjM5NjAxOTU4MA=='
+    # app_msg_token = '987_cjLuYj%2BqEZfnkrXFuo06pvB9JHXZHHgSqtFVjg~~'
+    # # 上面3个定义与公众号相关【_id仅为个人数据库中的一个标志】，下面3个跟当前微信会话有关
+    # pass_ticket = '4UNJTJN77aahj26LxFmo3IgBRs2kAqTpJn++Y/0stu3Q+nXVF8zb00nOMkRiFq5h'
+    # wap_sid2 = 'CIrci/0FElx1T2p1M2d6NFczNk1Dd05NUHRab0Fjb205ekxNSlBHV3VlNTVOYXl0Qk5ZUDc3Y2JsZ01jclczYWx3eXdMNUNoMDZhOUF4SkUxRHNIRHc3aG1SZExRZHNEQUFBfjDFjcfgBTgNQJVO'
+    # cookie = 'wxuin=1604513290; version=62060426; pass_ticket={}; wap_sid2={}'.format(pass_ticket, wap_sid2)
+    # wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
+    # # 开始爬取文章及评论
+    # wxMps.start()
+    load()

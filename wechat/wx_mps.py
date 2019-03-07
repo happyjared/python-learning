@@ -64,6 +64,7 @@ class WxMps(object):
                     comm_msg_info = msg['comm_msg_info']  # 该数据是本次推送多篇文章公共的
                     msg_id = comm_msg_info['id']  # 文章id
                     if msg_id == self.last_msg_id:
+                        print("最新一条啦{}".format(self.last_msg_id))
                         start = False
                         break
                     post_time = datetime.fromtimestamp(comm_msg_info['datetime'])  # 发布时间

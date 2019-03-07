@@ -16,13 +16,14 @@ elastic = es.Es(host='localhost', port=12900, index='mp', doc='article')
 
 def load():
     for i in range(1, 19):
-        sql = "select id,mps_biz,last_msg_id,app_msg_token,pass_ticket,wap_sid2 from tb_mps where id = {}".format(i)
+        sql = "select id,mps_biz,last_msg_id,app_msg_token,pass_ticket,wap_sid2 from " \
+              "tb_mps where id = {} and show = True".format(i)
         result = postgres.fetch_all(sql)
         for r in result:
             r_id, r_mps_biz, r_last_msg_id, r_app_msg_token, r_pass_ticket, r_wap_sid2 = r[0], r[1], r[2], \
                                                                                          r[3], r[4], r[5]
-            r_cookie = 'wxuin=1604513290; version=62060426; pass_ticket={}; wap_sid2={}' \
-                .format(r_pass_ticket, r_wap_sid2)
+            r_cookie = 'wxuin=1604513290; version=62060619; lang=zh_TW; pass_ticket={}; wap_sid2={}'.format(
+                r_pass_ticket, r_wap_sid2)
             mps = WxMps(r_id, r_mps_biz, r_pass_ticket, r_app_msg_token, r_cookie, r_last_msg_id)
             mps.start()
 
@@ -39,7 +40,7 @@ class WxMps(object):
         self.pass_ticket = _pass_ticket  # 票据(非固定)
         self.headers = {
             'Cookie': _cookie,  # Cookie(非固定)
-            'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 '
+            'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132'
         }
 
     def start(self):

@@ -15,7 +15,7 @@ elastic = es.Es(host='localhost', port=12900, index='mp', doc='article')
 
 
 def load():
-    for i in range(7, 19):
+    for i in range(1, 19):
         sql = "select id,mps_biz,last_msg_id,app_msg_token,pass_ticket,wap_sid2 from " \
               "tb_mps where id = {} and show = True".format(i)
         result = postgres.fetch_all(sql)

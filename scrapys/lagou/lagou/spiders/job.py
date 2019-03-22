@@ -46,6 +46,7 @@ class JobSpider(scrapy.Spider):
     def parse(self, response):
         self.logger.warning(response)
         resp = json.loads(response.body_as_unicode())
+        self.logger.info(resp)
         success = resp.get('success')
         self.logger.info('1. resp code %s success %s' % (resp.get('code'), success))
         if success:

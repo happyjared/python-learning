@@ -5,15 +5,13 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-import time
 import logging
 import random
-import requests
-from utils import mycaptcha
+import time
+
 from scrapy import signals
-from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 from scrapy.downloadermiddlewares.redirect import RedirectMiddleware
-from scrapy.downloadermiddlewares.httpproxy import HttpProxyMiddleware
+from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 
 
 # from scrapys.nearjob import app

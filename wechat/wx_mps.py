@@ -10,23 +10,23 @@ import requests
 from utils import pgs, es
 
 
-# wx_mps = 'wxmps'  # 这里数据库、用户、密码一致(需替换成实际的)
-# postgres = pgs.Pgs(host='localhost', port='12432', db_name=wx_mps, user=wx_mps, password=wx_mps)
-# elastic = es.Es(host='localhost', port=12900, index='mp', doc='article')
-#
-#
-# def load():
-#     for i in range(20, 21):
-#         sql = "select id,mps_biz,last_msg_id,app_msg_token,pass_ticket,wap_sid2 from " \
-#               "tb_mps where id = {} and show = True".format(i)
-#         result = postgres.fetch_all(sql)
-#         for r in result:
-#             r_id, r_mps_biz, r_last_msg_id, r_app_msg_token, r_pass_ticket, r_wap_sid2 = r[0], r[1], r[2], \
-#                                                                                          r[3], r[4], r[5]
-#             r_cookie = 'wxuin=1604513290; version=62060619; lang=zh_TW; pass_ticket={}; wap_sid2={}'.format(
-#                 r_pass_ticket, r_wap_sid2)
-#             mps = WxMps(r_id, r_mps_biz, r_pass_ticket, r_app_msg_token, r_cookie, r_last_msg_id)
-#             mps.start()
+wx_mps = 'wxmps'  # 这里数据库、用户、密码一致(需替换成实际的)
+postgres = pgs.Pgs(host='localhost', port='12432', db_name=wx_mps, user=wx_mps, password=wx_mps)
+elastic = es.Es(host='localhost', port=12900, index='mp', doc='article')
+
+
+def load():
+    for i in range(21, 22):
+        sql = "select id,mps_biz,last_msg_id,app_msg_token,pass_ticket,wap_sid2 from " \
+              "tb_mps where id = {} and show = True".format(i)
+        result = postgres.fetch_all(sql)
+        for r in result:
+            r_id, r_mps_biz, r_last_msg_id, r_app_msg_token, r_pass_ticket, r_wap_sid2 = r[0], r[1], r[2], \
+                                                                                         r[3], r[4], r[5]
+            r_cookie = 'wxuin=1604513290; version=62060619; lang=zh_TW; pass_ticket={}; wap_sid2={}'.format(
+                r_pass_ticket, r_wap_sid2)
+            mps = WxMps(r_id, r_mps_biz, r_pass_ticket, r_app_msg_token, r_cookie, r_last_msg_id)
+            mps.start()
 
 
 class WxMps(object):
@@ -247,14 +247,14 @@ class WxMps(object):
 
 
 if __name__ == '__main__':
-    _id = 18
-    biz = 'MjM5NjAxOTU4MA=='
-    app_msg_token = '987_cjLuYj%2BqEZfnkrXFuo06pvB9JHXZHHgSqtFVjg~~'
-    # 上面3个定义与公众号相关【_id仅为个人数据库中的一个标志】，下面3个跟当前微信会话有关
-    pass_ticket = '4UNJTJN77aahj26LxFmo3IgBRs2kAqTpJn++Y/0stu3Q+nXVF8zb00nOMkRiFq5h'
-    wap_sid2 = 'CIrci/0FElx1T2p1M2d6NFczNk1Dd05NUHRab0Fjb205ekxNSlBHV3VlNTVOYXl0Qk5ZUDc3Y2JsZ01jclczYWx3eXdMNUNoMDZhOUF4SkUxRHNIRHc3aG1SZExRZHNEQUFBfjDFjcfgBTgNQJVO'
-    cookie = 'wxuin=1604513290; version=62060426; pass_ticket={}; wap_sid2={}'.format(pass_ticket, wap_sid2)
-    wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
-    # 开始爬取文章及评论
-    wxMps.start()
-    # load()
+    # _id = 18
+    # biz = 'MjM5NjAxOTU4MA=='
+    # app_msg_token = '987_cjLuYj%2BqEZfnkrXFuo06pvB9JHXZHHgSqtFVjg~~'
+    # # 上面3个定义与公众号相关【_id仅为个人数据库中的一个标志】，下面3个跟当前微信会话有关
+    # pass_ticket = '4UNJTJN77aahj26LxFmo3IgBRs2kAqTpJn++Y/0stu3Q+nXVF8zb00nOMkRiFq5h'
+    # wap_sid2 = 'CIrci/0FElx1T2p1M2d6NFczNk1Dd05NUHRab0Fjb205ekxNSlBHV3VlNTVOYXl0Qk5ZUDc3Y2JsZ01jclczYWx3eXdMNUNoMDZhOUF4SkUxRHNIRHc3aG1SZExRZHNEQUFBfjDFjcfgBTgNQJVO'
+    # cookie = 'wxuin=1604513290; version=62060426; pass_ticket={}; wap_sid2={}'.format(pass_ticket, wap_sid2)
+    # wxMps = WxMps(_id, biz, pass_ticket, app_msg_token, cookie)
+    # # 开始爬取文章及评论
+    # wxMps.start()
+    load()

@@ -10,13 +10,13 @@ import requests
 from utils import pgs, es
 
 
-# wx_mps = 'wxmps'  # 这里数据库、用户、密码一致(需替换成实际的)
-# postgres = pgs.Pgs(host='localhost', port='12432', db_name=wx_mps, user=wx_mps, password=wx_mps)
-# elastic = es.Es(host='localhost', port=12900, index='mp', doc='article')
-#
-#
+wx_mps = 'wxmps'  # 这里数据库、用户、密码一致(需替换成实际的)
+postgres = pgs.Pgs(host='localhost', port='12432', db_name=wx_mps, user=wx_mps, password=wx_mps)
+elastic = es.Es(host='localhost', port=12900, index='mp', doc='article')
+
+
 # def load():
-#     for i in range(20, 21):
+#     for i in range(21, 22):
 #         sql = "select id,mps_biz,last_msg_id,app_msg_token,pass_ticket,wap_sid2 from " \
 #               "tb_mps where id = {} and show = True".format(i)
 #         result = postgres.fetch_all(sql)

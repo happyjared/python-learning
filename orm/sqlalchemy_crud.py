@@ -25,7 +25,7 @@ class User(Base):
 
 
 # 创建数据库连接（'数据库类型+数据库驱动名称://用户名:密码@ip地址:端口/数据库名'）
-conn =  "postgresql+psycopg2://postgres:<password>@<ip>:5432/postgres"
+conn = "postgresql+psycopg2://postgres:<password>@<ip>:5432/postgres"
 engine = create_engine(conn, encoding='UTF-8', echo=False)  # echo=True表示输出执行日志,默认为False
 
 # 删除映射数据表(如果存在)

@@ -10,9 +10,9 @@ from sqlalchemy import Column, String, Integer, FLOAT, TIMESTAMP, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-argv_length = sys.argv
-if len(argv_length) > 1:
-    os.system("nohup python3 {} >> /dev/null 2>&1 &".format(sys.argv[0]))
+argv = sys.argv
+if len(argv) > 1:
+    os.system("nohup python3 {} >> /dev/null 2>&1 &".format(argv[0]))
 else:
     # 基类
     base = declarative_base()

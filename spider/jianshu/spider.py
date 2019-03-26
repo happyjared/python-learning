@@ -1,7 +1,7 @@
-import sys
-import os
 import datetime
+import os
 import random
+import sys
 import time
 
 import requests
@@ -18,6 +18,10 @@ else:
     base = declarative_base()
 
 
+    def get_now():
+        return datetime.datetime.now()
+
+
     class Article(base):
         __tablename__ = "tb_jianshu_article"
 
@@ -28,7 +32,7 @@ else:
         ic_reward = Column(Integer, nullable=False, comment="赞赏人次")
         comment_num = Column(Integer, nullable=False, comment="评论人次")
         publish_time = Column(TIMESTAMP, nullable=False, comment="发布时间")
-        init_time = datetime.datetime.now()
+        init_time = get_now()
         update_time = Column(TIMESTAMP, nullable=False, default=init_time, comment="更新时间")
         create_time = Column(TIMESTAMP, nullable=False, default=init_time, comment="创建时间")
 
@@ -51,7 +55,7 @@ else:
         else:
             # update
             article.ic_paid, article.ic_like, article.ic_reward, article.comment_num = paid, like, reward, num
-            article.update_time = datetime.datetime.now()
+            article.update_time = get_now()
         session.add(article)
         session.commit()
 
@@ -101,7 +105,7 @@ else:
                             publish_time = datetime.datetime.strptime(publish_time, "%Y-%m-%dT%H:%M:%S+08:00")
 
                             publish_date = datetime.datetime.date(publish_time)
-                            today_date = datetime.datetime.date(datetime.datetime.now())
+                            today_date = datetime.datetime.date(get_now())
                             if publish_date == today_date:
                                 # 查看次数 && 评论人次
                                 a_list = meta.find_all("a")

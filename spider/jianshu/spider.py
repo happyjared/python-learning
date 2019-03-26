@@ -23,7 +23,7 @@ class Article(base):
     create_time = Column(TIMESTAMP, nullable=False, default=datetime.datetime.now())
 
 
-conn = "postgresql+psycopg2://postgres:pgsmaster5432@193.112.0.219:12432/scrapy"
+conn = "postgresql+psycopg2://postgres:pgsmaster5432@localhost:12432/scrapy"
 engine = create_engine(conn, encoding='UTF-8', echo=False)
 base.metadata.create_all(engine)
 
@@ -65,27 +65,29 @@ while True:
                     html = resp.text
                     bs = BeautifulSoup(html, 'html.parser')
                     content_list = bs.find_all("div", class_="content")
-                    for content in content_list[0:1]:
-                        meta = content.find("div", class_="meta")
 
-                        # 简书钻数 && 喜欢人次 && 发布时间
-                        ic_paid = ic_like = 0
-                        publish_time = None
-                        span_list = meta.find_all("span")
-                        if len(span_list) == 2:
-                            ic_like, publish_time = span_list[0].text.strip(), span_list[1]["data-shared-at"]
-                        else:
-                            ic_paid = span_list[0].text.strip()
-                            ic_like, publish_time = span_list[1].text.strip(), span_list[2]["data-shared-at"]
-                        publish_time = datetime.datetime.strptime(publish_time, '%Y-%m-%dT%H:%M:%S+08:00')
+                    content = content_list[0]
+                    meta = content.find("div", class_="meta")
 
-                        publish_date = datetime.datetime.date(publish_time)
-                        today_date = datetime.datetime.date(datetime.datetime.now())
-                        if publish_date == today_date:
-                            # 查看次数 && 评论人次
-                            a_list = meta.find_all("a")
-                            article_url_suffix, comment_num = a_list[0]['href'], a_list[1].text.strip()
+                    # 简书钻数 && 喜欢人次 && 发布时间
+                    ic_paid = ic_like = 0
+                    publish_time = None
+                    span_list = meta.find_all("span")
+                    if len(span_list) == 2:
+                        ic_like, publish_time = span_list[0].text.strip(), span_list[1]["data-shared-at"]
+                    else:
+                        ic_paid = span_list[0].text.strip()
+                        ic_like, publish_time = span_list[1].text.strip(), span_list[2]["data-shared-at"]
+                    publish_time = datetime.datetime.strptime(publish_time, '%Y-%m-%dT%H:%M:%S+08:00')
 
-                            save_article(article_url_suffix, ic_paid, ic_like, comment_num, publish_time)
+                    publish_date = datetime.datetime.date(publish_time)
+                    today_date = datetime.datetime.date(datetime.datetime.now())
+                    if publish_date == today_date:
+                        # 查看次数 && 评论人次
+                        a_list = meta.find_all("a")
+                        article_url_suffix, comment_num = a_list[0]['href'], a_list[1].text.strip()
+
+                        save_article(article_url_suffix, ic_paid, ic_like, comment_num, publish_time)
+
     print("sleep...")
     time.sleep(300)

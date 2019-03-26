@@ -32,9 +32,8 @@ else:
         ic_reward = Column(Integer, nullable=False, comment="赞赏人次")
         comment_num = Column(Integer, nullable=False, comment="评论人次")
         publish_time = Column(TIMESTAMP, nullable=False, comment="发布时间")
-        init_time = get_now()
-        update_time = Column(TIMESTAMP, nullable=False, default=init_time, comment="更新时间")
-        create_time = Column(TIMESTAMP, nullable=False, default=init_time, comment="创建时间")
+        update_time = Column(TIMESTAMP, nullable=False, comment="更新时间")
+        create_time = Column(TIMESTAMP, nullable=False, comment="创建时间")
 
 
     conn = "postgresql+psycopg2://postgres:pgsmaster5432@localhost:12432/scrapy"
@@ -50,8 +49,9 @@ else:
         article = session.query(Article).filter(Article.article_url_suffix == suffix).first()
         if not article:
             # add
-            article = Article(article_url_suffix=suffix, ic_paid=paid, ic_reward=reward,
-                              ic_like=like, comment_num=num, publish_time=p_time)
+            init_time = get_now()
+            article = Article(article_url_suffix=suffix, ic_paid=paid, ic_reward=reward, ic_like=like,
+                              comment_num=num, publish_time=p_time, update_time=init_time, create_time=init_time)
         else:
             # update
             article.ic_paid, article.ic_like, article.ic_reward, article.comment_num = paid, like, reward, num

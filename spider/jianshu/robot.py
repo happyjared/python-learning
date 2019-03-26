@@ -50,6 +50,7 @@ else:
     session = Session()
 
     domain = "https://www.jianshu.com"
+    note_like = "https://www.jianshu.com/notes/{}/like"
     headers = {
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
     }
@@ -79,7 +80,12 @@ else:
             if resp.status_code == 200:
                 bs = BeautifulSoup(resp.text, "html.parser")
                 meta = bs.find("meta", {"name": "csrf-token"})
-                token = meta["content"]
+                note = bs.find("div", {"data-vcomp": "recommended-notes"})
+
+                note_id = note["data-note-id"]
+                headers["x-csrf-token"] = meta["content"]
+                resp = requests.post(note_like.format(note_id), headers)
+                print(resp.status_code)
 
 
     may_like()

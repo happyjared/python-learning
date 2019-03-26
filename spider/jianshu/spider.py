@@ -6,7 +6,7 @@ from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
-from sqlalchemy import Column, String, Integer, FLOAT, TIMESTAMP, create_engine
+from sqlalchemy import Column, String, Integer, FLOAT, TIMESTAMP, BOOLEAN, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -32,6 +32,7 @@ else:
         ic_reward = Column(Integer, nullable=False, comment="赞赏人次")
         comment_num = Column(Integer, nullable=False, comment="评论人次")
         publish_time = Column(TIMESTAMP, nullable=False, comment="发布时间")
+        processed = Column(BOOLEAN, nullable=False, default=False, comment="处理状态。True:已处理;False:未处理")
         update_time = Column(TIMESTAMP, nullable=False, comment="更新时间")
         create_time = Column(TIMESTAMP, nullable=False, comment="创建时间")
 

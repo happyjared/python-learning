@@ -1,8 +1,8 @@
-import datetime
 import os
 import random
 import sys
 import time
+from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
@@ -19,7 +19,7 @@ else:
 
 
     def get_now():
-        return datetime.datetime.now()
+        return datetime.now()
 
 
     class Article(base):
@@ -102,10 +102,10 @@ else:
                                     publish_time = span_list[2]["data-shared-at"]
                                 elif span_list_length == 4:
                                     ic_reward, publish_time = span_list[2].text.strip(), span_list[3]["data-shared-at"]
-                            publish_time = datetime.datetime.strptime(publish_time, "%Y-%m-%dT%H:%M:%S+08:00")
+                            publish_time = datetime.strptime(publish_time, "%Y-%m-%dT%H:%M:%S+08:00")
 
-                            publish_date = datetime.datetime.date(publish_time)
-                            today_date = datetime.datetime.date(get_now())
+                            publish_date = datetime.date(publish_time)
+                            today_date = datetime.date(get_now())
                             if publish_date == today_date:
                                 # 查看次数 && 评论人次
                                 a_list = meta.find_all("a")

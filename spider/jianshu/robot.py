@@ -10,8 +10,10 @@ from sqlalchemy.orm import sessionmaker
 
 argv = sys.argv
 if len(argv) > 1:
+    # python3 robot.py jianshu
     os.system("nohup python3 {} >> /dev/null 2>&1 &".format(argv[0]))
 else:
+    # python3 robot.py
     # 基类
     base = declarative_base()
 
@@ -39,10 +41,11 @@ else:
         __tablename__ = "tb_jianshu_info"
 
         id = Column(Integer, primary_key=True, autoincrement=True)
-        cookie = Column(String(3000))
+        cookie = Column(String(3000), nullable=False)
+        expired = Column(BOOLEAN, nullable=False)
 
 
-    conn = "postgresql+psycopg2://postgres:pgsmaster5432@193.112.0.219:12432/scrapy"
+    conn = "postgresql+psycopg2://postgres:pgsmaster5432@localhost:12432/scrapy"
     engine = create_engine(conn, encoding="UTF-8", echo=False)
     base.metadata.create_all(engine)
 
@@ -58,6 +61,13 @@ else:
 
     def get_info():
         return session.query(Info).first()
+
+
+    def update_info():
+        info = session.query(Info).first()
+        info.expired = True
+        session.add(info)
+        session.commit()
 
 
     def get_article():
@@ -85,7 +95,9 @@ else:
                 note_id = note["data-note-id"]
                 headers["x-csrf-token"] = meta["content"]
                 resp = requests.post(note_like.format(note_id), headers)
-                print(resp.status_code)
+
+                if not resp.status_code == 200:
+                    update_info()
 
 
     may_like()

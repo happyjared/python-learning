@@ -11,5 +11,5 @@ def job():
 
 
 scheduler = BlockingScheduler()
-scheduler.add_job(job, 'bihu', hour=7)
+scheduler.add_job(job, "cron", hour=7)
 scheduler.start()

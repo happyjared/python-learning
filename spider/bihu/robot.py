@@ -19,7 +19,6 @@ def sleep():
 options = Options()
 options.add_argument('window-size=1366x728')
 options.add_argument('--disable-gpu')
-options.add_argument('--hide-scrollbars')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 options.add_argument('--headless')
@@ -42,9 +41,9 @@ driver.find_element_by_xpath('//*[@id="root"]/div/div/div/div[1]/div[3]/div/div[
 driver.find_element_by_class_name("LoaderButton").click()
 sleep()
 
-print(driver.title)
+print(driver.current_url)
 # 登录成功
-if driver.current_url == bihu:
+if driver.current_url == bihu + "/":
 
     bs = BeautifulSoup(driver.page_source, 'html.parser')
     item_list = bs.find_all("li", class_="ArticleItem")

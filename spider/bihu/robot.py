@@ -45,63 +45,66 @@ sleep()
 print(driver.current_url)
 if driver.current_url == bihu + "/":
 
-    # # 点赞长文
-    # bs = BeautifulSoup(driver.page_source, 'html.parser')
-    # item_list = bs.find_all("li", class_="ArticleItem")
-    # articles = {}
-    # for article_item in item_list:
-    #     # 解析ArticleItem
-    #     user_info = article_item.find("div", class_="user-info")
-    #     p_list = user_info.find_all("p")
-    #     publish_time = p_list[-1].text
-    #
-    #     bottom = article_item.find("div", class_="item-bottom")
-    #     bottom_list = bottom.find_all("span")
-    #     # Key数 && 点赞数 && 评论数
-    #     key, like, comment = bottom_list
-    #     key_num, like_num, comment_num = key.text.strip(), like.text.strip(), comment.text.strip()
-    #
-    #     content_info = article_item.find("div", class_="content-info")
-    #     info = content_info.find("a")
-    #     articles[info["href"]] = int(like_num)
-    #
-    # num = 0
-    # # 点赞操作
-    # for key, value in sorted(articles.items(), key=lambda item: item[1]):
-    #     if num >= 6: break
-    #
-    #     article = "{}{}".format(bihu, key)
-    #     driver.get(article)
-    #     sleep()
-    #     target = driver.find_element_by_class_name("collect-div")
-    #     driver.execute_script("arguments[0].scrollIntoView()", target)
-    #     sleep()
-    #
-    #     details = driver.find_element_by_class_name("article-details-center2")
-    #     buttons = details.find_elements_by_tag_name("button")
-    #     if len(buttons) == 3:
-    #         num += 1
-    #         buttons[1].click()
-    #         sleep()
-    #
-    # print("长文已点赞完...")
+    # 1. 点赞长文
+    bs = BeautifulSoup(driver.page_source, 'html.parser')
+    item_list = bs.find_all("li", class_="ArticleItem")
+    articles = {}
+    for article_item in item_list:
+        # 解析ArticleItem
+        user_info = article_item.find("div", class_="user-info")
+        p_list = user_info.find_all("p")
+        publish_time = p_list[-1].text
 
-    # 点赞微文
+        bottom = article_item.find("div", class_="item-bottom")
+        bottom_list = bottom.find_all("span")
+        # Key数 && 点赞数 && 评论数
+        key, like, comment = bottom_list
+        key_num, like_num, comment_num = key.text.strip(), like.text.strip(), comment.text.strip()
+
+        content_info = article_item.find("div", class_="content-info")
+        info = content_info.find("a")
+        articles[info["href"]] = int(like_num)
+
+    num = 0
+    # 点赞操作
+    for key, value in sorted(articles.items(), key=lambda item: item[1]):
+        if num >= 6: break
+
+        article = "{}{}".format(bihu, key)
+        driver.get(article)
+        sleep()
+        target = driver.find_element_by_class_name("collect-div")
+        driver.execute_script("arguments[0].scrollIntoView()", target)
+        sleep()
+
+        details = driver.find_element_by_class_name("article-details-center2")
+        buttons = details.find_elements_by_tag_name("button")
+        if len(buttons) == 3:
+            num += 1
+            buttons[1].click()
+            sleep()
+
+    print("长文已点赞完...")
+
+    # 2. 点赞微文
     driver.get("https://bihu.com/shortcontents")
     sleep()
+
     i = 0
     while True:
-        driver.execute_script("document.body.scrollTop=100000")
-        sleep(3, 5)
-        i += 1
-        if i >= 5: break
-
-    short_items = driver.find_elements_by_class_name("ShortItem")
-    for short_item in short_items:
-        bottom = short_item.find_element_by_class_name("item-bottom")
-        buttons = bottom.find_elements_by_tag_name("button")
-        buttons[1].click()
-        sleep(1, 3)
+        short_items = driver.find_elements_by_class_name("ShortItem")
+        short_items_length = len(short_items)
+        for index, short_item in enumerate(short_items):
+            bottom = short_item.find_element_by_class_name("item-bottom")
+            buttons = bottom.find_elements_by_tag_name("button")
+            like_button = buttons[1]
+            if like_button and like_button.is_enabled():
+                like_button.click()
+                sleep(1, 3)
+                i += 1
+            if index + 1 == short_items_length:
+                sleep(5, 10)
+        if i >= 100: break
 
     # bs = BeautifulSoup(driver.page_source, 'html.parser')
     # item_list = bs.find_all("li", class_="ShortItem")

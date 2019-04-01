@@ -1,13 +1,15 @@
-import json
-import random
 import re
 import time
+import json
+import random
+import urllib3
+import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-import requests
-
 from utils import pgs, es
+
+urllib3.disable_warnings()
 
 wx_mps = 'wxmps'  # 这里数据库、用户、密码一致(需替换成实际的)
 postgres = pgs.Pgs(host='localhost', port='12432', db_name=wx_mps, user=wx_mps, password=wx_mps)

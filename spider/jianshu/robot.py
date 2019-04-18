@@ -1,103 +1,155 @@
-import os
+import random
 import sys
-import requests
-from datetime import datetime
+import time
 
-from bs4 import BeautifulSoup
-from sqlalchemy import Column, String, Integer, FLOAT, TIMESTAMP, BOOLEAN, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.wait import WebDriverWait
 
 argv = sys.argv
-if len(argv) > 1:
-    # python3 robot.py jianshu
-    os.system("nohup python3 {} >> /dev/null 2>&1 &".format(argv[0]))
-else:
-    # python3 robot.py
-    # 基类
-    base = declarative_base()
+argv_length = len(argv)
 
 
-    def get_now():
-        return datetime.now()
+def sleep(min_seconds=3, max_seconds=10):
+    """随机休眠"""
+    time.sleep(random.randint(min_seconds, max_seconds))
 
 
-    class Article(base):
-        __tablename__ = "tb_jianshu_article"
+# 无头模式
+options = Options()
+options.add_argument('--headless')
+options.add_argument('log-level=3')
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-gpu')
+options.add_argument('window-size=1366x728')
+options.add_argument('--disable-dev-shm-usage')
+driver = webdriver.Chrome(chrome_options=options)
 
-        id = Column(Integer, primary_key=True, autoincrement=True)
-        article_url_suffix = Column(String(50), nullable=False, index=True, unique=True, comment="地址后缀")
-        ic_paid = Column(FLOAT(2), nullable=False, comment="简书钻数")
-        ic_like = Column(Integer, nullable=False, comment="喜欢人次")
-        ic_reward = Column(Integer, nullable=False, comment="赞赏人次")
-        comment_num = Column(Integer, nullable=False, comment="评论人次")
-        publish_time = Column(TIMESTAMP, nullable=False, comment="发布时间")
-        processed = Column(BOOLEAN, nullable=False, default=False, comment="处理状态。True:已处理;False:未处理")
-        update_time = Column(TIMESTAMP, nullable=False, comment="更新时间")
-        create_time = Column(TIMESTAMP, nullable=False, comment="创建时间")
+username = argv[1] if argv_length > 1 else input("请输入登录账号\n")
+password = argv[2] if argv_length > 2 else input("请输入登录密码\n")
+role = int(argv[3]) if argv_length > 3 else input("请输入Role\n")
 
+# 登录简书
+jianshu = "https://www.jianshu.com"
+driver.get("{}/sign_in".format(jianshu))
+driver.maximize_window()
 
-    class Info(base):
-        __tablename__ = "tb_jianshu_info"
+if role == 0:
+    # QQ登录
+    driver.find_element_by_id("qq").click()
+    sleep()
+    # 切换到最新打开的窗口
+    driver.close()
+    window_handles = driver.window_handles
+    driver.switch_to.window(window_handles[-1])
+    # 切换iframe
+    i_frame = WebDriverWait(driver, 3).until(lambda d: d.find_element_by_id('ptlogin_iframe'))
+    driver.switch_to.frame(i_frame)
+    driver.find_element_by_id("switcher_plogin").click(), sleep()
+    driver.find_element_by_id("u").send_keys(username)
+    driver.find_element_by_id("p").send_keys(password)
+    driver.find_element_by_id("login_button").click()
+elif role == 1:
+    # 豆瓣登录
+    driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div/ul/li[4]").click()
+    driver.find_element_by_class_name("douban").click()
+    sleep()
+    # 切换到最新打开的窗口
+    driver.close()
+    window_handles = driver.window_handles
+    driver.switch_to.window(window_handles[-1])
+    driver.find_element_by_id("inp-alias").send_keys(username)
+    driver.find_element_by_id("inp-pwd").send_keys(password)
+    driver.find_element_by_xpath("/html/body/div/div[2]/form[2]/div[4]/input[1]").click()
+sleep()
 
-        id = Column(Integer, primary_key=True, autoincrement=True)
-        cookie = Column(String(3000), nullable=False)
-        expired = Column(BOOLEAN, nullable=False)
+page_title = driver.title
+print("当前：{}".format(page_title))
 
+# 1.写文（一言）
+driver.get("{}/writer#/".format(jianshu)), sleep()
+driver.find_element_by_class_name("_1GsW5").click(), sleep()
 
-    conn = "postgresql+psycopg2://postgres:pgsmaster5432@localhost:12432/scrapy"
-    engine = create_engine(conn, encoding="UTF-8", echo=False)
-    base.metadata.create_all(engine)
+driver.find_element_by_class_name("_24i7u").send_keys(Keys.HOME)
+title_prefix = "每日一言：" if role == 0 else "一言美句："
+driver.find_element_by_class_name("_24i7u").send_keys(title_prefix)
 
-    Session = sessionmaker(bind=engine)
-    session = Session()
+i = 0
+content = ""
+while len(content) < 500:
+    resp = requests.get("https://v1.hitokoto.cn/").json()
+    hitokoto = resp.get("hitokoto")
+    if hitokoto:
+        i += 1
+        content += hitokoto
+        driver.find_element_by_id("arthur-editor").send_keys(str(i) + ". " + hitokoto)
+        if len(content) < 500:
+            driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
+            driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
 
-    domain = "https://www.jianshu.com"
-    note_like = "https://www.jianshu.com/notes/{}/like"
-    headers = {
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-    }
+# 发布文章
+driver.find_element_by_class_name("tGbI7").click(), sleep(10, 15)
+if role == 1:
+    # 点个喜欢
+    driver.find_element_by_class_name("_2-ZiM").click(), sleep()
+    driver.find_element_by_xpath("/html/body/div[1]/div[3]/ul/li[4]/a/i").click(), sleep()
+if role == 0:
+    # 取消发布
+    # driver.get("{}/writer#/".format(jianshu)), sleep()
+    # driver.find_element_by_css_selector('a[data-action="privatize"]').click()
+    pass
+sleep()
 
+# 2.阅读(PC无效)
+# driver.get(jianshu)
+# sleep()
+# content_elements = driver.find_elements_by_class_name("content")
+# for content_element in content_elements:
+#     article_element = content_element.find_element_by_class_name("title")
+#     article_element.click(), sleep(3, 5)
+#     window_handles = driver.window_handles
+#     driver.switch_to.window(window_handles[-1])
+#     driver.execute_script("window.scrollTo(0,document.body.scrollHeight)"), sleep(1, 3)
+#     driver.execute_script("window.scrollTo(document.body.scrollHeight,0)"), sleep(1, 3)
+#     driver.close()
+#     window_handles = driver.window_handles
+#     driver.switch_to.window(window_handles[0])
+# sleep()
 
-    def get_info():
-        return session.query(Info).first()
+# 3.点赞
+# if role == 0:
+#     jianshu_u = "{}/u/".format(jianshu)
+#     role_0 = []
+# elif role == 1:
+#     driver.get("{}/users/68a80b0c87a5/following".format(jianshu))
+#     user_list_element = driver.find_element_by_class_name("user-list")
+#     user_elements = user_list_element.find_elements_by_class_name("avatar")
+#     for user_element in user_elements:
+#         user_element.click(), sleep()
+#         article_list_element = driver.find_element_by_class_name("note-list")
+#         top_article_time_element = article_list_element.find_element_by_class_name("time")
+#         if True:
+#             article_list_element.find_element_by_class_name("wrap-img").click(), sleep()
+#             window_handles = driver.window_handles
+#             driver.switch_to.window(window_handles[-1])
+#             driver.find_element_by_css_selector("class='iconfont ic-like'").click()
+#             driver.close()
+# sleep()
 
-
-    def update_info():
-        info = session.query(Info).first()
-        info.expired = True
-        session.add(info)
-        session.commit()
-
-
-    def get_article():
-        return session.query(Article).filter_by(processed=False).all()
-
-
-    def update_article(article_id):
-        article = session.query(Article).get(article_id)
-        article.processed = True
-        session.add(article)
-        session.commit()
-
-
-    def may_like():
-        for article in get_article():
-            info = get_info()
-            headers["cookie"] = info.cookie
-            article_detail = domain + article.article_url_suffix
-            resp = requests.get(article_detail, headers=headers)
-            if resp.status_code == 200:
-                bs = BeautifulSoup(resp.text, "html.parser")
-                meta = bs.find("meta", {"name": "csrf-token"})
-                note = bs.find("div", {"data-vcomp": "recommended-notes"})
-
-                note_id = note["data-note-id"]
-                headers["x-csrf-token"] = meta["content"]
-                resp = requests.post(note_like.format(note_id), headers)
-
-                if not resp.status_code == 200:
-                    update_info()
-
-
-    may_like()
+# 4.评论
+jianshu_p = "{}/p/".format(jianshu)
+if role == 0:
+    role_0 = "ac02c56c0865"
+    driver.get("{}{}".format(jianshu_p, role_0)), sleep()
+    driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
+    driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
+    driver.find_element_by_id('like-button-38968576').click()
+elif role == 1:
+    role_1 = "be27870bdba9"
+    driver.get("{}{}".format(jianshu_p, role_1)), sleep()
+    driver.execute_script("window.scrollTo(0,1400)"), sleep(1, 2)
+    driver.find_element_by_id('like-button-38969657').click(), sleep(1, 2)
+    driver.find_element_by_id('like-button-38969657').click()
+sleep()

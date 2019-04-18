@@ -14,13 +14,12 @@ class YiQiSpider(scrapy.Spider):
         super().__init__(name, **kwargs)
         self.getUserById = 'http://api.wondertech.com.cn/user/v2/users/getById'
         # self.likeUser = 'http://api.wondertech.com.cn/fmvoice/v1/voice/vlike'
-        self.token = 'eyJhbGciOiJIUzUxMiJ9.eyJwaG9uZSI6IjEzNzA5NjQxNzEzIiwiZXhw' \
-                     'IjoxNTQ4OTAxMDM4LCJ1c2VySWQiOjU4NjQzfQ.-N6EqLyAU_NvXqcNTT' \
-                     'awkpfY_6lidC_XjvYJAnHr-AfBTCz2kT1-Sht_sTDZZOB_lDX6bruHTTJ8SzfZyX1JkA'
+        self.token = 'eyJhbGciOiJIUzUxMiJ9.eyJwaG9uZSI6IjEzNzA5NjQxNzEzIiwiZXhwIjoxNTU3MTIxMjQxLCJ1c2VySWQiOjU4NjQzfQ.lLvZd0L-ged9WdbQmj9ATS10l_GcyPLIR6P2-THjeZ9VA-iifxpfGBQAFtHPctN0aDHcyFWixiWVb5dzUn7JHw'
+
         self.formData = {'token': self.token}
 
     def start_requests(self):
-        for user_id in range(307478, 320000):
+        for user_id in range(309130, 350000):
             self.formData['id'] = str(user_id)
             yield FormRequest(self.getUserById, formdata=self.formData,
                               callback=self.parse, meta={'uid': user_id})

@@ -69,7 +69,7 @@ sleep()
 page_title = driver.title
 print("当前：{}".format(page_title))
 
-# 1.写文（一言）
+# 1.写文(一言Hitokoto)
 driver.get("{}/writer#/".format(jianshu)), sleep()
 driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sleep()
 
@@ -93,15 +93,7 @@ while len(content) < 500:
             driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
 
 # 发布文章
-driver.find_element_by_css_selector("i[class='fa fa-mail-forward']").click(), sleep(10, 15)
-if role == 1:
-    # 点个喜欢
-    driver.find_element_by_class_name("_2-ZiM").click(), sleep()
-    driver.find_element_by_xpath("/html/body/div[1]/div[3]/ul/li[4]/a/i").click(), sleep()
-else:
-    # 取消发布
-    driver.get("{}/writer#/".format(jianshu)), sleep()
-    driver.find_element_by_css_selector("li[class='tGbI7 cztJE']").click()
+driver.find_element_by_css_selector("i[class='fa fa-mail-forward']").click()
 sleep()
 
 # 2.阅读(PC无效)
@@ -120,7 +112,7 @@ sleep()
 #     driver.switch_to.window(window_handles[0])
 # sleep()
 
-# 3.点赞
+# 3.点赞(手动操作)
 # if role == 0:
 #     jianshu_u = "{}/u/".format(jianshu)
 #     role_0 = []

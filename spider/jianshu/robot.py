@@ -3,6 +3,7 @@ import sys
 import time
 
 import requests
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
@@ -51,7 +52,7 @@ if role == 0:
     driver.find_element_by_id("u").send_keys(username)
     driver.find_element_by_id("p").send_keys(password)
     driver.find_element_by_id("login_button").click()
-elif role == 1:
+else:
     # 豆瓣登录
     driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div/ul/li[4]").click()
     driver.find_element_by_class_name("douban").click()
@@ -70,10 +71,12 @@ print("当前：{}".format(page_title))
 
 # 1.写文（一言）
 driver.get("{}/writer#/".format(jianshu)), sleep()
-driver.find_element_by_class_name("_1GsW5").click(), sleep()
+driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sleep()
 
 driver.find_element_by_class_name("_24i7u").send_keys(Keys.HOME)
-title_prefix = "每日一言：" if role == 0 else "一言美句："
+title_prefix = "一言美句：" if role == 1 else "每日一言："
+now_hour = datetime.now().hour
+title_prefix = "早晨! " if now_hour < 18 else "晚安! " + title_prefix
 driver.find_element_by_class_name("_24i7u").send_keys(title_prefix)
 
 i = 0
@@ -90,16 +93,15 @@ while len(content) < 500:
             driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
 
 # 发布文章
-driver.find_element_by_class_name("tGbI7").click(), sleep(10, 15)
+driver.find_element_by_css_selector("i[class='fa fa-mail-forward']").click(), sleep(10, 15)
 if role == 1:
     # 点个喜欢
     driver.find_element_by_class_name("_2-ZiM").click(), sleep()
     driver.find_element_by_xpath("/html/body/div[1]/div[3]/ul/li[4]/a/i").click(), sleep()
-if role == 0:
+else:
     # 取消发布
-    # driver.get("{}/writer#/".format(jianshu)), sleep()
-    # driver.find_element_by_css_selector('a[data-action="privatize"]').click()
-    pass
+    driver.get("{}/writer#/".format(jianshu)), sleep()
+    driver.find_element_by_css_selector("li[class='tGbI7 cztJE']").click()
 sleep()
 
 # 2.阅读(PC无效)
@@ -140,16 +142,16 @@ sleep()
 
 # 4.评论
 jianshu_p = "{}/p/".format(jianshu)
-if role == 0:
-    role_0 = "ac02c56c0865"
-    driver.get("{}{}".format(jianshu_p, role_0)), sleep()
-    driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
-    driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
-    driver.find_element_by_id('like-button-38968576').click()
-elif role == 1:
+if role == 1:
     role_1 = "be27870bdba9"
     driver.get("{}{}".format(jianshu_p, role_1)), sleep()
     driver.execute_script("window.scrollTo(0,1400)"), sleep(1, 2)
     driver.find_element_by_id('like-button-38969657').click(), sleep(1, 2)
     driver.find_element_by_id('like-button-38969657').click()
+else:
+    role_0 = "ac02c56c0865"
+    driver.get("{}{}".format(jianshu_p, role_0)), sleep()
+    driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
+    driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
+    driver.find_element_by_id('like-button-38968576').click()
 sleep()

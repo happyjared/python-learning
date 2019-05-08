@@ -78,16 +78,16 @@ title_prefix = "早晨" if datetime.now().hour < 18 else "晚安"
 title_prefix2 = "一言美句" if role == 1 else "每日一言"
 driver.find_element_by_class_name("_24i7u").send_keys((title_prefix + "！" + title_prefix2 + "："))
 
-i = 0
 content = ""
-while len(content) < 1000:
+i, content_length = 0, random.randint(800, 1500)
+while len(content) < content_length:
     resp = requests.get("https://v1.hitokoto.cn/").json()
     hitokoto = resp.get("hitokoto")
     if hitokoto:
         i += 1
         content += hitokoto
         driver.find_element_by_id("arthur-editor").send_keys(str(i) + ". " + hitokoto)
-        if len(content) < 1000:
+        if len(content) < content_length:
             driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
             driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
 

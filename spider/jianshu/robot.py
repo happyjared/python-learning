@@ -88,7 +88,7 @@ while len(content) < 1000:
         i += 1
         content += hitokoto
         driver.find_element_by_id("arthur-editor").send_keys(str(i) + ". " + hitokoto)
-        if len(content) < 500:
+        if len(content) < 1000:
             driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
             driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
 

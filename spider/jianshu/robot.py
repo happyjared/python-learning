@@ -76,12 +76,12 @@ driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sle
 driver.find_element_by_class_name("_24i7u").send_keys(Keys.HOME)
 title_prefix = "一言美句：" if role == 1 else "每日一言："
 now_hour = datetime.now().hour
-title_prefix = "早晨! " if now_hour < 18 else "晚安! " + title_prefix
+title_prefix = "早晨！" if now_hour < 18 else "晚安！" + title_prefix
 driver.find_element_by_class_name("_24i7u").send_keys(title_prefix)
 
 i = 0
 content = ""
-while len(content) < 500:
+while len(content) < 1000:
     resp = requests.get("https://v1.hitokoto.cn/").json()
     hitokoto = resp.get("hitokoto")
     if hitokoto:

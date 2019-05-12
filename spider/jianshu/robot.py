@@ -74,7 +74,8 @@ driver.get("{}/writer#/".format(jianshu)), sleep()
 driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sleep()
 
 driver.find_element_by_class_name("_24i7u").send_keys(Keys.HOME)
-title_prefix = "早晨" if datetime.now().hour < 18 else "晚安"
+is_day = datetime.now().hour < 18
+title_prefix = "早晨" if is_day < 18 else "晚安"
 title_prefix2 = "一言美句" if role == 1 else "每日一言"
 driver.find_element_by_class_name("_24i7u").send_keys((title_prefix + "！" + title_prefix2 + "："))
 
@@ -132,17 +133,18 @@ sleep()
 # sleep()
 
 # 4.评论
-jianshu_p = "{}/p/".format(jianshu)
-if role == 1:
-    role_1 = "be27870bdba9"
-    driver.get("{}{}".format(jianshu_p, role_1)), sleep()
-    driver.execute_script("window.scrollTo(0,1400)"), sleep(1, 2)
-    driver.find_element_by_id('like-button-38969657').click(), sleep(1, 2)
-    driver.find_element_by_id('like-button-38969657').click()
-else:
-    role_0 = "ac02c56c0865"
-    driver.get("{}{}".format(jianshu_p, role_0)), sleep()
-    driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
-    driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
-    driver.find_element_by_id('like-button-38968576').click()
-sleep()
+if is_day:
+    jianshu_p = "{}/p/".format(jianshu)
+    if role == 1:
+        role_1 = "be27870bdba9"
+        driver.get("{}{}".format(jianshu_p, role_1)), sleep()
+        driver.execute_script("window.scrollTo(0,1400)"), sleep(1, 2)
+        driver.find_element_by_id('like-button-38969657').click(), sleep(1, 2)
+        driver.find_element_by_id('like-button-38969657').click()
+    else:
+        role_0 = "ac02c56c0865"
+        driver.get("{}{}".format(jianshu_p, role_0)), sleep()
+        driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
+        driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
+        driver.find_element_by_id('like-button-38968576').click()
+    sleep()

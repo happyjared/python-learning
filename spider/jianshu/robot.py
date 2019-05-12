@@ -75,7 +75,7 @@ driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sle
 
 driver.find_element_by_class_name("_24i7u").send_keys(Keys.HOME)
 is_day = datetime.now().hour < 18
-title_prefix = "早晨" if is_day < 18 else "晚安"
+title_prefix = "早晨" if is_day else "晚安"
 title_prefix2 = "一言美句" if role == 1 else "每日一言"
 driver.find_element_by_class_name("_24i7u").send_keys((title_prefix + "！" + title_prefix2 + "："))
 

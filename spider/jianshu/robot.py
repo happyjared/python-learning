@@ -82,19 +82,26 @@ sleep()
 if is_day:
     jianshu_p = "{}/p/".format(jianshu)
     if role == 0:
+        p_suffix = "ac02c56c0865"
+        driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
+        driver.execute_script("window.scrollTo(0,3400)"), sleep(1, 2)
+        driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
+        driver.find_element_by_id('like-button-38968576').click()
+    elif role == 1:
         p_suffix = "be27870bdba9"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
         driver.execute_script("window.scrollTo(0,1400)"), sleep(1, 2)
         driver.find_element_by_id('like-button-38969657').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-38969657').click()
-    elif role == 1:
-        p_suffix = "ac02c56c0865"
+    elif role == 2:
+        p_suffix = "277f1b0a140d"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
         driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
-        driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
-        driver.find_element_by_id('like-button-38968576').click()
-    elif role == 2:
-        pass
+        driver.find_element_by_id('like-button-40692862').click(), sleep(1, 2)
+        driver.find_element_by_id('like-button-40692862').click()
     elif role == 3:
-        pass
-    sleep()
+        p_suffix = "15eb212788fc"
+        driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
+        driver.execute_script("window.scrollTo(0,2000)"), sleep(1, 2)
+        driver.find_element_by_id('like-button-40693328').click(), sleep(1, 2)
+        driver.find_element_by_id('like-button-40693328').click()

@@ -105,3 +105,9 @@ if is_day:
         driver.execute_script("window.scrollTo(0,2000)"), sleep(1, 2)
         driver.find_element_by_id('like-button-40693328').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-40693328').click()
+
+sleep()
+driver.get("{}{}".format(jianshu, "/notifications#/likes")), sleep(1, 2)
+driver.get("{}{}".format(jianshu, "/notifications#/others")), sleep(1, 2)
+driver.get("{}{}".format(jianshu, "/notifications#/follows")), sleep(1, 2)
+driver.get("{}{}".format(jianshu, "/notifications#/comments"))

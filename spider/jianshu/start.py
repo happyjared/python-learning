@@ -3,12 +3,14 @@
 # @date : 2019/5/16 19:33
 
 import os
+import sys
+
 from apscheduler.schedulers.background import *
 
 
-def robot_job(job, hour):
+def robot_job(hour):
     scheduler = BlockingScheduler()
-    scheduler.add_job(job, 'cron', hour=hour)
+    scheduler.add_job(robot, 'cron', hour=hour)
     scheduler.start()
 
 
@@ -17,5 +19,7 @@ def robot():
 
 
 if __name__ == '__main__':
-    os.system("nohup python3 start.py 22 >> /dev/null 2>&1 &")
-    os.system("nohup python3 start.py 6 >> /dev/null 2>&1 &")
+    argv = sys.argv
+    robot_job(argv[1])
+    # os.system("nohup python3 start.py 22 >> /dev/null 2>&1 &")
+    # os.system("nohup python3 start.py 6 >> /dev/null 2>&1 &")

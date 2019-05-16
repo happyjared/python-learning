@@ -105,6 +105,13 @@ if is_day:
         driver.execute_script("window.scrollTo(0,2000)"), sleep(1, 2)
         driver.find_element_by_id('like-button-40693328').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-40693328').click()
+    elif role == 4:
+        pass
+        # p_suffix = "ac02c56c0865"
+        # driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
+        # driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
+        # driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
+        # driver.find_element_by_id('like-button-38968576').click()
     elif role == 10:
         pass
         # p_suffix = "ac02c56c0865"

@@ -17,5 +17,5 @@ def robot():
 
 
 if __name__ == '__main__':
-    os.system("nohup python3 start.py 5 >> /dev/null 2>&1 &")
+    os.system("nohup python3 start.py 23 >> /dev/null 2>&1 &")
     os.system("nohup python3 start.py 6 >> /dev/null 2>&1 &")

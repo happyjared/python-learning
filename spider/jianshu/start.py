@@ -18,8 +18,7 @@ def robot():
     os.system('./start.sh')
 
 
+# nohup python3 start.py 22 >> /dev/null 2>&1 &
 if __name__ == '__main__':
     argv = sys.argv
     robot_job(argv[1])
-    # os.system("nohup python3 start.py 22 >> /dev/null 2>&1 &")
-    # os.system("nohup python3 start.py 6 >> /dev/null 2>&1 &")

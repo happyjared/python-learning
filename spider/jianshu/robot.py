@@ -50,20 +50,25 @@ driver.find_element_by_xpath("/html/body/div/div[2]/form[2]/div[4]/input[1]").cl
 sleep()
 
 page_title = driver.title
-print("当前：{}".format(page_title))
+print("当前{} ：{}".format(role, page_title))
 
 # 1.写文
 driver.get("{}/writer#/".format(jianshu)), sleep()
 driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sleep()
 
-driver.find_element_by_class_name("_24i7u").send_keys(Keys.HOME)
 is_day = datetime.now().hour < 18
-title_prefix = "早晨" if is_day else "晚安"
-title_prefix2 = "每日一言" if role == 0 else "一言美句"
-driver.find_element_by_class_name("_24i7u").send_keys((title_prefix + "！" + title_prefix2 + "："))
+if role == 0 or role == 1:
+    title_prefix = "早晨" if is_day else "晚安"
+    title_prefix2 = "每日一言" if role == 0 else "一言美句"
+    driver.find_element_by_class_name("_24i7u").send_keys(Keys.HOME)
+    driver.find_element_by_class_name("_24i7u").send_keys((title_prefix + "！" + title_prefix2 + "："))
+else:
+    resp = requests.get("https://v1.hitokoto.cn/").json()
+    title = resp.get('hitokoto')
+    driver.find_element_by_class_name("_24i7u").clear()
+    driver.find_element_by_class_name("_24i7u").send_keys(title)
 
-content = ""
-count, content_length = 0, random.randint(1000, 1500)
+content, count, content_length = "", 0, random.randint(1000, 1500)
 while len(content) < content_length:
     resp = requests.get("https://v1.hitokoto.cn/").json()
     hitokoto = resp.get("hitokoto")
@@ -106,6 +111,13 @@ if is_day:
         driver.find_element_by_id('like-button-40693328').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-40693328').click()
     elif role == 4:
+        pass
+        # p_suffix = "ac02c56c0865"
+        # driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
+        # driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
+        # driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
+        # driver.find_element_by_id('like-button-38968576').click()
+    elif role == 5:
         pass
         # p_suffix = "ac02c56c0865"
         # driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()

@@ -123,19 +123,17 @@ if is_day:
         driver.find_element_by_id('like-button-40874520').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-40874520').click()
     elif role == 10:
-        pass
-        # p_suffix = "ac02c56c0865"
-        # driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        # driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
-        # driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
-        # driver.find_element_by_id('like-button-38968576').click()
+        p_suffix = "f9a76934b45f"
+        driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
+        driver.execute_script("window.scrollTo(0,2500)"), sleep(1, 2)
+        driver.find_element_by_id('like-button-40892474').click(), sleep(1, 2)
+        driver.find_element_by_id('like-button-40892474').click()
     elif role == 11:
-        pass
-        # p_suffix = "be27870bdba9"
-        # driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        # driver.execute_script("window.scrollTo(0,1400)"), sleep(1, 2)
-        # driver.find_element_by_id('like-button-38969657').click(), sleep(1, 2)
-        # driver.find_element_by_id('like-button-38969657').click()
+        p_suffix = "8f93afad869f"
+        driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
+        driver.execute_script("window.scrollTo(0,3800)"), sleep(1, 2)
+        driver.find_element_by_id('like-button-40892368').click(), sleep(1, 2)
+        driver.find_element_by_id('like-button-40892368').click()
 
 sleep()
 driver.get("{}{}".format(jianshu, "/notifications#/likes")), sleep(1, 2)

@@ -1,3 +1,5 @@
+import os
+import platform
 import random
 import sys
 import time
@@ -10,6 +12,13 @@ from selenium.webdriver.common.keys import Keys
 
 argv = sys.argv
 argv_length = len(argv)
+
+username = argv[1] if argv_length > 1 else input("请输入登录账号\n")
+password = argv[2] if argv_length > 2 else input("请输入登录密码\n")
+role = int(argv[3]) if argv_length > 3 else input("请输入Role\n")
+
+if platform.system() == "Linux":
+    os.system('ps -ef | grep chrome | awk "{print \$2}" | xargs kill -9')
 
 
 def sleep(min_seconds=3, max_seconds=10):
@@ -26,10 +35,6 @@ options.add_argument('--disable-gpu')
 options.add_argument('window-size=1366x728')
 options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(chrome_options=options)
-
-username = argv[1] if argv_length > 1 else input("请输入登录账号\n")
-password = argv[2] if argv_length > 2 else input("请输入登录密码\n")
-role = int(argv[3]) if argv_length > 3 else input("请输入Role\n")
 
 # 登录简书
 jianshu = "https://www.jianshu.com"
@@ -50,7 +55,7 @@ driver.find_element_by_xpath("/html/body/div/div[2]/form[2]/div[4]/input[1]").cl
 sleep()
 
 page_title = driver.title
-print("当前{} ：{}".format(role, page_title))
+print("{} ：{}".format(role, page_title))
 
 # 1.写文
 driver.get("{}/writer#/".format(jianshu)), sleep()
@@ -67,6 +72,12 @@ else:
     title = resp.get('hitokoto')
     driver.find_element_by_class_name("_24i7u").clear()
     driver.find_element_by_class_name("_24i7u").send_keys(title)
+
+start = '> 动漫也好、小说也好、网络也好，不论在哪里，我们总会看到有那么一两个句子能穿透你的心，这就是一言。' \
+        '或是感动，或是开心，又或是单纯的回忆，与大家分享，这就是一言存在的目的。'
+driver.find_element_by_id("arthur-editor").send_keys(start)
+driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
+driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
 
 content, count, content_length = "", 0, random.randint(1000, 1500)
 while len(content) < content_length:
@@ -101,37 +112,37 @@ if is_day:
     elif role == 2:
         p_suffix = "277f1b0a140d"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,3400)"), sleep(1, 2)
         driver.find_element_by_id('like-button-40692862').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-40692862').click()
     elif role == 3:
         p_suffix = "15eb212788fc"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,2000)"), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,2150)"), sleep(1, 2)
         driver.find_element_by_id('like-button-40693328').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-40693328').click()
     elif role == 4:
         p_suffix = "81d5ae85f38a"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,3600)"), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,3550)"), sleep(1, 2)
         driver.find_element_by_id('like-button-40874580').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-40874580').click()
     elif role == 5:
         p_suffix = "4dca23c2c75a"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,3400)"), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,3550)"), sleep(1, 2)
         driver.find_element_by_id('like-button-40874520').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-40874520').click()
     elif role == 10:
         p_suffix = "f9a76934b45f"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,2500)"), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,2600)"), sleep(1, 2)
         driver.find_element_by_id('like-button-40892474').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-40892474').click()
     elif role == 11:
         p_suffix = "8f93afad869f"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,3800)"), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,3900)"), sleep(1, 2)
         driver.find_element_by_id('like-button-40892368').click(), sleep(1, 2)
         driver.find_element_by_id('like-button-40892368').click()
 

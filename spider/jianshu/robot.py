@@ -73,23 +73,26 @@ else:
     driver.find_element_by_class_name("_24i7u").clear()
     driver.find_element_by_class_name("_24i7u").send_keys(title)
 
-start = '> 动漫也好、小说也好、网络也好，不论在哪里，我们总会看到有那么一两个句子能穿透你的心，这就是一言。' \
-        '或是感动，或是开心，又或是单纯的回忆，与大家分享，这就是一言存在的目的。'
-driver.find_element_by_id("arthur-editor").send_keys(start)
-driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
-driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
+editor = "arthur-editor"
+start = '> 动漫也好、小说也罢，不论在哪里，总会看到有那么一两个句子能穿透你的心，这就是一言。'
+driver.find_element_by_id(editor).send_keys(start)
+driver.find_element_by_id(editor).send_keys(Keys.ENTER)
+driver.find_element_by_id(editor).send_keys(Keys.ENTER)
 
-content, count, content_length = "", 0, random.randint(1000, 1500)
+content, count, content_length = "", 0, random.randint(700, 1200)
 while len(content) < content_length:
     resp = requests.get("https://v1.hitokoto.cn/").json()
     hitokoto = resp.get("hitokoto")
     if hitokoto:
         count += 1
         content += hitokoto
-        driver.find_element_by_id("arthur-editor").send_keys(str(count) + ". " + hitokoto)
+        driver.find_element_by_id(editor).send_keys(str(count) + ". " + hitokoto)
         if len(content) < content_length:
-            driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
-            driver.find_element_by_id("arthur-editor").send_keys(Keys.ENTER)
+            driver.find_element_by_id(editor).send_keys(Keys.ENTER)
+            driver.find_element_by_id(editor).send_keys(Keys.ENTER)
+
+end = '> 或是开心，或是感动，又或是单纯的回忆，与大家分享美句，这就是一言。'
+driver.find_element_by_id(editor).send_keys(end)
 # 发布文章
 driver.find_element_by_css_selector("i[class='fa fa-mail-forward']").click()
 sleep()

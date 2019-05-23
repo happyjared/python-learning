@@ -86,9 +86,10 @@ while len(content) < content_length:
             driver.find_element_by_id(editor).send_keys(Keys.ENTER)
             driver.find_element_by_id(editor).send_keys(Keys.ENTER)
 
+driver.find_element_by_id(editor).send_keys(Keys.ENTER)
+driver.find_element_by_id(editor).send_keys(Keys.ENTER)
 end = '> 动漫也好、小说也罢，不论在哪里，总会看到有那么一两个句子能穿透你的心，这就是一言。'
 driver.find_element_by_id(editor).send_keys(end)
-driver.find_element_by_id(editor).send_keys(Keys.ENTER)
 # 发布文章
 driver.find_element_by_css_selector("i[class='fa fa-mail-forward']").click()
 sleep()

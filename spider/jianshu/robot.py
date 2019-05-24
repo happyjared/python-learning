@@ -81,7 +81,8 @@ while len(content) < content_length:
     if hitokoto:
         count += 1
         content += hitokoto
-        driver.find_element_by_id(editor).send_keys(str(count) + ". " + hitokoto)
+        mark = "- " if role % 2 == 0 else str(count) + ". "
+        driver.find_element_by_id(editor).send_keys(mark + hitokoto)
         if len(content) < content_length:
             driver.find_element_by_id(editor).send_keys(Keys.ENTER)
             driver.find_element_by_id(editor).send_keys(Keys.ENTER)

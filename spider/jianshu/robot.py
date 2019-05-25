@@ -73,25 +73,20 @@ else:
     driver.find_element_by_class_name("_24i7u").clear()
     driver.find_element_by_class_name("_24i7u").send_keys(title)
 
-content, editor = "", "arthur-editor"
-count, content_length = 0, random.randint(700, 1200)
-while len(content) < content_length:
+content, editor, count = "", "arthur-editor", 0
+while len(content) < 600:
     resp = requests.get("https://v1.hitokoto.cn/").json()
     hitokoto = resp.get("hitokoto")
     if hitokoto:
         count += 1
-        content += hitokoto
+        content += hitokoto.strip()
         mark = "- " if role % 2 == 0 else str(count) + ". "
         driver.find_element_by_id(editor).send_keys(mark + hitokoto)
-        if len(content) < content_length:
-            driver.find_element_by_id(editor).send_keys(Keys.ENTER)
-            driver.find_element_by_id(editor).send_keys(Keys.ENTER)
+        driver.find_element_by_id(editor).send_keys(Keys.ENTER)
+        driver.find_element_by_id(editor).send_keys(Keys.ENTER)
 
-driver.find_element_by_id(editor).send_keys(Keys.ENTER)
-driver.find_element_by_id(editor).send_keys(Keys.ENTER)
 end = '> 动漫也好、小说也罢，不论在哪里，总会看到有那么一两个句子能穿透你的心，这就是一言。'
 driver.find_element_by_id(editor).send_keys(end)
-# 发布文章
 driver.find_element_by_css_selector("i[class='fa fa-mail-forward']").click()
 sleep()
 

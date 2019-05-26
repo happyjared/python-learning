@@ -75,13 +75,13 @@ else:
 
 content, editor, count = "", "arthur-editor", 0
 while len(content) < 600:
-    resp = requests.get("https://v1.hitokoto.cn/").json()
+    api = random.choice(('international.v1.hitokoto.cn', "v1.hitokoto.cn"))
+    resp = requests.get("https://{}".format(api)).json()
     hitokoto = resp.get("hitokoto")
     if hitokoto:
         count += 1
         content += hitokoto.strip()
-        mark = "- " if role % 2 == 0 else str(count) + ". "
-        driver.find_element_by_id(editor).send_keys(mark + hitokoto)
+        driver.find_element_by_id(editor).send_keys(str(count) + ". " + hitokoto)
         driver.find_element_by_id(editor).send_keys(Keys.ENTER)
         driver.find_element_by_id(editor).send_keys(Keys.ENTER)
 

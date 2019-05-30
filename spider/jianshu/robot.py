@@ -1,4 +1,5 @@
 import os
+import logging
 import platform
 import random
 import sys
@@ -26,6 +27,8 @@ def sleep(min_seconds=3, max_seconds=10):
     time.sleep(random.randint(min_seconds, max_seconds))
 
 
+logging.basicConfig(level='INFO', filename='info.log',
+                    format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
 # 无头模式
 options = Options()
 options.add_argument('--headless')
@@ -55,7 +58,7 @@ driver.find_element_by_xpath("/html/body/div/div[2]/form[2]/div[4]/input[1]").cl
 sleep()
 
 page_title = driver.title
-print("{} ：{}".format(role, page_title))
+logging.info("{} ：{}".format(role, page_title))
 
 # 1.写文
 driver.get("{}/writer#/".format(jianshu)), sleep()
@@ -96,50 +99,50 @@ if is_day:
     if role == 0:
         p_suffix = "ac02c56c0865"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,3200)"), sleep(1, 2)
-        driver.find_element_by_id('like-button-38968576').click(), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,3200)"), sleep(3, 5)
+        driver.find_element_by_id('like-button-38968576').click(), sleep(3, 5)
         driver.find_element_by_id('like-button-38968576').click()
     elif role == 1:
         p_suffix = "be27870bdba9"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,1400)"), sleep(1, 2)
-        driver.find_element_by_id('like-button-38969657').click(), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,1400)"), sleep(3, 5)
+        driver.find_element_by_id('like-button-38969657').click(), sleep(3, 5)
         driver.find_element_by_id('like-button-38969657').click()
     elif role == 2:
         p_suffix = "277f1b0a140d"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,3400)"), sleep(1, 2)
-        driver.find_element_by_id('like-button-40692862').click(), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,3400)"), sleep(3, 5)
+        driver.find_element_by_id('like-button-40692862').click(), sleep(3, 5)
         driver.find_element_by_id('like-button-40692862').click()
     elif role == 3:
         p_suffix = "15eb212788fc"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,2150)"), sleep(1, 2)
-        driver.find_element_by_id('like-button-40693328').click(), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,2150)"), sleep(3, 5)
+        driver.find_element_by_id('like-button-40693328').click(), sleep(3, 5)
         driver.find_element_by_id('like-button-40693328').click()
     elif role == 4:
         p_suffix = "81d5ae85f38a"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,3550)"), sleep(1, 2)
-        driver.find_element_by_id('like-button-40874580').click(), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,3550)"), sleep(3, 5)
+        driver.find_element_by_id('like-button-40874580').click(), sleep(3, 5)
         driver.find_element_by_id('like-button-40874580').click()
     elif role == 5:
         p_suffix = "4dca23c2c75a"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,3550)"), sleep(1, 2)
-        driver.find_element_by_id('like-button-40874520').click(), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,3550)"), sleep(3, 5)
+        driver.find_element_by_id('like-button-40874520').click(), sleep(3, 5)
         driver.find_element_by_id('like-button-40874520').click()
     elif role == 10:
         p_suffix = "f9a76934b45f"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,2600)"), sleep(1, 2)
-        driver.find_element_by_id('like-button-40892474').click(), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,2600)"), sleep(3, 5)
+        driver.find_element_by_id('like-button-40892474').click(), sleep(3, 5)
         driver.find_element_by_id('like-button-40892474').click()
     elif role == 11:
         p_suffix = "8f93afad869f"
         driver.get("{}{}".format(jianshu_p, p_suffix)), sleep()
-        driver.execute_script("window.scrollTo(0,3900)"), sleep(1, 2)
-        driver.find_element_by_id('like-button-40892368').click(), sleep(1, 2)
+        driver.execute_script("window.scrollTo(0,3900)"), sleep(3, 5)
+        driver.find_element_by_id('like-button-40892368').click(), sleep(3, 5)
         driver.find_element_by_id('like-button-40892368').click()
 
 sleep()

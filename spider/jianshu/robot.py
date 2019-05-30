@@ -93,6 +93,13 @@ driver.find_element_by_id(editor).send_keys(end)
 driver.find_element_by_css_selector("i[class='fa fa-mail-forward']").click()
 sleep()
 
+driver.get("{}{}".format(jianshu, "/notifications#/likes")), sleep(1, 2)
+driver.get("{}{}".format(jianshu, "/notifications#/others")), sleep(1, 2)
+driver.get("{}{}".format(jianshu, "/notifications#/follows")), sleep(1, 2)
+driver.get("{}{}".format(jianshu, "/notifications#/money")), sleep(1, 2)
+driver.get("{}{}".format(jianshu, "/notifications#/comments")), sleep(1, 2)
+sleep()
+
 # 2.评论
 if is_day:
     jianshu_p = "{}/p/".format(jianshu)
@@ -145,10 +152,4 @@ if is_day:
         driver.find_element_by_id('like-button-40892368').click(), sleep(3, 5)
         driver.find_element_by_id('like-button-40892368').click()
 
-sleep()
-driver.get("{}{}".format(jianshu, "/notifications#/likes")), sleep(1, 2)
-driver.get("{}{}".format(jianshu, "/notifications#/others")), sleep(1, 2)
-driver.get("{}{}".format(jianshu, "/notifications#/follows")), sleep(1, 2)
-driver.get("{}{}".format(jianshu, "/notifications#/money")), sleep(1, 2)
-driver.get("{}{}".format(jianshu, "/notifications#/comments"))
 driver.quit()

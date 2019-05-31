@@ -100,7 +100,14 @@ driver.get("{}{}".format(jianshu, "/notifications#/money")), sleep(1, 2)
 driver.get("{}{}".format(jianshu, "/notifications#/comments")), sleep(1, 2)
 sleep()
 
-# 2.评论
+# 2. 收益
+driver.get('{}/mobile/fp?read_mode=night'.format(jianshu)), sleep(1, 2)
+elements = driver.find_elements_by_class_name("order")
+info = ' ; '.join(map(lambda ele: ele.text, elements[1:]))
+logging.info("{} : {}".format(role, info))
+sleep()
+
+# 3.评论
 if is_day:
     jianshu_p = "{}/p/".format(jianshu)
     if role == 0:
@@ -151,5 +158,4 @@ if is_day:
         driver.execute_script("window.scrollTo(0,3900)"), sleep(3, 5)
         driver.find_element_by_id('like-button-40892368').click(), sleep(3, 5)
         driver.find_element_by_id('like-button-40892368').click()
-
 driver.quit()

@@ -1,15 +1,13 @@
-import os
 import logging
+import os
 import platform
 import random
 import sys
 import time
 from datetime import datetime
 
-import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
 
 argv = sys.argv
 argv_length = len(argv)
@@ -73,38 +71,38 @@ else:
     logging.info("{} : {}".format(role, info))
     sleep()
 
-    # 2.写文
-    driver.get("{}/writer#/".format(jianshu)), sleep()
-    driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sleep()
-
     is_day = datetime.now().hour < 18
-    if role == 0 or role == 1:
-        title_prefix = "早晨" if is_day else "晚安"
-        title_prefix2 = "每日一言" if role == 0 else "一言美句"
-        driver.find_element_by_class_name("_24i7u").send_keys(Keys.HOME)
-        driver.find_element_by_class_name("_24i7u").send_keys((title_prefix + "！" + title_prefix2 + "："))
-    else:
-        resp = requests.get("https://v1.hitokoto.cn/").json()
-        title = resp.get('hitokoto')
-        driver.find_element_by_class_name("_24i7u").clear()
-        driver.find_element_by_class_name("_24i7u").send_keys(title)
-
-    content, editor, count = "", "arthur-editor", 0
-    while len(content) < 600:
-        api = random.choice(('international.v1.hitokoto.cn', "v1.hitokoto.cn"))
-        resp = requests.get("https://{}".format(api)).json()
-        hitokoto = resp.get("hitokoto")
-        if hitokoto:
-            count += 1
-            content += hitokoto.strip()
-            driver.find_element_by_id(editor).send_keys(str(count) + ". " + hitokoto)
-            driver.find_element_by_id(editor).send_keys(Keys.ENTER)
-            driver.find_element_by_id(editor).send_keys(Keys.ENTER)
-
-    end = '> 动漫也好、小说也罢，不论在哪里，总会看到有那么一两个句子能穿透你的心，这就是一言。'
-    driver.find_element_by_id(editor).send_keys(end)
-    driver.find_element_by_css_selector("i[class='fa fa-mail-forward']").click()
-    sleep()
+    # 2.写文
+    # driver.get("{}/writer#/".format(jianshu)), sleep()
+    # driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sleep()
+    #
+    # if role == 0 or role == 1:
+    #     title_prefix = "早晨" if is_day else "晚安"
+    #     title_prefix2 = "每日一言" if role == 0 else "一言美句"
+    #     driver.find_element_by_class_name("_24i7u").send_keys(Keys.HOME)
+    #     driver.find_element_by_class_name("_24i7u").send_keys((title_prefix + "！" + title_prefix2 + "："))
+    # else:
+    #     resp = requests.get("https://v1.hitokoto.cn/").json()
+    #     title = resp.get('hitokoto')
+    #     driver.find_element_by_class_name("_24i7u").clear()
+    #     driver.find_element_by_class_name("_24i7u").send_keys(title)
+    #
+    # content, editor, count = "", "arthur-editor", 0
+    # while len(content) < 600:
+    #     api = random.choice(('international.v1.hitokoto.cn', "v1.hitokoto.cn"))
+    #     resp = requests.get("https://{}".format(api)).json()
+    #     hitokoto = resp.get("hitokoto")
+    #     if hitokoto:
+    #         count += 1
+    #         content += hitokoto.strip()
+    #         driver.find_element_by_id(editor).send_keys(str(count) + ". " + hitokoto)
+    #         driver.find_element_by_id(editor).send_keys(Keys.ENTER)
+    #         driver.find_element_by_id(editor).send_keys(Keys.ENTER)
+    #
+    # end = '> 动漫也好、小说也罢，不论在哪里，总会看到有那么一两个句子能穿透你的心，这就是一言。'
+    # driver.find_element_by_id(editor).send_keys(end)
+    # driver.find_element_by_css_selector("i[class='fa fa-mail-forward']").click()
+    # sleep()
 
     # 3.消息
     driver.get("{}{}".format(jianshu, "/notifications#/likes")), sleep(1, 2)

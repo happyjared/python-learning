@@ -138,7 +138,7 @@ class WxChat(object):
 
         for province in list(self.num_of_province.keys()):
             number = self.num_of_province[province]
-            if number / member_count < .02 and province != self.unknown_province:
+            if number / member_count < .01 and province != self.unknown_province:
                 other_province_num = self.num_of_province.get(self.unknown_province)
                 self.num_of_province.__setitem__(self.unknown_province, other_province_num + number)
                 del self.num_of_province[province]
@@ -150,6 +150,9 @@ class WxChat(object):
 
         # font size include: ‘xx-small’,x-small’,'small’,'medium’,‘large’,‘x-large’,‘xx-large’ or number
         # plt.xticks(size='small',rotation=30)
+
+        plt.rcParams["font.sans-serif"] = ["SimHei"]
+        plt.rcParams["axes.unicode_minus"] = False
         plt.bar('男', self.male_num, color='yellow')
         plt.bar('女', self.female_num, color='pink')
         plt.bar('未知', self.unknown_gender, color='gray')
@@ -166,6 +169,8 @@ class WxChat(object):
 
         data = np.array(list(self.num_of_province.values()))
         labels = list(self.num_of_province.keys())
+        plt.rcParams["font.sans-serif"] = ["SimHei"]
+        plt.rcParams["axes.unicode_minus"] = False
         plt.pie(data, labels=labels, autopct='%.1f%%', )
         plt.axis('equal')
         plt.legend(loc=2, prop={'size': 5.5})

@@ -120,8 +120,11 @@ else:
         y_scroll, button_id = info.split(",")
         driver.execute_script("window.scrollTo(0,{})".format(y_scroll)), sleep(3, 5)
         button_element = 'like-button-{}'.format(button_id)
-        driver.find_element_by_id(button_element).click(), sleep(3, 5)
-        driver.find_element_by_id(button_element).click()
+        try:
+            driver.find_element_by_id(button_element).click(), sleep(3, 5)
+            driver.find_element_by_id(button_element).click()
+        except:
+            pass
 finally:
     driver.close()
     driver.quit()

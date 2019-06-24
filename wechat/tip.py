@@ -13,6 +13,10 @@ class CheLaiLe:
     start = False
 
 
+class ShellIsland:
+    start = False
+
+
 @itchat.msg_register(itchat.content.TEXT)
 def text(msg):
     receive_text = msg['Text']
@@ -45,7 +49,10 @@ def text(msg):
 
         if receive_text.startswith("s"):
             # 贝壳小岛
-            pass
+            ShellIsland.start = not ShellIsland.start
+            while ShellIsland.start:
+                itchat.send("", toUserName='filehelper')
+                time.sleep(60)
 
 
 itchat.auto_login(hotReload=True)

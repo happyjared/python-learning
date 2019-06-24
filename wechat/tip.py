@@ -17,13 +17,16 @@ class ShellIsland:
     start = False
 
 
+file_helper = 'filehelper'
+
+
 @itchat.msg_register(itchat.content.TEXT)
 def text(msg):
     receive_text = msg['Text']
     to_user_id = msg['ToUserName']  # 接收人
     # from_user_id = msg['FromUserName']  # 发送人
 
-    if to_user_id == 'filehelper':
+    if to_user_id == file_helper:
         if receive_text.startswith("b"):
             # 车来了
             CheLaiLe.start = not CheLaiLe.start
@@ -44,14 +47,14 @@ def text(msg):
                 tip_desc, pre_arrival_desc = data.get("tip").get("desc"), data.get("depDesc")
 
                 send_msg = "{}\n[{}]".format(tip_desc, pre_arrival_desc)
-                itchat.send(send_msg, toUserName='filehelper')
+                itchat.send(send_msg, toUserName=file_helper)
                 time.sleep(30)
 
         if receive_text.startswith("s"):
             # 贝壳小岛
             ShellIsland.start = not ShellIsland.start
             while ShellIsland.start:
-                itchat.send("", toUserName='filehelper')
+                itchat.send("", toUserName=file_helper)
                 time.sleep(60)
 
 

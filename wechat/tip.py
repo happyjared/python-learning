@@ -2,15 +2,16 @@
 # @author : Jared
 # @date : 2019/6/22 17:39
 
-import time
 import json
+import time
+from datetime import datetime
+
 import itchat
 import requests
-from datetime import datetime
 
 
 class CheLaiLe:
-    start = False
+    count, step, max_count = 0, 1, 90
 
 
 class ShellIsland:
@@ -29,8 +30,8 @@ def text(msg):
     if to_user_id == file_helper:
         if receive_text.startswith("b"):
             # 车来了
-            CheLaiLe.start = not CheLaiLe.start
-            while CheLaiLe.start:
+            while CheLaiLe.count <= CheLaiLe.max_count:
+                CheLaiLe.count += CheLaiLe.step
                 if datetime.now().hour < 12:
                     resp = requests.get(
                         'https://api.chelaile.net.cn/bus/line!busesDetail.action'
@@ -58,5 +59,5 @@ def text(msg):
                 time.sleep(60)
 
 
-itchat.auto_login(hotReload=True, enableCmdQR=2)
+itchat.auto_login(hotReload=True)
 itchat.run()

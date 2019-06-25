@@ -30,6 +30,7 @@ def text(msg):
     if to_user_id == file_helper:
         if receive_text.startswith("b"):
             # 车来了
+            CheLaiLe.count = 0
             while CheLaiLe.count <= CheLaiLe.max_count:
                 CheLaiLe.count += CheLaiLe.step
                 if datetime.now().hour < 12:

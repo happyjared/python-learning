@@ -21,4 +21,7 @@ def robot():
 # nohup python3 start.py 22 >> /dev/null 2>&1 &
 if __name__ == '__main__':
     argv = sys.argv
-    robot_job(argv[1])
+    if len(argv) > 1:
+        robot_job(argv[1])
+    else:
+        robot_job(6)

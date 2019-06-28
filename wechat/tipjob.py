@@ -9,7 +9,7 @@ def job_task():
 
 
 def tip():
-    resp = os.popen("ps -ef|grep python | grep tip | wc -l").read()
+    resp = os.popen("ps -ef|grep python | grep tip.py | wc -l").read()
     if int(resp) > 1:
         os.system("nohup python3 tip.py >> /dev/null 2>&1 &")
 

@@ -10,8 +10,11 @@ def job_task():
 
 def tip():
     resp = os.popen("ps -ef|grep python | grep tip.py | wc -l").read()
-    if int(resp) > 1:
+    if int(resp) <= 1:
+        print("脚本即将运行...")
         os.system("nohup python3 tip.py >> /dev/null 2>&1 &")
+    else:
+        print("脚本已经运行...")
 
 
 if __name__ == '__main__':

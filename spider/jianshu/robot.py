@@ -115,7 +115,9 @@ else:
     jianshu_p = "{}/p/".format(jianshu)
     comments = {"ac02c56c0865": "3200,38968576", "be27870bdba9": "1400,38969657", "277f1b0a140d": "1400,40692862",
                 "15eb212788fc": "2150,40693328", "81d5ae85f38a": "3550,40874580", "4dca23c2c75a": "3550,40874520",
-                "9aaebad1753a": "3500,42635258"}
+                "9aaebad1753a": "3500,42635258",
+                "f3398c00ffc1": "1550,42854890", "e369bb81bcc8": "1500,42855033", "4ec116446717": "1300,42855114",
+                "2d184d128522": "1400,42855181", }
     for comment_id, info in comments.items():
         driver.get("{}{}".format(jianshu_p, comment_id)), sleep()
         y_scroll, button_id = info.split(",")

@@ -60,5 +60,5 @@ def text(msg):
                 time.sleep(60)
 
 
-itchat.auto_login(hotReload=True)
+itchat.auto_login(hotReload=True, enableCmdQR=2)
 itchat.run()

@@ -16,7 +16,7 @@ password = argv[2] if argv_length > 2 else input("请输入登录密码\n")
 role = int(argv[3]) if argv_length > 3 else input("请输入Role\n")
 
 if platform.system() == "Linux":
-    os.system('ps -ef | grep chrome | awk "{print \$2}" | xargs kill -9')
+    os.system("ps -ef | grep chrome | awk '{print $2}' | xargs kill -9")
 
 
 def sleep(min_seconds=3, max_seconds=10):
@@ -57,17 +57,18 @@ driver.find_element_by_id("inp-pwd").send_keys(password)
 try:
     driver.find_element_by_xpath("/html/body/div/div[2]/form[2]/div[4]/input[1]").click()
 except:
-    logging.info("{} : 登录失败".format(role))
+    logging.error("{} : 登录失败".format(role))
 else:
     sleep()
 
     page_title = driver.title
-    logging.info("{} ：{}".format(role, page_title))
+    if page_title.find("简书") == -1:
+        logging.error("{} ：{}".format(role, page_title))
 
     # 1. 收益
     driver.get('{}/mobile/fp?read_mode=night'.format(jianshu)), sleep(1, 2)
     elements = driver.find_elements_by_class_name("order")
-    info = ' ; '.join(map(lambda ele: ele.text, elements[1:]))
+    info = ' ; '.join(map(lambda ele: ele.text, elements))
     logging.info("{} : {}".format(role, info))
     sleep()
 
@@ -124,6 +125,7 @@ else:
             driver.find_element_by_id(button_element).click(), sleep(3, 5)
             driver.find_element_by_id(button_element).click()
         except:
+            logging.error("Button_Element : {}".format(button_element))
             pass
 finally:
     driver.close()

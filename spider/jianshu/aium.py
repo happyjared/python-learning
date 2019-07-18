@@ -1,10 +1,11 @@
 import time
-import jsloader
 
 from appium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+import jsloader
 
 server = 'http://localhost:4723/wd/hub'
 desired_capabilities = {
@@ -16,6 +17,7 @@ desired_capabilities = {
 
 data = jsloader.load_account()
 for row in data:
+    start = time.time()
     username, password, role = row
 
     driver = webdriver.Remote(server, desired_capabilities)
@@ -78,31 +80,7 @@ for row in data:
                                                                    'android.view.View[2]/android.view.View[2]')))
         ele.click()
         try:
-            # 2. 继续观看
-            ele = short_wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
-                                                                             'android.widget.FrameLayout/'
-                                                                             'android.widget.FrameLayout/'
-                                                                             'android.widget.LinearLayout/'
-                                                                             'android.widget.FrameLayout/'
-                                                                             'android.widget.FrameLayout/'
-                                                                             'android.widget.FrameLayout/'
-                                                                             'android.widget.FrameLayout/'
-                                                                             'android.widget.FrameLayout/'
-                                                                             'android.widget.RelativeLayout/'
-                                                                             'android.view.ViewGroup/'
-                                                                             'android.widget.FrameLayout/'
-                                                                             'android.webkit.WebView/'
-                                                                             'android.webkit.WebView/'
-                                                                             'android.view.View/'
-                                                                             'android.view.View[1]/'
-                                                                             'android.view.View[2]/'
-                                                                             'android.view.View[2]/'
-                                                                             'android.view.View[2]')))
-
-        except:
-            pass
-        else:
-            ele.click()
+            # 2. 继续观看(根据元素文字来判断是否还有抽奖次数)
             clickable = EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
                                                               'android.widget.FrameLayout/'
                                                               'android.widget.FrameLayout/'
@@ -122,14 +100,27 @@ for row in data:
                                                               'android.view.View[2]/'
                                                               'android.view.View[2]/'
                                                               'android.view.View[2]'))
-            print("clickable {}".format(clickable))
-            # 根据元素是否还可以点击来判断是否还有抽奖次数 todo
+            ele = short_wait.until(clickable)
+        except:
+            pass
+        else:
+            text = ele.text
+            print(text)
+            if text.find('今日已用完') != -1:
+                break
+            ele.click()
         # 3. 关闭
         ele = long_wait.until(EC.presence_of_element_located((By.ID, 'com.jianshu.haruki:id/tt_video_ad_close')))
         ele.click()
         try:
             # 4. 知道了 todo
+            # ele = short_wait.until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, '知道了')))
             time.sleep(5)
             driver.tap([(540, 1335)])
         except:
             pass
+        else:
+            # ele.click()
+            pass
+
+    print("{}用时{}秒".format(role, time.time() - start))

@@ -25,6 +25,7 @@ for row in data:
     wait = WebDriverWait(driver, 30)
     short_wait = WebDriverWait(driver, 10)
     long_wait = WebDriverWait(driver, 60)
+    max_long_wait = WebDriverWait(driver, 100)
 
     # 我的
     ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tab_mine')))
@@ -111,7 +112,7 @@ for row in data:
                 break
             ele.click()
         # 3. 关闭
-        ele = long_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tt_video_ad_close')))
+        ele = max_long_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tt_video_ad_close')))
         ele.click()
         try:
             # 4. 知道了 todo

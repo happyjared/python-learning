@@ -145,3 +145,6 @@ for row in data:
             pass
 
     print("Number{}.用时{}秒".format(role, int(time.time() - start)))
+    driver.close_app()
+    driver.close()
+    driver.quit()

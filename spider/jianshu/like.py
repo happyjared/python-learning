@@ -5,8 +5,8 @@
 import logging
 import random
 import time
-import pyperclip
 
+import pyperclip
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver

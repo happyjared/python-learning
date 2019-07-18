@@ -26,7 +26,7 @@ for row in data:
     long_wait = WebDriverWait(driver, 60)
 
     # 我的
-    ele = wait.until(EC.presence_of_element_located((By.ID, 'com.jianshu.haruki:id/tab_mine')))
+    ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tab_mine')))
     ele.click()
     ele = wait.until(EC.presence_of_element_located((By.ID, 'com.jianshu.haruki:id/user_top_info_avatar')))
     ele.click()
@@ -38,13 +38,13 @@ for row in data:
     ele.send_keys(username)
     ele = wait.until(EC.presence_of_element_located((By.ID, 'com.jianshu.haruki:id/et_verification_code_or_password')))
     ele.send_keys(password)
-    login = driver.find_element_by_id('com.jianshu.haruki:id/tv_login')
-    login.click()
+    ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_login')))
+    ele.click()
 
     # 简书钻 -> 抽奖
-    ele = wait.until(EC.presence_of_element_located((By.ID, 'com.jianshu.haruki:id/tab_jsd')))
+    ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tab_jsd')))
     ele.click()
-    ele = long_wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+    ele = long_wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
                                                                     'android.widget.FrameLayout/'
                                                                     'android.widget.FrameLayout/'
                                                                     'android.widget.LinearLayout/'
@@ -63,7 +63,7 @@ for row in data:
     # 每日抽奖
     while True:
         # 1. GO
-        ele = wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout'
+        ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout'
                                                                    '/android.widget.FrameLayout/'
                                                                    'android.widget.FrameLayout/'
                                                                    'android.widget.LinearLayout/'
@@ -110,17 +110,17 @@ for row in data:
                 break
             ele.click()
         # 3. 关闭
-        ele = long_wait.until(EC.presence_of_element_located((By.ID, 'com.jianshu.haruki:id/tt_video_ad_close')))
+        ele = long_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tt_video_ad_close')))
         ele.click()
         try:
             # 4. 知道了 todo
-            # ele = short_wait.until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, '知道了')))
+            # ele = short_wait.until(EC.element_to_be_clickable((By.PARTIAL_LINK_TEXT, '知道了')))
             time.sleep(5)
             driver.tap([(540, 1335)])
         except:
             # 奖励异常，后退重进
             driver.back()
-            ele = long_wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+            ele = long_wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
                                                                             'android.widget.FrameLayout/'
                                                                             'android.widget.FrameLayout/'
                                                                             'android.widget.LinearLayout/'

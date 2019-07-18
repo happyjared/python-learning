@@ -118,9 +118,29 @@ for row in data:
             time.sleep(5)
             driver.tap([(540, 1335)])
         except:
-            pass
+            # 奖励异常，后退重进
+            driver.back()
+            ele = long_wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.LinearLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.support.v4.view.ViewPager/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.RelativeLayout/'
+                                                                            'android.view.ViewGroup/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.webkit.WebView/'
+                                                                            'android.webkit.WebView/'
+                                                                            'android.view.View[1]/'
+                                                                            'android.view.View[1]/'
+                                                                            'android.view.View[17]/'
+                                                                            'android.view.View[3]')))
+            ele.click()
         else:
             # ele.click()
             pass
 
-    print("{}用时{}秒".format(role, time.time() - start))
+    print("Number{}.用时{}秒".format(role, int(time.time() - start)))

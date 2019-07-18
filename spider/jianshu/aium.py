@@ -115,13 +115,30 @@ for row in data:
         ele = max_long_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tt_video_ad_close')))
         ele.click()
         try:
-            # 4. 知道了 todo
-            # ele = short_wait.until(EC.element_to_be_clickable((By.PARTIAL_LINK_TEXT, '知道了')))
-            time.sleep(5)
-            driver.tap([(540, 1335)])
+            # 4. 知道了
+            ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+                                                                         'android.widget.FrameLayout/'
+                                                                         'android.widget.FrameLayout/'
+                                                                         'android.widget.LinearLayout/'
+                                                                         'android.widget.FrameLayout/'
+                                                                         'android.widget.FrameLayout/'
+                                                                         'android.widget.FrameLayout/'
+                                                                         'android.widget.FrameLayout/'
+                                                                         'android.widget.FrameLayout/'
+                                                                         'android.widget.RelativeLayout/'
+                                                                         'android.view.ViewGroup/'
+                                                                         'android.widget.FrameLayout/'
+                                                                         'android.webkit.WebView/'
+                                                                         'android.webkit.WebView/'
+                                                                         'android.view.View[1]/'
+                                                                         'android.view.View[1]/'
+                                                                         'android.view.View[2]/'
+                                                                         'android.view.View[2]/'
+                                                                         'android.widget.Button')))
         except:
             # 奖励异常，后退重进
-            driver.back()
+            ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/close')))
+            ele.click()
             ele = long_wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
                                                                         'android.widget.FrameLayout/'
                                                                         'android.widget.FrameLayout/'
@@ -142,8 +159,7 @@ for row in data:
                                                                         'android.view.View[3]')))
             ele.click()
         else:
-            # ele.click()
-            pass
+            ele.click()
 
     print("Number{}.用时{}秒".format(role, int(time.time() - start)))
     driver.close_app()

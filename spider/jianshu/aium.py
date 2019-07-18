@@ -1,5 +1,5 @@
 import time
-from . import load
+import jsloader
 
 from appium import webdriver
 from selenium.webdriver.common.by import By
@@ -14,7 +14,7 @@ desired_capabilities = {
     "appActivity": "com.baiji.jianshu.MainActivity"
 }
 
-data = load.load_account()
+data = jsloader.load_account()
 for row in data:
     username, password, role = row
 
@@ -103,6 +103,26 @@ for row in data:
             pass
         else:
             ele.click()
+            clickable = EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+                                                              'android.widget.FrameLayout/'
+                                                              'android.widget.FrameLayout/'
+                                                              'android.widget.LinearLayout/'
+                                                              'android.widget.FrameLayout/'
+                                                              'android.widget.FrameLayout/'
+                                                              'android.widget.FrameLayout/'
+                                                              'android.widget.FrameLayout/'
+                                                              'android.widget.FrameLayout/'
+                                                              'android.widget.RelativeLayout/'
+                                                              'android.view.ViewGroup/'
+                                                              'android.widget.FrameLayout/'
+                                                              'android.webkit.WebView/'
+                                                              'android.webkit.WebView/'
+                                                              'android.view.View/'
+                                                              'android.view.View[1]/'
+                                                              'android.view.View[2]/'
+                                                              'android.view.View[2]/'
+                                                              'android.view.View[2]'))
+            print("clickable {}".format(clickable))
             # 根据元素是否还可以点击来判断是否还有抽奖次数 todo
         # 3. 关闭
         ele = long_wait.until(EC.presence_of_element_located((By.ID, 'com.jianshu.haruki:id/tt_video_ad_close')))

@@ -9,9 +9,9 @@ def load_account():
 
     print("开始读取")
     data = csv.reader(open('{}data.csv'.format(base), encoding='utf-8'))
-    for row in data:
-        username, password, role = row
-        print("Username: {}  Password: {}  Role:  {}".format(username, password, role))
+    # for row in data:
+    #     username, password, role = row
+    #     print("Username: {}  Password: {}  Role:  {}".format(username, password, role))
     print("读取结束")
     return data
 

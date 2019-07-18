@@ -44,6 +44,8 @@ for uid in user_ids:
             if count >= article_num:
                 break
 
+logging.info("共发布了{}篇文章".format(len(articles)))
+
 
 def sleep(min_seconds=3, max_seconds=10):
     time.sleep(random.randint(min_seconds, max_seconds))

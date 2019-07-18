@@ -8,7 +8,7 @@ def load_account():
     """ 加载账号 """
 
     print("开始读取")
-    data = csv.reader(open('{}data.csv'.format(base), encoding='utf-8'))
+    data = csv.reader(open('{}data.csv'.format(base), "r", encoding='utf-8'))
     # for row in data:
     #     username, password, role = row
     #     print("Username: {}  Password: {}  Role:  {}".format(username, password, role))

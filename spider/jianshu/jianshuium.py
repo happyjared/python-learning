@@ -1,4 +1,5 @@
 import time
+from . import data_
 
 from appium import webdriver
 from selenium.webdriver.common.by import By
@@ -13,8 +14,10 @@ desired_capabilities = {
     "appActivity": "com.baiji.jianshu.MainActivity"
 }
 
-data = {"269373": "6"}
-for username, password in data.items():
+data = data_.load_data()
+for row in data:
+    username, password, role = row
+
     driver = webdriver.Remote(server, desired_capabilities)
     wait = WebDriverWait(driver, 30)
     short_wait = WebDriverWait(driver, 10)

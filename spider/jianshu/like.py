@@ -5,11 +5,13 @@
 import logging
 import random
 import time
-from bs4 import BeautifulSoup
 
 import requests
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+
+from . import data_
 
 logging.basicConfig(level='INFO', filename='info.log', format='%(message)s')
 headers = {"user-agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36"}
@@ -46,11 +48,11 @@ def sleep(min_seconds=3, max_seconds=10):
     time.sleep(random.randint(min_seconds, max_seconds))
 
 
-data = {"269373": "6"}
-for username, role in data.items():
+data = data_.load_data()
+for row in data:
+    username, password, role = row
 
     # 无头模式
-    password = ""
     options = Options()
     if role != "6":
         options.add_argument('--headless')

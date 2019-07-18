@@ -4,8 +4,8 @@ import os
 base = "D:\\Data\\"
 
 
-def load_data():
-    """ 加载数据 """
+def load_account():
+    """ 加载账号 """
 
     print("开始读取")
     data = csv.reader(open('{}data.csv'.format(base), encoding='utf-8'))
@@ -31,5 +31,3 @@ def load_article(role):
         data.setdefault(article_name, article_content)
     print("读取结束".format(role))
     return data
-
-

@@ -24,7 +24,7 @@ def sleep(min_seconds=3, max_seconds=10):
     time.sleep(random.randint(min_seconds, max_seconds))
 
 
-logging.basicConfig(level='INFO', filename='info.log',
+logging.basicConfig(level='INFO', filename='robot.log',
                     format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
 # 无头模式
 options = Options()
@@ -64,69 +64,37 @@ else:
     page_title = driver.title
     if page_title.find("简书") == -1:
         logging.error("{} ：{}".format(role, page_title))
+    else:
+        # 1. 收益
+        driver.get('{}/mobile/fp?read_mode=night'.format(jianshu)), sleep(1, 2)
+        elements = driver.find_elements_by_class_name("order")
+        info = ' ; '.join(map(lambda ele: ele.text, elements))
+        logging.info("{} : {}".format(role, info))
+        sleep()
 
-    # 1. 收益
-    driver.get('{}/mobile/fp?read_mode=night'.format(jianshu)), sleep(1, 2)
-    elements = driver.find_elements_by_class_name("order")
-    info = ' ; '.join(map(lambda ele: ele.text, elements))
-    logging.info("{} : {}".format(role, info))
-    sleep()
+        # 2.消息
+        driver.get("{}{}".format(jianshu, "/notifications#/likes")), sleep(1, 2)
+        driver.get("{}{}".format(jianshu, "/notifications#/others")), sleep(1, 2)
+        driver.get("{}{}".format(jianshu, "/notifications#/follows")), sleep(1, 2)
+        driver.get("{}{}".format(jianshu, "/notifications#/money")), sleep(1, 2)
+        driver.get("{}{}".format(jianshu, "/notifications#/comments")), sleep(1, 2)
+        sleep()
 
-    # 2.写文
-    # driver.get("{}/writer#/".format(jianshu)), sleep()
-    # driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sleep()
-    #
-    # if role == 0 or role == 1:
-    #     title_prefix = "早晨" if is_day else "晚安"
-    #     title_prefix2 = "每日一言" if role == 0 else "一言美句"
-    #     driver.find_element_by_class_name("_24i7u").send_keys(Keys.HOME)
-    #     driver.find_element_by_class_name("_24i7u").send_keys((title_prefix + "！" + title_prefix2 + "："))
-    # else:
-    #     resp = requests.get("https://v1.hitokoto.cn/").json()
-    #     title = resp.get('hitokoto')
-    #     driver.find_element_by_class_name("_24i7u").clear()
-    #     driver.find_element_by_class_name("_24i7u").send_keys(title)
-    #
-    # content, editor, count = "", "arthur-editor", 0
-    # while len(content) < 600:
-    #     api = random.choice(('international.v1.hitokoto.cn', "v1.hitokoto.cn"))
-    #     resp = requests.get("https://{}".format(api)).json()
-    #     hitokoto = resp.get("hitokoto")
-    #     if hitokoto:
-    #         count += 1
-    #         content += hitokoto.strip()
-    #         driver.find_element_by_id(editor).send_keys(str(count) + ". " + hitokoto)
-    #         driver.find_element_by_id(editor).send_keys(Keys.ENTER)
-    #         driver.find_element_by_id(editor).send_keys(Keys.ENTER)
-    #
-    # end = '> 动漫也好、小说也罢，不论在哪里，总会看到有那么一两个句子能穿透你的心，这就是一言。'
-    # driver.find_element_by_id(editor).send_keys(end)
-    # driver.find_element_by_css_selector("i[class='fa fa-mail-forward']").click()
-    # sleep()
-
-    # 3.消息
-    driver.get("{}{}".format(jianshu, "/notifications#/likes")), sleep(1, 2)
-    driver.get("{}{}".format(jianshu, "/notifications#/others")), sleep(1, 2)
-    driver.get("{}{}".format(jianshu, "/notifications#/follows")), sleep(1, 2)
-    driver.get("{}{}".format(jianshu, "/notifications#/money")), sleep(1, 2)
-    driver.get("{}{}".format(jianshu, "/notifications#/comments")), sleep(1, 2)
-    sleep()
-
-    # 4.评论
-    jianshu_p = "{}/p/".format(jianshu)
-    comments = {"ac02c56c0865": "38968576", "be27870bdba9": "38969657", "277f1b0a140d": "40692862",
-                "15eb212788fc": "40693328", "81d5ae85f38a": "40874580", "4dca23c2c75a": "40874520",
-                "9aaebad1753a": "42635258", "f3398c00ffc1": "42854890", "e369bb81bcc8": "42855033",
-                "4ec116446717": "42855114", "2d184d128522": "42855181", }
-    for comment_id, button_id in comments.items():
-        driver.get("{}{}#comment-{}".format(jianshu_p, comment_id, button_id)), sleep(3, 5)
-        button_element = 'like-button-{}'.format(button_id)
-        try:
-            driver.find_element_by_id(button_element).click(), sleep(3, 5)
-            driver.find_element_by_id(button_element).click()
-        except:
-            logging.error("Button_Element : {}".format(button_element))
-            pass
+        # 3.评论
+        jianshu_p = "{}/p/".format(jianshu)
+        comments = {"ac02c56c0865": "38968576", "be27870bdba9": "38969657", "277f1b0a140d": "40692862",
+                    "15eb212788fc": "40693328", "81d5ae85f38a": "40874580", "4dca23c2c75a": "40874520",
+                    "9aaebad1753a": "42635258", "f3398c00ffc1": "42854890", "e369bb81bcc8": "42855033",
+                    "4ec116446717": "42855114", "2d184d128522": "42855181", }
+        for comment_id, button_id in comments.items():
+            driver.get("{}{}#comment-{}".format(jianshu_p, comment_id, button_id)), sleep(3, 5)
+            button_element = 'like-button-{}'.format(button_id)
+            try:
+                driver.find_element_by_id(button_element).click(), sleep(3, 5)
+                driver.find_element_by_id(button_element).click()
+            except:
+                logging.error("Button_Element : {}".format(button_element))
+                pass
 finally:
     driver.close()
     driver.quit()

@@ -1,5 +1,5 @@
 import time
-from . import data_
+from . import load
 
 from appium import webdriver
 from selenium.webdriver.common.by import By
@@ -14,7 +14,7 @@ desired_capabilities = {
     "appActivity": "com.baiji.jianshu.MainActivity"
 }
 
-data = data_.load_data()
+data = load.load_account()
 for row in data:
     username, password, role = row
 

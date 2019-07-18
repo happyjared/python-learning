@@ -13,7 +13,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 
-from . import data_
+from . import load
 
 logging.basicConfig(level='INFO', filename='like.log', format='%(message)s')
 headers = {"user-agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36"}
@@ -49,7 +49,7 @@ def sleep(min_seconds=3, max_seconds=10):
     time.sleep(random.randint(min_seconds, max_seconds))
 
 
-data = data_.load_data()
+data = load.load_account()
 for row in data:
 
     username, password, role = row
@@ -105,7 +105,7 @@ for row in data:
                     logging.info("{}".format(url))
 
             # 2. 写文
-            article_data = data_.load_article(role)
+            article_data = load.load_article(role)
             driver.get("{}/writer#/".format(jianshu)), sleep()
             for title, content in article_data.items():
                 driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sleep()

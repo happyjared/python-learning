@@ -5,15 +5,17 @@
 import logging
 import random
 import time
+import pyperclip
 
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
 
 from . import data_
 
-logging.basicConfig(level='INFO', filename='info.log', format='%(message)s')
+logging.basicConfig(level='INFO', filename='like.log', format='%(message)s')
 headers = {"user-agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36"}
 jianshu = "https://www.jianshu.com"
 
@@ -44,15 +46,13 @@ for uid in user_ids:
 
 
 def sleep(min_seconds=3, max_seconds=10):
-    """随机休眠"""
     time.sleep(random.randint(min_seconds, max_seconds))
 
 
 data = data_.load_data()
 for row in data:
-    username, password, role = row
 
-    # 无头模式
+    username, password, role = row
     options = Options()
     if role != "6":
         options.add_argument('--headless')
@@ -64,17 +64,14 @@ for row in data:
         options.add_argument('blink-settings=imagesEnabled=false')
     driver = webdriver.Chrome(chrome_options=options)
 
-    # 登录简书
     driver.get("{}/sign_in".format(jianshu))
     driver.maximize_window()
 
     if role != "6":
-        # 豆瓣登录
         driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div/ul/li[4]").click()
         driver.find_element_by_class_name("douban").click()
         sleep()
 
-        # 切换窗口
         driver.close()
         window_handles = driver.window_handles
         driver.switch_to.window(window_handles[-1])
@@ -85,7 +82,7 @@ for row in data:
         if role != "6":
             driver.find_element_by_xpath("/html/body/div/div[2]/form[2]/div[4]/input[1]").click()
     except:
-        logging.error("{} : 登录失败".format(role))
+        logging.error("{} : 授权登录失败".format(role))
     else:
         if role != "6":
             sleep()
@@ -94,9 +91,11 @@ for row in data:
 
         page_title = driver.title
         if page_title.find("简书") == -1:
-            logging.error("{} ：{}".format(role, page_title))
+            logging.error("{} ：{} 登录失败".format(role, page_title))
         else:
             logging.info("Role: {}".format(role))
+
+            # 1. 喜欢
             for article in articles:
                 url = "{}{}".format(jianshu, article)
                 driver.get(url)
@@ -105,6 +104,16 @@ for row in data:
                 if not like_element:
                     logging.info("{}".format(url))
 
+            # 2. 写文
+            article_data = data_.load_article(role)
+            driver.get("{}/writer#/".format(jianshu)), sleep()
+            for title, content in article_data.items():
+                driver.find_element_by_css_selector("i[class='fa fa-plus-circle']").click(), sleep()
+                driver.find_element_by_class_name("_24i7u").clear()
+                driver.find_element_by_class_name("_24i7u").send_keys(title), sleep()
+                driver.find_element_by_id("arthur-editor").clear()
+                pyperclip.copy(content)
+                driver.find_element_by_id("arthur-editor").send_keys(Keys.CONTROL, 'v'), sleep()
     finally:
         driver.close()
         driver.quit()

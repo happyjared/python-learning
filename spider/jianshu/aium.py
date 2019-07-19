@@ -51,26 +51,30 @@ for row in data:
     else:
         ele.click()
 
-    # 简书钻 -> 抽奖
+    # 简书钻 -> 天天抽奖
     ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tab_jsd')))
     ele.click()
-    ele = long_wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
-                                                                'android.widget.FrameLayout/'
-                                                                'android.widget.FrameLayout/'
-                                                                'android.widget.LinearLayout/'
-                                                                'android.widget.FrameLayout/'
-                                                                'android.widget.FrameLayout/'
-                                                                'android.widget.FrameLayout/'
-                                                                'android.support.v4.view.ViewPager/'
-                                                                'android.widget.FrameLayout/'
-                                                                'android.widget.RelativeLayout/'
-                                                                'android.view.ViewGroup/android.widget.FrameLayout/'
-                                                                'android.webkit.WebView/android.webkit.WebView/'
-                                                                'android.view.View[1]/android.view.View[1]/'
-                                                                'android.view.View[17]/android.view.View[3]')))
+    ele = long_wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+                                                                    'android.widget.FrameLayout/'
+                                                                    'android.widget.FrameLayout/'
+                                                                    'android.widget.LinearLayout/'
+                                                                    'android.widget.FrameLayout/'
+                                                                    'android.widget.FrameLayout/'
+                                                                    'android.widget.LinearLayout/'
+                                                                    'android.support.v4.view.ViewPager/'
+                                                                    'android.widget.FrameLayout/'
+                                                                    'android.widget.RelativeLayout/'
+                                                                    'android.view.ViewGroup/'
+                                                                    'android.widget.FrameLayout/'
+                                                                    'android.webkit.WebView/'
+                                                                    'android.webkit.WebView/'
+                                                                    'android.view.View[1]/'
+                                                                    'android.view.View[1]/'
+                                                                    'android.view.View[17]/'
+                                                                    'android.view.View[3]')))
     ele.click()
 
-    # 每日抽奖
+    # 抽奖
     while True:
         # 1. GO
         ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout'
@@ -147,24 +151,24 @@ for row in data:
             # 奖励异常，后退重进
             ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/close')))
             ele.click()
-            ele = long_wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
-                                                                        'android.widget.FrameLayout/'
-                                                                        'android.widget.FrameLayout/'
-                                                                        'android.widget.LinearLayout/'
-                                                                        'android.widget.FrameLayout/'
-                                                                        'android.widget.FrameLayout/'
-                                                                        'android.widget.FrameLayout/'
-                                                                        'android.support.v4.view.ViewPager/'
-                                                                        'android.widget.FrameLayout/'
-                                                                        'android.widget.RelativeLayout/'
-                                                                        'android.view.ViewGroup/'
-                                                                        'android.widget.FrameLayout/'
-                                                                        'android.webkit.WebView/'
-                                                                        'android.webkit.WebView/'
-                                                                        'android.view.View[1]/'
-                                                                        'android.view.View[1]/'
-                                                                        'android.view.View[17]/'
-                                                                        'android.view.View[3]')))
+            ele = long_wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.LinearLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.LinearLayout/'
+                                                                            'android.support.v4.view.ViewPager/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.RelativeLayout/'
+                                                                            'android.view.ViewGroup/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.webkit.WebView/'
+                                                                            'android.webkit.WebView/'
+                                                                            'android.view.View[1]/'
+                                                                            'android.view.View[1]/'
+                                                                            'android.view.View[17]/'
+                                                                            'android.view.View[3]')))
             ele.click()
         else:
             ele.click()

@@ -20,7 +20,8 @@ headers = {"user-agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/5
 jianshu = "https://www.jianshu.com"
 
 articles = set()
-user_ids = ["000a530f461c", "68a80b0c87a5", "ef6f9c30080a", "b34dcc8c2394", "37ec6dd9fc1c", "04f7029dba14"]
+user_ids = ["000a530f461c", "68a80b0c87a5", "ef6f9c30080a",
+            "b34dcc8c2394", "37ec6dd9fc1c", "04f7029dba14", "32bbb0ecfcb9"]
 jianshu_u = "{}/u/".format(jianshu)
 for uid in user_ids:
     user = "{}{}".format(jianshu_u, uid)

@@ -43,6 +43,14 @@ for row in data:
     ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_login')))
     ele.click()
 
+    # 领钻弹框
+    try:
+        ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_cancel')))
+    except:
+        pass
+    else:
+        ele.click()
+
     # 简书钻 -> 抽奖
     ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tab_jsd')))
     ele.click()
@@ -117,24 +125,24 @@ for row in data:
         try:
             # 4. 知道了
             ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
-                                                                         'android.widget.FrameLayout/'
-                                                                         'android.widget.FrameLayout/'
-                                                                         'android.widget.LinearLayout/'
-                                                                         'android.widget.FrameLayout/'
-                                                                         'android.widget.FrameLayout/'
-                                                                         'android.widget.FrameLayout/'
-                                                                         'android.widget.FrameLayout/'
-                                                                         'android.widget.FrameLayout/'
-                                                                         'android.widget.RelativeLayout/'
-                                                                         'android.view.ViewGroup/'
-                                                                         'android.widget.FrameLayout/'
-                                                                         'android.webkit.WebView/'
-                                                                         'android.webkit.WebView/'
-                                                                         'android.view.View[1]/'
-                                                                         'android.view.View[1]/'
-                                                                         'android.view.View[2]/'
-                                                                         'android.view.View[2]/'
-                                                                         'android.widget.Button')))
+                                                                   'android.widget.FrameLayout/'
+                                                                   'android.widget.FrameLayout/'
+                                                                   'android.widget.LinearLayout/'
+                                                                   'android.widget.FrameLayout/'
+                                                                   'android.widget.FrameLayout/'
+                                                                   'android.widget.FrameLayout/'
+                                                                   'android.widget.FrameLayout/'
+                                                                   'android.widget.FrameLayout/'
+                                                                   'android.widget.RelativeLayout/'
+                                                                   'android.view.ViewGroup/'
+                                                                   'android.widget.FrameLayout/'
+                                                                   'android.webkit.WebView/'
+                                                                   'android.webkit.WebView/'
+                                                                   'android.view.View[1]/'
+                                                                   'android.view.View[1]/'
+                                                                   'android.view.View[2]/'
+                                                                   'android.view.View[2]/'
+                                                                   'android.widget.Button')))
         except:
             # 奖励异常，后退重进
             ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/close')))

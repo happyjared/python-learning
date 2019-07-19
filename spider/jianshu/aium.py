@@ -77,7 +77,7 @@ for row in data:
     # 抽奖
     while True:
         # 1. GO
-        ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout'
+        ele = long_wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout'
                                                                '/android.widget.FrameLayout/'
                                                                'android.widget.FrameLayout/'
                                                                'android.widget.LinearLayout/'
@@ -127,7 +127,7 @@ for row in data:
         ele = max_long_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tt_video_ad_close')))
         ele.click()
         try:
-            # 4. 知道了
+            # 4. 知道了 todo
             ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
                                                                    'android.widget.FrameLayout/'
                                                                    'android.widget.FrameLayout/'

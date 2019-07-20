@@ -1,4 +1,5 @@
 import time
+import random
 
 from appium import webdriver
 from selenium.webdriver.common.by import By
@@ -320,7 +321,7 @@ for row in data:
 
         screen_size = get_screen_size()
         x1 = int(screen_size[0] * 0.5)  # x坐标
-        y1 = int(screen_size[1] * 0.75)  # 起始y坐标
+        y1 = int(screen_size[1] * 0.4)  # 起始y坐标
         y2 = int(screen_size[1] * 0.25)  # 终点y坐标
         driver.swipe(x1, y1, x1, y2, t)
 
@@ -331,7 +332,7 @@ for row in data:
         screen_size = get_screen_size()
         x1 = int(screen_size[0] * 0.5)  # x坐标
         y1 = int(screen_size[1] * 0.25)  # 起始y坐标
-        y2 = int(screen_size[1] * 0.75)  # 终点y坐标
+        y2 = int(screen_size[1] * 0.4)  # 终点y坐标
         driver.swipe(x1, y1, x1, y2, t)
 
 
@@ -381,7 +382,7 @@ for row in data:
             selected = ele.get_attribute("selected")
             if selected == 'false':
                 ele.click()
-                swipe_down(30)
+                swipe_up(random.randint(50, 100))
             # 点击更多
             ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
             ele.click()
@@ -391,7 +392,7 @@ for row in data:
                 ele.click()
             else:
                 driver.tap([(18, 1235)])
-                swipe_down(30)
+                swipe_up(random.randint(50, 100))
             # 评论文章
             ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_write_comment')))
             ele.click()
@@ -401,10 +402,10 @@ for row in data:
             ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/text_comment_send')))
             ele.click()
             # 后退下滑
-            time.sleep(3)
+            time.sleep(random.randint(2, 3))
             driver.back()
-            time.sleep(3)
-            swipe_down(50)
+            time.sleep(random.randint(2, 3))
+            swipe_up(random.randint(600, 800))
 
         # 返回
         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_toolbar_back')))

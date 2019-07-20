@@ -1,14 +1,15 @@
 import csv
 import os
+from random import shuffle
 
 base = "D:\\Data\\"
 
 
-def load_account():
+def load_account(file_name):
     """ 加载账号 """
 
     print("开始读取")
-    data = csv.reader(open('{}data.csv'.format(base), "r", encoding='utf-8'))
+    data = csv.reader(open('{}{}.csv'.format(base, file_name), "r", encoding='utf-8'))
     # for row in data:
     #     username, password, role = row
     #     print("Username: {}  Password: {}  Role:  {}".format(username, password, role))
@@ -23,6 +24,7 @@ def load_article(role):
     path = "{}{}".format(base, role)
     file_list = os.listdir(path)
     print("文件夹路径【{}】下共有文章{}篇".format(path, len(file_list)))
+    shuffle(file_list)
     data = dict()
     for file_name in file_list:
         article_name = file_name.replace(".md", "")

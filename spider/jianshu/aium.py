@@ -80,7 +80,9 @@ for row in data:
                                                                'android.view.View[1]/'
                                                                'android.view.View[1]/'
                                                                'android.view.View[15]')))
-    hole_jz_num = floor(float(ele.text.replace("持有借钻: ", "")))
+    # hole_jz_num = floor(float(ele.text.replace("持有借钻: ", "")))
+    print(ele.text)
+    hole_jz_num = 0
     try:
         """ 签到 """
         start = time.time()

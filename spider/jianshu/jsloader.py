@@ -33,3 +33,18 @@ def load_article(role):
         data.setdefault(article_name, article_content)
     print("读取结束".format(role))
     return data
+
+
+def load_comment():
+    """ 加载评论 """
+
+    print("开始读取")
+    data = list()
+    reader = csv.reader(open('{}{}.csv'.format(base, "comment"), "r", encoding='utf-8'))
+    for row in reader:
+        data.append(row[0])
+    shuffle(data)
+    print("读取结束")
+    return data
+
+

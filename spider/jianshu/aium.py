@@ -25,6 +25,8 @@ for row in data:
     start = time.time()
     username, password, role, post_num = row
     post_num = int(post_num)
+    if post_num <= 0:
+        break
     print("\nNumber{}.".format(role))
 
     driver = webdriver.Remote(server, desired_capabilities)
@@ -492,13 +494,24 @@ for row in data:
         # 发布
         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_action_public')))
         ele.click()
+        # 点赞
+        ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+                                                               'android.widget.FrameLayout/'
+                                                               'android.widget.FrameLayout/'
+                                                               'android.widget.LinearLayout/'
+                                                               'android.widget.FrameLayout/'
+                                                               'android.widget.FrameLayout/'
+                                                               'android.widget.ScrollView/'
+                                                               'android.widget.LinearLayout/'
+                                                               'android.widget.LinearLayout[1]/'
+                                                               'android.widget.FrameLayout[3]/'
+                                                               'android.widget.RelativeLayout/'
+                                                               'android.widget.FrameLayout/android.widget.ImageView')))
+        ele.click()
+        time.sleep(2)
         # 返回
         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_nav')))
         ele.click()
-        # 点赞
-        ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_vote_up')))
-        ele.click()
-        time.sleep(4)
         # 点击更多
         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
         ele.click()

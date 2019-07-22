@@ -80,9 +80,10 @@ for row in data:
                                                                'android.view.View[1]/'
                                                                'android.view.View[1]/'
                                                                'android.view.View[15]')))
-    # hole_jz_num = floor(float(ele.text.replace("持有借钻: ", "")))
-    print(ele.text)
     hole_jz_num = 0
+    if ele.text.find("持有借钻") != -1:
+        hole_jz_num = floor(float(ele.text.replace("持有借钻: ", "")))
+    print(ele.text, " ", hole_jz_num)
     try:
         """ 签到 """
         start = time.time()
@@ -497,7 +498,7 @@ for row in data:
         # 点赞
         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_vote_up')))
         ele.click()
-        time.sleep(3)
+        time.sleep(4)
         # 点击更多
         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
         ele.click()
@@ -505,7 +506,7 @@ for row in data:
         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_bookmark')))
         ele.click()
         # 返回
-        time.sleep(3)
+        time.sleep(2)
         driver.back()
     print("Number{}.发文用时{}秒".format(role, int(time.time() - start)))
 

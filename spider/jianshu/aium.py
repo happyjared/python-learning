@@ -509,10 +509,10 @@ for row in data:
                                                                'android.widget.RelativeLayout/'
                                                                'android.widget.FrameLayout/android.widget.ImageView')))
         ele.click()
-        # 返回
-        ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_nav')))
-        ele.click()
         try:
+            # 返回
+            ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_nav')))
+            ele.click()
             # 点击更多
             ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
             ele.click()
@@ -520,107 +520,106 @@ for row in data:
             ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_bookmark')))
             ele.click()
         except:
-            pass
+            driver.back()
         # 返回
         time.sleep(2)
         driver.back()
     print("Number{}.发文用时{}秒".format(role, int(time.time() - start)))
 
-
-    def get_screen_size():
-        """ 屏幕大小 """
-
-        x = driver.get_window_size()['width']
-        y = driver.get_window_size()['height']
-        return x, y
-
-
-    def swipe_up(t):
-        """ 向上滑动，屏幕下滑 """
-
-        screen_size = get_screen_size()
-        x1 = int(screen_size[0] * 0.5)  # x坐标
-        y1 = int(screen_size[1] * 0.6)  # 起始y坐标
-        y2 = int(screen_size[1] * 0.25)  # 终点y坐标
-        driver.swipe(x1, y1, x1, y2, t)
-
-
-    """ 关注 """
-    start = time.time()
-    driver.back()
-    # 关注列表
-    ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/login_follow_text')))
-    ele.click()
-    for i in range(1, 7):
-        ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
-                                                               'android.widget.FrameLayout/'
-                                                               'android.widget.FrameLayout/'
-                                                               'android.widget.LinearLayout/'
-                                                               'android.widget.FrameLayout/'
-                                                               'android.widget.FrameLayout/'
-                                                               'android.widget.LinearLayout/'
-                                                               'android.support.v4.view.ViewPager/'
-                                                               'android.widget.FrameLayout/'
-                                                               'android.widget.FrameLayout/'
-                                                               'android.view.ViewGroup/'
-                                                               'android.support.v7.widget.RecyclerView/'
-                                                               'android.widget.RelativeLayout[{}]'.format(i))))
-        ele.click()
-
-        swipe_up(random.randint(600, 800))
-
-        # 浏览文章
-        for j in range(1, 5):
-            ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
-                                                                   'android.widget.FrameLayout/'
-                                                                   'android.widget.FrameLayout/'
-                                                                   'android.widget.LinearLayout/'
-                                                                   'android.widget.FrameLayout/'
-                                                                   'android.widget.FrameLayout/'
-                                                                   'android.widget.FrameLayout/'
-                                                                   'android.view.ViewGroup/'
-                                                                   'android.support.v4.view.ViewPager/'
-                                                                   'android.widget.FrameLayout/'
-                                                                   'android.widget.FrameLayout/'
-                                                                   'android.widget.LinearLayout/'
-                                                                   'android.view.ViewGroup/'
-                                                                   'android.support.v7.widget.RecyclerView/'
-                                                                   'android.widget.LinearLayout[{}]'.format(j))))
-            ele.click()
-
-            # 点击更多
-            ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
-            ele.click()
-            # 收藏文章
-            ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_bookmark')))
-            if ele.text == '收藏':
-                ele.click()
-            else:
-                driver.tap([(18, 1235)])
-                swipe_up(800)
-            # 点赞文章
-            ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_vote_up')))
-            selected = ele.get_attribute("selected")
-            if selected == 'false':
-                ele.click()
-                swipe_up(800)
-            # 评论文章
-            ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_write_comment')))
-            ele.click()
-            ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/edit_comment')))
-            ele.click()
-            ele.send_keys(random.choice(comment_data))
-            ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/text_comment_send')))
-            ele.click()
-            # 后退下滑
-            time.sleep(random.randint(2, 3))
-            driver.back()
-            time.sleep(random.randint(2, 3))
-
-        # 返回
-        ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_toolbar_back')))
-        ele.click()
-    print("Number{}.关注用时{}秒".format(role, int(time.time() - start)))
+    # def get_screen_size():
+    #     """ 屏幕大小 """
+    #
+    #     x = driver.get_window_size()['width']
+    #     y = driver.get_window_size()['height']
+    #     return x, y
+    #
+    #
+    # def swipe_up(t):
+    #     """ 向上滑动，屏幕下滑 """
+    #
+    #     screen_size = get_screen_size()
+    #     x1 = int(screen_size[0] * 0.5)  # x坐标
+    #     y1 = int(screen_size[1] * 0.6)  # 起始y坐标
+    #     y2 = int(screen_size[1] * 0.25)  # 终点y坐标
+    #     driver.swipe(x1, y1, x1, y2, t)
+    #
+    #
+    # """ 关注 """
+    # start = time.time()
+    # driver.back()
+    # # 关注列表
+    # ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/login_follow_text')))
+    # ele.click()
+    # for i in range(1, 7):
+    #     ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+    #                                                            'android.widget.FrameLayout/'
+    #                                                            'android.widget.FrameLayout/'
+    #                                                            'android.widget.LinearLayout/'
+    #                                                            'android.widget.FrameLayout/'
+    #                                                            'android.widget.FrameLayout/'
+    #                                                            'android.widget.LinearLayout/'
+    #                                                            'android.support.v4.view.ViewPager/'
+    #                                                            'android.widget.FrameLayout/'
+    #                                                            'android.widget.FrameLayout/'
+    #                                                            'android.view.ViewGroup/'
+    #                                                            'android.support.v7.widget.RecyclerView/'
+    #                                                            'android.widget.RelativeLayout[{}]'.format(i))))
+    #     ele.click()
+    #
+    #     swipe_up(random.randint(600, 800))
+    #
+    #     # 浏览文章
+    #     for j in range(1, 5):
+    #         ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+    #                                                                'android.widget.FrameLayout/'
+    #                                                                'android.widget.FrameLayout/'
+    #                                                                'android.widget.LinearLayout/'
+    #                                                                'android.widget.FrameLayout/'
+    #                                                                'android.widget.FrameLayout/'
+    #                                                                'android.widget.FrameLayout/'
+    #                                                                'android.view.ViewGroup/'
+    #                                                                'android.support.v4.view.ViewPager/'
+    #                                                                'android.widget.FrameLayout/'
+    #                                                                'android.widget.FrameLayout/'
+    #                                                                'android.widget.LinearLayout/'
+    #                                                                'android.view.ViewGroup/'
+    #                                                                'android.support.v7.widget.RecyclerView/'
+    #                                                                'android.widget.LinearLayout[{}]'.format(j))))
+    #         ele.click()
+    #
+    #         # 点击更多
+    #         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
+    #         ele.click()
+    #         # 收藏文章
+    #         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_bookmark')))
+    #         if ele.text == '收藏':
+    #             ele.click()
+    #         else:
+    #             driver.tap([(18, 1235)])
+    #             swipe_up(800)
+    #         # 点赞文章
+    #         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_vote_up')))
+    #         selected = ele.get_attribute("selected")
+    #         if selected == 'false':
+    #             ele.click()
+    #             swipe_up(800)
+    #         # 评论文章
+    #         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_write_comment')))
+    #         ele.click()
+    #         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/edit_comment')))
+    #         ele.click()
+    #         ele.send_keys(random.choice(comment_data))
+    #         ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/text_comment_send')))
+    #         ele.click()
+    #         # 后退下滑
+    #         time.sleep(random.randint(2, 3))
+    #         driver.back()
+    #         time.sleep(random.randint(2, 3))
+    #
+    #     # 返回
+    #     ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_toolbar_back')))
+    #     ele.click()
+    # print("Number{}.关注用时{}秒".format(role, int(time.time() - start)))
 
     """ 退出APP """
     driver.close_app()

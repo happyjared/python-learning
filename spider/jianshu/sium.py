@@ -64,8 +64,9 @@ def sleep(min_seconds=3, max_seconds=10):
 
 
 data = jsloader.load_account("dbdata")
-for row in data:
-    username, password, role, post_num, like = row
+for account in data:
+    username, password, role, post_num, like = account.username, account.password, \
+                                               account.role, account.post_num, account.like
     post_num = int(post_num)
     if post_num <= 0 and like != "T":
         continue

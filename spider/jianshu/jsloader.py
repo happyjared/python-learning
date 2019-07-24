@@ -5,14 +5,22 @@ from random import shuffle
 base = "D:\\Data\\"
 
 
+class Account:
+
+    def __init__(self, username, password, role, post_num, like=None) -> None:
+        self.username, self.password, self.role, self.post_num, self.like = username, password, role, post_num, like
+
+
 def load_account(file_name):
     """ 加载账号 """
 
     print("开始读取")
-    data = csv.reader(open('{}{}.csv'.format(base, file_name), "r", encoding='utf-8'))
-    # for row in data:
-    #     username, password, role = row
-    #     print("Username: {}  Password: {}  Role:  {}".format(username, password, role))
+    data = list()
+    reader_data = csv.reader(open('{}{}.csv'.format(base, file_name), "r", encoding='utf-8'))
+    for row in reader_data:
+        username, password, role, post_num = row
+        print("Username: {}  Password: {}  Role:  {}".format(username, password, role))
+        data.append(Account(username=username, password=password, role=role, post_num=post_num))
     print("读取结束")
     return data
 
@@ -46,5 +54,3 @@ def load_comment():
     shuffle(data)
     print("读取结束")
     return data
-
-

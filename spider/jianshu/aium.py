@@ -22,9 +22,9 @@ desired_capabilities = {
 
 data = jsloader.load_account("jsdata")
 comment_data = jsloader.load_comment()
-for row in data:
+for account in data:
     start = time.time()
-    username, password, role, post_num = row
+    username, password, role, post_num = account.username, account.password, account.role, account.post_num
     post_num = int(post_num)
     if post_num <= 0:
         break

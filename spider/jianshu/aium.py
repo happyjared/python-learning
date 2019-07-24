@@ -629,4 +629,5 @@ for row in data:
         driver.close_app()
         driver.quit()
     except:
+        print("Role {} 操作异常".format(role))
         pass

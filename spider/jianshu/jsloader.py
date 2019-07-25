@@ -8,7 +8,8 @@ base = "D:\\Data\\"
 class Account:
 
     def __init__(self, username, password, role, post_num, like=None) -> None:
-        self.username, self.password, self.role, self.post_num, self.like = username, password, role, post_num, like
+        self.username, self.password = username, password
+        self.role, self.post_num, self.like = int(role), int(post_num), like
 
 
 def load_account(file_name):
@@ -16,11 +17,12 @@ def load_account(file_name):
 
     print("开始读取")
     data = list()
-    reader_data = csv.reader(open('{}{}.csv'.format(base, file_name), "r", encoding='utf-8'))
-    for row in reader_data:
-        username, password, role, post_num = row
-        print("Username: {}  Password: {}  Role:  {}".format(username, password, role))
-        data.append(Account(username=username, password=password, role=role, post_num=post_num))
+    with open('{}{}.csv'.format(base, file_name), "r", encoding='utf-8') as file:
+        reader_data = csv.reader(file)
+        for row in reader_data:
+            username, password, role, post_num = row
+            print("Username: {}  Password: {}  Role:  {}".format(username, password, role))
+            data.append(Account(username=username, password=password, role=role, post_num=post_num))
     print("读取结束")
     return data
 
@@ -48,9 +50,10 @@ def load_comment():
 
     print("开始读取")
     data = list()
-    reader = csv.reader(open('{}{}.csv'.format(base, "comment"), "r", encoding='utf-8'))
-    for row in reader:
-        data.append(row[0])
+    with open('{}{}.csv'.format(base, "comment"), "r", encoding='utf-8') as file:
+        reader_data = csv.reader(file)
+        for row in reader_data:
+            data.append(row[0])
     shuffle(data)
     print("读取结束")
     return data

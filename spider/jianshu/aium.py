@@ -1,4 +1,4 @@
-import random
+import logging
 import time
 
 from appium import webdriver
@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 import jsloader
 
+logging.basicConfig(level='INFO', filename='aium.log', format='%(asctime)s[%(lineno)d]: %(message)s')
 server = 'http://localhost:4723/wd/hub'
 desired_capabilities = {
     "platformName": "Android",
@@ -29,7 +30,7 @@ while len(data) > 0:
         if post_num <= 0:
             data.remove(account)
             break
-        print("\nNumber{}.".format(role))
+        logging.info("\nNumber{}.".format(role))
 
         try:
             driver = webdriver.Remote(server, desired_capabilities)
@@ -54,7 +55,7 @@ while len(data) > 0:
             ele.send_keys(password)
             ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_login')))
             ele.click()
-            print("Number{}.登录用时{}秒".format(role, int(time.time() - start)))
+            logging.info("Number{}.登录用时{}秒".format(role, int(time.time() - start)))
 
             try:
                 # 领钻弹框
@@ -67,6 +68,26 @@ while len(data) > 0:
             # 简书钻
             ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tab_jsd')))
             ele.click()
+            # 当天收益
+            ele = wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+                                                                       'android.widget.FrameLayout/'
+                                                                       'android.widget.FrameLayout/'
+                                                                       'android.widget.LinearLayout/'
+                                                                       'android.widget.FrameLayout/'
+                                                                       'android.widget.FrameLayout/'
+                                                                       'android.widget.LinearLayout/'
+                                                                       'android.support.v4.view.ViewPager/'
+                                                                       'android.widget.FrameLayout/'
+                                                                       'android.widget.RelativeLayout/'
+                                                                       'android.view.ViewGroup/'
+                                                                       'android.widget.FrameLayout/'
+                                                                       'android.webkit.WebView/'
+                                                                       'android.webkit.WebView/'
+                                                                       'android.view.View[1]/'
+                                                                       'android.view.View[1]/'
+                                                                       'android.view.View[4]/'
+                                                                       'android.view.View[1]/android.view.View')))
+            logging.info(ele.text)
             # 持有借钻
             time.sleep(5)
             ele = wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
@@ -89,7 +110,7 @@ while len(data) > 0:
             hole_jz_num = 10000
             if ele.text.find("持有借钻") != -1:
                 hole_jz_num = floor(float(ele.text.replace("持有借钻: ", "")))
-            print(ele.text, "/", hole_jz_num)
+            logging.info(ele.text, "/", hole_jz_num)
             try:
                 """ 签到 """
                 start = time.time()
@@ -137,7 +158,7 @@ while len(data) > 0:
             else:
                 ele.click()
             finally:
-                print("Number{}.签到用时{}秒".format(role, int(time.time() - start)))
+                logging.info("Number{}.签到用时{}秒".format(role, int(time.time() - start)))
 
                 """ 领钻 """
                 start = time.time()
@@ -227,7 +248,7 @@ while len(data) > 0:
                                                                                'android.view.View[1]')))
                     jz_num = int(ele.text)
                     receive += 1
-                print("Number{}.领钻用时{}秒".format(role, int(time.time() - start)))
+                logging.info("Number{}.领钻用时{}秒".format(role, int(time.time() - start)))
 
                 # 后退
                 time.sleep(2)
@@ -312,7 +333,7 @@ while len(data) > 0:
                                                                                'android.widget.Button')))
                     ele.click()
                     # 确认转换
-                print("Number{}.转钻用时{}秒".format(role, int(time.time() - start)))
+                logging.info("Number{}.转钻用时{}秒".format(role, int(time.time() - start)))
 
                 """ 抽奖 """
                 start = time.time()
@@ -382,7 +403,7 @@ while len(data) > 0:
                         pass
                     else:
                         text = ele.text
-                        print(text)
+                        logging.info(text)
                         if text.find('今日已用完') != -1:
                             break
                         ele.click()
@@ -417,7 +438,7 @@ while len(data) > 0:
                                                                       'android.widget.Button')))
                             ele.click()
                     except:
-                        print("奖励异常，后退重进")
+                        logging.info("奖励异常，后退重进")
                         ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/close')))
                         ele.click()
                         ele = long_wait.until(
@@ -441,7 +462,7 @@ while len(data) > 0:
                                                                       'android.view.View[3]')))
                         ele.click()
 
-                print("Number{}.抽奖用时{}秒".format(role, int(time.time() - start)))
+                logging.info("Number{}.抽奖用时{}秒".format(role, int(time.time() - start)))
 
             """ 发文 """
             start = time.time()
@@ -473,7 +494,8 @@ while len(data) > 0:
                                                          'android.widget.FrameLayout/android.widget.FrameLayout/'
                                                          'android.widget.LinearLayout/android.widget.FrameLayout/'
                                                          'android.widget.FrameLayout/android.widget.FrameLayout/'
-                                                         'android.widget.LinearLayout/android.widget.HorizontalScrollView/'
+                                                         'android.widget.LinearLayout/'
+                                                         'android.widget.HorizontalScrollView/'
                                                          'android.widget.LinearLayout/'
                                                          'android.support.v7.app.ActionBar.Tab[2]')))
             ele.click()
@@ -512,7 +534,8 @@ while len(data) > 0:
                                                                        'android.widget.LinearLayout[1]/'
                                                                        'android.widget.FrameLayout[3]/'
                                                                        'android.widget.RelativeLayout/'
-                                                                       'android.widget.FrameLayout/android.widget.ImageView')))
+                                                                       'android.widget.FrameLayout/'
+                                                                       'android.widget.ImageView')))
                 ele.click()
                 try:
                     # 返回
@@ -530,7 +553,7 @@ while len(data) > 0:
                 time.sleep(2)
                 driver.back()
                 account.post_num = account.post_num - 1
-            print("Number{}.发文用时{}秒".format(role, int(time.time() - start)))
+            logging.info("Number{}.发文用时{}秒".format(role, int(time.time() - start)))
 
             # def get_screen_size():
             #     """ 屏幕大小 """
@@ -625,11 +648,11 @@ while len(data) > 0:
             #     # 返回
             #     ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_toolbar_back')))
             #     ele.click()
-            # print("Number{}.关注用时{}秒".format(role, int(time.time() - start)))
+            # logging.info("Number{}.关注用时{}秒".format(role, int(time.time() - start)))
 
             """ 退出APP """
             driver.close_app()
             driver.quit()
         except Exception as e:
-            print("Role {} 操作异常".format(role), e)
+            logging.info("Role {} 操作异常".format(role), e)
             pass

@@ -539,8 +539,10 @@ while len(data) > 0:
                 ele.click()
                 try:
                     # 返回
-                    ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_nav')))
-                    ele.click()
+                    time.sleep(2)
+                    driver.back()
+                    # ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_nav')))
+                    # ele.click()
                     # 点击更多
                     ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
                     ele.click()
@@ -548,7 +550,7 @@ while len(data) > 0:
                     ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_bookmark')))
                     ele.click()
                 except:
-                    driver.back()
+                    pass
                 # 返回
                 time.sleep(2)
                 driver.back()
@@ -655,4 +657,3 @@ while len(data) > 0:
             driver.quit()
         except Exception as e:
             logging.info("Role {} 操作异常".format(role), e)
-            pass

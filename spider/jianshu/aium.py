@@ -40,8 +40,8 @@ while len(data) > 0:
             break
         logging.info("Number{}.".format(role))
 
+        driver = webdriver.Remote(server, desired_capabilities)
         try:
-            driver = webdriver.Remote(server, desired_capabilities)
             wait = WebDriverWait(driver, 30)
             short_wait = WebDriverWait(driver, 10)
             long_wait = WebDriverWait(driver, 60)
@@ -261,6 +261,7 @@ while len(data) > 0:
                 # 后退
                 time.sleep(2)
                 driver.back()
+                time.sleep(2)
 
                 """ 贝转钻 """
                 start = time.time()
@@ -344,6 +345,7 @@ while len(data) > 0:
                 logging.info("Number{}.转钻用时{}秒".format(role, int(time.time() - start)))
 
                 """ 抽奖 """
+                time.sleep(3)
                 start = time.time()
                 ele = long_wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
                                                                                 'android.widget.FrameLayout/'
@@ -547,20 +549,20 @@ while len(data) > 0:
                 ele.click()
                 try:
                     # 返回
-                    time.sleep(2)
+                    time.sleep(3)
                     driver.back()
                     # ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_nav')))
                     # ele.click()
                     # 点击更多
-                    ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
-                    ele.click()
-                    # 收藏文章
-                    ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_bookmark')))
-                    ele.click()
+                    # ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
+                    # ele.click()
+                    # # 收藏文章
+                    # ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_bookmark')))
+                    # ele.click()
                 except:
                     pass
                 # 返回
-                time.sleep(2)
+                time.sleep(3)
                 driver.back()
                 account.post_num = account.post_num - 1
             logging.info("Number{}.发文用时{}秒".format(role, int(time.time() - start)))
@@ -659,9 +661,9 @@ while len(data) > 0:
             #     ele = wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_toolbar_back')))
             #     ele.click()
             # logging.info("Number{}.关注用时{}秒".format(role, int(time.time() - start)))
-
+        except Exception as e:
+            logging.error("Role {} 操作异常".format(str(role)), e)
+        finally:
             """ 退出APP """
             driver.close_app()
             driver.quit()
-        except Exception as e:
-            logging.error("Role {} 操作异常".format(str(role)), e)

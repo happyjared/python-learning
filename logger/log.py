@@ -5,8 +5,8 @@ import logging
 import logging.config
 
 
-class Logger(object):
-    def __init__(self):
+class Logger:
+    def __init__(self, log_name='info.log'):
         """日志相关配置"""
 
         path = 'logs'
@@ -19,7 +19,7 @@ class Logger(object):
                 config = yaml.load(f)
                 logging.config.dictConfig(config)
         else:
-            logging.basicConfig(level='INFO', filename='info.log',
+            logging.basicConfig(level='INFO', filename=log_name,
                                 format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
 
         logging.info(">>> Load logger config")

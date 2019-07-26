@@ -9,7 +9,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 import jsloader
 
-logging.basicConfig(level='INFO', filename='aium.log', format='%(asctime)s[%(lineno)d]: %(message)s')
+logger = logging.getLogger()
+logger.setLevel('INFO')
+formatter = logging.Formatter("%(asctime)s[%(lineno)d]: %(message)s", '%Y-%m-%d %H:%M:%S')
+stream_handler = logging.StreamHandler()  # 输出到控制台的handler
+stream_handler.setFormatter(formatter)
+file_handler = logging.FileHandler('aium.log')  # 输出到文件的handler
+file_handler.setFormatter(formatter)
+logger.addHandler(stream_handler)
+logger.addHandler(file_handler)
 server = 'http://localhost:4723/wd/hub'
 desired_capabilities = {
     "platformName": "Android",
@@ -30,7 +38,7 @@ while len(data) > 0:
         if post_num <= 0:
             data.remove(account)
             break
-        logging.info("\nNumber{}.".format(role))
+        logging.info("Number{}.".format(role))
 
         try:
             driver = webdriver.Remote(server, desired_capabilities)
@@ -110,7 +118,7 @@ while len(data) > 0:
             hole_jz_num = 10000
             if ele.text.find("持有借钻") != -1:
                 hole_jz_num = floor(float(ele.text.replace("持有借钻: ", "")))
-            logging.info(ele.text, "/", hole_jz_num)
+            logging.info(ele.text + "/" + str(hole_jz_num))
             try:
                 """ 签到 """
                 start = time.time()
@@ -656,4 +664,4 @@ while len(data) > 0:
             driver.close_app()
             driver.quit()
         except Exception as e:
-            logging.info("Role {} 操作异常".format(role), e)
+            logging.error("Role {} 操作异常".format(str(role)), e)

@@ -10,6 +10,7 @@ class Account:
     def __init__(self, username, password, role, post_num, like=None) -> None:
         self.username, self.password = username, password
         self.role, self.post_num, self.like = int(role), int(post_num), like
+        print("Username: {} Password: {} Role: {} Post: {} Like: {}".format(username, password, role, post_num, like))
 
 
 def load_account(file_name):
@@ -21,7 +22,6 @@ def load_account(file_name):
         reader_data = csv.reader(file)
         for row in reader_data:
             username, password, role, post_num = row
-            print("Username: {}  Password: {}  Role:  {}".format(username, password, role))
             data.append(Account(username=username, password=password, role=role, post_num=post_num))
     print("读取结束")
     return data

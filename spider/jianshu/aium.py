@@ -8,16 +8,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 import jsloader
+from logger import log
 
-logger = logging.getLogger()
-logger.setLevel('INFO')
-formatter = logging.Formatter("%(asctime)s[%(lineno)d]: %(message)s", '%Y-%m-%d %H:%M:%S')
-stream_handler = logging.StreamHandler()  # 输出到控制台的handler
-stream_handler.setFormatter(formatter)
-file_handler = logging.FileHandler('aium.log')  # 输出到文件的handler
-file_handler.setFormatter(formatter)
-logger.addHandler(stream_handler)
-logger.addHandler(file_handler)
+log.Logger()
 server = 'http://localhost:4723/wd/hub'
 desired_capabilities = {
     "platformName": "Android",

@@ -338,26 +338,26 @@ while len(data) > 0:
                 logging.info("Number{}.转钻用时{}秒".format(role, int(time.time() - start)))
 
                 """ 抽奖 """
-                time.sleep(3)
+                time.sleep(5)
                 start = time.time()
-                ele = long_wait.until(EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
-                                                                                'android.widget.FrameLayout/'
-                                                                                'android.widget.FrameLayout/'
-                                                                                'android.widget.LinearLayout/'
-                                                                                'android.widget.FrameLayout/'
-                                                                                'android.widget.FrameLayout/'
-                                                                                'android.widget.LinearLayout/'
-                                                                                'android.support.v4.view.ViewPager/'
-                                                                                'android.widget.FrameLayout/'
-                                                                                'android.widget.RelativeLayout/'
-                                                                                'android.view.ViewGroup/'
-                                                                                'android.widget.FrameLayout/'
-                                                                                'android.webkit.WebView/'
-                                                                                'android.webkit.WebView/'
-                                                                                'android.view.View[1]/'
-                                                                                'android.view.View[1]/'
-                                                                                'android.view.View[17]/'
-                                                                                'android.view.View[3]')))
+                ele = long_wait.until(EC.element_to_be_clickable((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.LinearLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.LinearLayout/'
+                                                                            'android.support.v4.view.ViewPager/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.widget.RelativeLayout/'
+                                                                            'android.view.ViewGroup/'
+                                                                            'android.widget.FrameLayout/'
+                                                                            'android.webkit.WebView/'
+                                                                            'android.webkit.WebView/'
+                                                                            'android.view.View[1]/'
+                                                                            'android.view.View[1]/'
+                                                                            'android.view.View[17]/'
+                                                                            'android.view.View[3]')))
                 ele.click()
                 while True:
                     # 1. GO
@@ -444,6 +444,7 @@ while len(data) > 0:
                         logging.info("奖励异常，后退重进")
                         ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/close')))
                         ele.click()
+                        time.sleep(3)
                         ele = long_wait.until(
                             EC.presence_of_element_located((By.XPATH, '/hierarchy/android.widget.FrameLayout/'
                                                                       'android.widget.FrameLayout/'
@@ -535,27 +536,28 @@ while len(data) > 0:
                                                                        'android.widget.ScrollView/'
                                                                        'android.widget.LinearLayout/'
                                                                        'android.widget.LinearLayout[1]/'
-                                                                       'android.widget.FrameLayout[3]/'
+                                                                       'android.widget.FrameLayout[2]/'
                                                                        'android.widget.RelativeLayout/'
                                                                        'android.widget.FrameLayout/'
                                                                        'android.widget.ImageView')))
                 ele.click()
                 try:
                     # 返回
-                    time.sleep(3)
+                    time.sleep(2)
                     driver.back()
+                    time.sleep(2)
                     # ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_nav')))
                     # ele.click()
                     # 点击更多
-                    # ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
-                    # ele.click()
-                    # # 收藏文章
-                    # ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/tv_bookmark')))
-                    # ele.click()
+                    ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/action_more')))
+                    ele.click()
+                    # 收藏文章
+                    ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/menu_bookmark')))
+                    ele.click()
                 except:
                     pass
                 # 返回
-                time.sleep(3)
+                time.sleep(2)
                 driver.back()
                 account.post_num = account.post_num - 1
             logging.info("Number{}.发文用时{}秒".format(role, int(time.time() - start)))

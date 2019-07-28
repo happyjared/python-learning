@@ -72,7 +72,7 @@ for account in data:
         continue
     start = time.time()
     options = Options()
-    # if role != "6":
+    # if role != 6:
     #     options.add_argument('--headless')
     #     options.add_argument('log-level=3')
     #     options.add_argument('--no-sandbox')
@@ -91,7 +91,7 @@ for account in data:
 
     try:
         # 登录
-        if role != "6":
+        if role != 6:
             ele = wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div[2]/div/div/ul/li[4]')))
             ele.click()
             ele = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'douban')))

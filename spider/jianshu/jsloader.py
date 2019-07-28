@@ -21,8 +21,12 @@ def load_account(file_name):
     with open('{}{}.csv'.format(base, file_name), "r", encoding='utf-8') as file:
         reader_data = csv.reader(file)
         for row in reader_data:
-            username, password, role, post_num = row
-            data.append(Account(username=username, password=password, role=role, post_num=post_num))
+            if len(row) == 4:
+                username, password, role, post_num = row
+                data.append(Account(username=username, password=password, role=role, post_num=post_num))
+            else:
+                username, password, role, post_num, like = row
+                data.append(Account(username=username, password=password, role=role, post_num=post_num, like=like))
     print("读取结束")
     return data
 

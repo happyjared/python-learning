@@ -16,7 +16,7 @@ class Logger:
         path = os.path.dirname(__file__) + '/logging.yml'
         if os.path.exists(path):
             with open(path, 'r', encoding='utf-8') as f:
-                config = yaml.load(f)
+                config = yaml.safe_load(f)
                 logging.config.dictConfig(config)
         else:
             logging.basicConfig(level='INFO', filename=log_name,

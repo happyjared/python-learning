@@ -386,6 +386,7 @@ while len(data) > 0:
                                                                   'android.view.View[17]/'
                                                                   'android.view.View[3]')))
                     ele.click()
+                print("抽奖ing...")
             logging.info("Number{}.抽奖用时{}秒".format(role, int(time.time() - start)))
 
             time.sleep(2)
@@ -541,14 +542,14 @@ while len(data) > 0:
                                                                        'android.widget.ScrollView/'
                                                                        'android.widget.LinearLayout/'
                                                                        'android.widget.LinearLayout[1]/'
-                                                                       'android.widget.FrameLayout[3  ]/'
+                                                                       'android.widget.FrameLayout[3]/'
                                                                        'android.widget.RelativeLayout/'
                                                                        'android.widget.FrameLayout/'
                                                                        'android.widget.ImageView')))
                 ele.click()
                 try:
                     # 返回
-                    time.sleep(2)
+                    time.sleep(4)
                     driver.back()
                     time.sleep(2)
                     # ele = short_wait.until(EC.element_to_be_clickable((By.ID, 'com.jianshu.haruki:id/iv_nav')))
@@ -565,6 +566,7 @@ while len(data) > 0:
                 time.sleep(2)
                 driver.back()
                 account.post_num = account.post_num - 1
+                print("发文ing...")
             logging.info("Number{}.发文用时{}秒".format(role, int(time.time() - start)))
 
             # def get_screen_size():

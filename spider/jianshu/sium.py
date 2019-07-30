@@ -80,7 +80,7 @@ for account in data:
     #     options.add_argument('window-size=1366x728')
     #     options.add_argument('--disable-dev-shm-usage')
     #     options.add_argument('blink-settings=imagesEnabled=false')
-    driver = webdriver.Chrome(chrome_options=options)
+    driver = webdriver.Chrome(options=options)
     wait = WebDriverWait(driver, 30)
     short_wait = WebDriverWait(driver, 10)
     long_wait = WebDriverWait(driver, 60)

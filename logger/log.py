@@ -22,5 +22,3 @@ class Logger:
         else:
             logging.basicConfig(level='INFO', filename=log_name,
                                 format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
-
-        logging.info(">>> Load logger config")

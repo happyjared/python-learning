@@ -30,7 +30,6 @@ for role, cookie in cookie_data.items():
     driver = webdriver.Chrome(options=options)
     wait = WebDriverWait(driver, 30)
     driver.get(jianshu)
-    driver.maximize_window()
     driver.add_cookie({"name": "remember_user_token", "value": cookie})
     sleep()
 
@@ -56,13 +55,9 @@ for role, cookie in cookie_data.items():
                     "4ec116446717": "42855114", "2d184d128522": "42855181", }
         for comment_id, button_id in comments.items():
             driver.get("{}{}#comment-{}".format(jianshu_p, comment_id, button_id))
-            try:
-                like_ele = wait.until(EC.element_to_be_clickable((By.ID, 'like-button-{}'.format(button_id))))
-                like_ele.click()
-                sleep(3, 5)
-                like_ele.click()
-            except Exception:
-                logging.error("Button_Element : {}".format(button_id), Exception)
+            like_ele = wait.until(EC.element_to_be_clickable((By.ID, 'like-button-{}'.format(button_id))))
+            driver.execute_script("arguments[0].click();", like_ele), sleep(3, 5)
+            driver.execute_script("arguments[0].click();", like_ele)
     except Exception:
         logging.error("{} 重新获取 cookie".format(role), Exception)
         driver.add_cookie({"name": "remember_user_token", "value": ""})

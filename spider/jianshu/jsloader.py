@@ -2,6 +2,8 @@ import csv
 import os
 from random import shuffle
 
+from utils import rds
+
 base = "D:\\Data\\"
 
 
@@ -61,3 +63,27 @@ def load_comment():
     shuffle(data)
     print("读取结束")
     return data
+
+
+def load_server():
+    """ 加载服务 """
+
+    print("开始读取")
+    with open('{}{}.csv'.format(base, "server"), "r", encoding='utf-8') as file:
+        reader_data = csv.reader(file)
+        for row in reader_data:
+            alias, ip, port, password = row
+    print("读取结束")
+    return alias, ip, port, password
+
+
+def load_cookie():
+    """ 加载cookie """
+
+    print("开始读取")
+    alias, ip, port, password = load_server()
+    redis = rds.Rds(host=ip, port=port, db=10, password=password).redis_cli
+    cookie_data = redis.hgetall("jianshu")
+    redis.close()
+    print("读取结束")
+    return cookie_data

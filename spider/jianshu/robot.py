@@ -1,22 +1,13 @@
 import logging
-import os
-import platform
 import random
-import sys
+import getpass
 import time
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-argv = sys.argv
-argv_length = len(argv)
-
-username = argv[1] if argv_length > 1 else input("请输入登录账号\n")
-password = argv[2] if argv_length > 2 else input("请输入登录密码\n")
-role = int(argv[3]) if argv_length > 3 else input("请输入Role\n")
-
-if platform.system() == "Linux":
-    os.system("ps -ef | grep chrome | awk '{print $2}' | xargs kill -9")
+import jsloader
+from logger import log
 
 
 def sleep(min_seconds=3, max_seconds=10):
@@ -24,47 +15,17 @@ def sleep(min_seconds=3, max_seconds=10):
     time.sleep(random.randint(min_seconds, max_seconds))
 
 
-logging.basicConfig(level='INFO', filename='robot.log',
-                    format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')
-# 无头模式
-options = Options()
-options.add_argument('--headless')
-options.add_argument('log-level=3')
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-gpu')
-options.add_argument('window-size=1366x728')
-options.add_argument('--disable-dev-shm-usage')
-options.add_argument('blink-settings=imagesEnabled=false')
-driver = webdriver.Chrome(chrome_options=options)
-
-# 登录简书
+log.Logger('robot.log')
 jianshu = "https://www.jianshu.com"
-driver.get("{}/sign_in".format(jianshu))
-driver.maximize_window()
-
-# 豆瓣登录
-driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div/ul/li[4]").click()
-driver.find_element_by_class_name("douban").click()
-sleep()
-
-# 切换窗口
-driver.close()
-window_handles = driver.window_handles
-driver.switch_to.window(window_handles[-1])
-driver.find_element_by_id("inp-alias").send_keys(username)
-driver.find_element_by_id("inp-pwd").send_keys(password)
-
-try:
-    driver.find_element_by_xpath("/html/body/div/div[2]/form[2]/div[4]/input[1]").click()
-except:
-    logging.error("{} : 登录失败".format(role))
-else:
-    sleep()
-
-    page_title = driver.title
-    if page_title.find("简书") == -1:
-        logging.error("{} ：{}".format(role, page_title))
-    else:
+cookie_data = jsloader.load_cookie()
+for role, cookie in cookie_data.items():
+    # 无头模式
+    chrome_dir = r"--user-data-dir=C:\Users\{}\AppData\Local\Google\Chrome\User Data".format(getpass.getuser())
+    options = Options()
+    options.add_argument(chrome_dir)
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options=options)
+    try:
         # 1. 收益
         driver.get('{}/mobile/fp?read_mode=night'.format(jianshu)), sleep(1, 2)
         elements = driver.find_elements_by_class_name("order")
@@ -95,6 +56,14 @@ else:
             except:
                 logging.error("Button_Element : {}".format(button_element))
                 pass
-finally:
-    driver.close()
-    driver.quit()
+    except:
+        logging.error("{} : 异常".format(role))
+    else:
+        # 重新获取 cookie
+        driver.add_cookie({"name": "remember_user_token",
+                           "value": ""})
+        pass
+    finally:
+        driver.delete_all_cookies()
+        driver.close()
+        driver.quit()

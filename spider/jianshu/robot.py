@@ -1,10 +1,13 @@
+import getpass
 import logging
 import random
-import getpass
 import time
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 import jsloader
 from logger import log
@@ -23,13 +26,18 @@ for role, cookie in cookie_data.items():
     chrome_dir = r"--user-data-dir=C:\Users\{}\AppData\Local\Google\Chrome\User Data".format(getpass.getuser())
     options = Options()
     options.add_argument(chrome_dir)
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     driver = webdriver.Chrome(options=options)
+    wait = WebDriverWait(driver, 30)
+    driver.get(jianshu)
+    driver.add_cookie({"name": "remember_user_token", "value": cookie})
+    sleep()
+
     try:
         # 1. 收益
-        driver.get('{}/mobile/fp?read_mode=night'.format(jianshu)), sleep(1, 2)
-        elements = driver.find_elements_by_class_name("order")
-        info = ' ; '.join(map(lambda ele: ele.text, elements))
+        driver.get('{}/mobile/fp?read_mode=night'.format(jianshu))
+        element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'order')))
+        info = ' ; '.join(map(lambda ele: ele.text, element))
         logging.info("{} : {}".format(role, info))
         sleep()
 
@@ -51,8 +59,10 @@ for role, cookie in cookie_data.items():
             driver.get("{}{}#comment-{}".format(jianshu_p, comment_id, button_id)), sleep(3, 5)
             button_element = 'like-button-{}'.format(button_id)
             try:
-                driver.find_element_by_id(button_element).click(), sleep(3, 5)
-                driver.find_element_by_id(button_element).click()
+                element = wait.until(EC.element_to_be_clickable((By.ID, button_element)))
+                element.click()
+                sleep(3, 5)
+                element.click()
             except:
                 logging.error("Button_Element : {}".format(button_element))
                 pass
@@ -60,8 +70,7 @@ for role, cookie in cookie_data.items():
         logging.error("{} : 异常".format(role))
     else:
         # 重新获取 cookie
-        driver.add_cookie({"name": "remember_user_token",
-                           "value": ""})
+        driver.add_cookie({"name": "remember_user_token", "value": ""})
         pass
     finally:
         driver.delete_all_cookies()

@@ -30,16 +30,16 @@ for role, cookie in cookie_data.items():
     driver = webdriver.Chrome(options=options)
     wait = WebDriverWait(driver, 30)
     driver.get(jianshu)
+    driver.maximize_window()
     driver.add_cookie({"name": "remember_user_token", "value": cookie})
     sleep()
 
     try:
         # 1. 收益
         driver.get('{}/mobile/fp?read_mode=night'.format(jianshu))
-        element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'order')))
-        info = ' ; '.join(map(lambda ele: ele.text, element))
-        logging.info("{} : {}".format(role, info))
-        sleep()
+        elements = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'order')))
+        info = ' ; '.join(map(lambda ele: ele.text, elements))
+        logging.info("{} ; {}".format(role, info))
 
         # 2.消息
         driver.get("{}{}".format(jianshu, "/notifications#/likes")), sleep(1, 2)
@@ -47,7 +47,6 @@ for role, cookie in cookie_data.items():
         driver.get("{}{}".format(jianshu, "/notifications#/follows")), sleep(1, 2)
         driver.get("{}{}".format(jianshu, "/notifications#/money")), sleep(1, 2)
         driver.get("{}{}".format(jianshu, "/notifications#/comments")), sleep(1, 2)
-        sleep()
 
         # 3.评论
         jianshu_p = "{}/p/".format(jianshu)
@@ -56,16 +55,14 @@ for role, cookie in cookie_data.items():
                     "9aaebad1753a": "42635258", "f3398c00ffc1": "42854890", "e369bb81bcc8": "42855033",
                     "4ec116446717": "42855114", "2d184d128522": "42855181", }
         for comment_id, button_id in comments.items():
-            driver.get("{}{}#comment-{}".format(jianshu_p, comment_id, button_id)), sleep(3, 5)
-            button_element = 'like-button-{}'.format(button_id)
+            driver.get("{}{}#comment-{}".format(jianshu_p, comment_id, button_id))
             try:
-                element = wait.until(EC.element_to_be_clickable((By.ID, button_element)))
-                element.click()
+                like_ele = wait.until(EC.element_to_be_clickable((By.ID, 'like-button-{}'.format(button_id))))
+                like_ele.click()
                 sleep(3, 5)
-                element.click()
-            except:
-                logging.error("Button_Element : {}".format(button_element))
-                pass
+                like_ele.click()
+            except Exception:
+                logging.error("Button_Element : {}".format(button_id), Exception)
     except Exception:
         logging.error("{} 重新获取 cookie".format(role), Exception)
         driver.add_cookie({"name": "remember_user_token", "value": ""})

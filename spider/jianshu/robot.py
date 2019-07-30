@@ -66,12 +66,9 @@ for role, cookie in cookie_data.items():
             except:
                 logging.error("Button_Element : {}".format(button_element))
                 pass
-    except:
-        logging.error("{} : 异常".format(role))
-    else:
-        # 重新获取 cookie
+    except Exception:
+        logging.error("{} 重新获取 cookie".format(role), Exception)
         driver.add_cookie({"name": "remember_user_token", "value": ""})
-        pass
     finally:
         driver.delete_all_cookies()
         driver.close()

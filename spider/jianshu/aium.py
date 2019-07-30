@@ -10,7 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 import jsloader
 from logger import log
 
-log.Logger()
+log.Logger('aium.log')
 server = 'http://localhost:4723/wd/hub'
 desired_capabilities = {
     "platformName": "Android",

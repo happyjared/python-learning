@@ -18,6 +18,7 @@ class Logger:
             with open(path, 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f)
                 logging.config.dictConfig(config)
+                logging.basicConfig(filename=log_name)
         else:
             logging.basicConfig(level='INFO', filename=log_name,
                                 format='%(asctime)s %(filename)s[%(lineno)d] %(name)s (%(levelname)s): %(message)s')

@@ -1,5 +1,6 @@
-import math
 import time
+
+import math
 import numpy
 import requests
 from bs4 import BeautifulSoup
@@ -54,7 +55,7 @@ class ReadCount(object):
             bs = BeautifulSoup(resp.text, 'html.parser')
 
             avatar = bs.find(class_='avatar')  # 头像
-            self.avatar = 'https:' + avatar.img['src']
+            self.avatar = avatar.img['src']
 
             nickname = bs.find(class_='name')  # 昵称
             self.nickname = nickname.text
